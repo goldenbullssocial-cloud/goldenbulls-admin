@@ -1,0 +1,154 @@
+@use '../../scss/main.scss' as *;
+@use '../../scss/breakpoints/breakpoints.scss' as *;
+@use '../../scss/font/font.scss' as *;
+
+.sidebar {
+    width: 100%;
+    height: calc(100dvh - 0px);
+    position: sticky;
+    top: 0;
+
+    .sidebarlogo {
+        padding: 24px 0;
+        margin: 0 20px;
+        display: flex;
+        justify-content: center;
+        border-bottom: 1px solid #212121;
+
+        img {
+            max-width: 120px;
+            display: block;
+        }
+    }
+
+    .asideBody {
+        padding: 24px 20px;
+        height: calc(100dvh - 282px);
+        overflow: auto;
+
+        .menu:last-child {
+            margin: 0;
+        }
+
+        .menu {
+            position: relative;
+            border-radius: 12px;
+            display: grid;
+            grid-template-columns: 24px 1fr;
+            gap: 16px;
+            margin: 0 0 12px 0;
+            transition: .3s ease-in-out;
+            padding: 16px 20px;
+            cursor: pointer;
+
+            &:hover {
+                background: #272727;
+
+                &::before {
+                    @include border;
+                    border-radius: 12px;
+                }
+
+                span {
+                    @include gradient-text;
+                }
+
+                svg {
+                    path {
+                        stroke: #E4AB40;
+                    }
+                }
+            }
+
+            &.active {
+                background: #272727;
+
+                &::before {
+                    @include border;
+                    border-radius: 12px;
+                }
+
+                span {
+                    @include gradient-text;
+                }
+
+                svg {
+                    path {
+                        stroke: #E4AB40;
+                    }
+                }
+            }
+
+            span {
+                display: block;
+                font-size: 18px;
+                color: #fff;
+                font-style: normal;
+                font-weight: 400;
+                line-height: normal;
+                @include font-normal;
+            }
+
+            svg {
+                path {
+                    transition: .3s ease-in-out;
+                }
+            }
+
+
+        }
+    }
+
+    .asideFooter {
+        padding: 20px;
+
+        .profileBox {
+            border-radius: 12px;
+            background: #272727;
+            padding: 12px;
+            position: relative;
+            display: grid;
+            gap: 16px;
+            grid-template-columns: 48px 1fr;
+
+            .profile {
+                width: 48px;
+                height: 48px;
+                background-color: #fff;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .textgrid {
+                display: grid;
+                grid-template-columns: 1fr 24px;
+                gap: 16px;
+                align-items: center;
+
+                svg {
+                    cursor: pointer;
+                }
+
+                span {
+                    display: block;
+                    font-size: 20px;
+                    font-style: normal;
+                    font-weight: 400;
+                    @include font-normal;
+                    @include gradient-text;
+                    line-height: normal;
+
+                    @include respond-to("xl") {
+                        font-size: 16px;
+                    }
+                }
+            }
+
+            &::before {
+                @include gold-border;
+            }
+        }
+    }
+}

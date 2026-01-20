@@ -1,0 +1,112 @@
+@use '../../scss/main.scss' as *;
+@use '../../scss/breakpoints/breakpoints.scss' as *;
+@use '../../scss/font/font.scss' as *;
+
+.input {
+    &.inputChange {
+        .relativeInput {
+            input {
+                padding: 0 16px;
+                border-radius: 16px;
+                background: rgba(255, 255, 255, 0.05);
+                padding-left: 16px;
+            }
+        }
+    }
+
+    label {
+        color: #FFF;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+        @include font-normal;
+        padding: 0 0 8px 0;
+        display: block;
+    }
+
+    .relativeInput {
+        position: relative;
+
+        &.inputRight {
+            input {
+                padding-left: 16px;
+                padding-right: 50px;
+            }
+        }
+
+        &.inputbgChange {
+            input {
+                background: rgba(255, 255, 255, 0.05);
+            }
+        }
+
+        &.leftSpacingRemove {
+            input {
+                padding-left: 16px;
+            }
+        }
+
+        .iconAlignment {
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            position: absolute;
+            display: flex;
+            align-items: center;
+
+            img {
+                display: block;
+            }
+        }
+
+        .text {
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            span {
+                color: #B6B6B6;
+                font-size: 20px;
+                @include font-normal;
+                font-style: normal;
+                font-weight: 400;
+                line-height: normal;
+            }
+        }
+
+        input {
+            width: 100%;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.10);
+            height: 52px;
+            padding-left: 47px;
+            padding-right: 16px;
+            font-size: 16px;
+            outline: none;
+            font-style: normal;
+            border: 1px solid #66666693;
+            font-weight: 400;
+            line-height: normal;
+            @include font-normal;
+            color: #fff;
+            transition: .3s ease-in-out;
+
+            &:focus {
+                border: 1px solid #F9F490;
+            }
+        }
+
+        ::placeholder {
+            color: rgba(255, 255, 255, 0.40);
+            font-size: 16px;
+            font-weight: 400;
+            line-height: normal;
+            @include font-normal;
+        }
+    }
+}

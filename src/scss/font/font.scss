@@ -1,0 +1,93 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&display=swap');
+
+@font-face {
+    font-family: "Bauhaus";
+    src: url("../../../public/assets/font/Bauhaus-9M8ny.ttf");
+}
+
+@font-face {
+    font-family: "SFPRODISPLAYBOLD";
+    src: url("../../../public/assets/font/SFPRODISPLAYBOLD.OTF");
+}
+
+@font-face {
+    font-family: "SFPRODISPLAYMEDIUM";
+    src: url("../../../public/assets/font/SFPRODISPLAYMEDIUM.OTF");
+}
+
+@font-face {
+    font-family: "SFPRODISPLAYREGULAR";
+    src: url("../../../public/assets/font/SFPRODISPLAYREGULAR.OTF");
+}
+
+@mixin heading-font {
+    font-family: "Bauhaus";
+}
+
+@mixin font-bold {
+    font-family: "SFPRODISPLAYBOLD";
+}
+
+@mixin font-medium {
+    font-family: "SFPRODISPLAYMEDIUM";
+}
+
+@mixin font-normal {
+    font-family: "SFPRODISPLAYREGULAR";
+}
+
+@mixin gradient-text {
+    background: linear-gradient(90deg, #F9F490 0%, #E4AB40 25.48%, #FEFBA5 75%, #BD894E 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+}
+
+@mixin border {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 24px;
+    border-radius: inherit;
+    padding: 1px;
+    /* border width */
+    background: linear-gradient(180deg, #666666 0%, #000000 100%);
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    transition: .3s ease-in-out;
+
+    @media (max-width:1600px) {
+        border-radius: 18px;
+    }
+}
+
+@mixin gold-border {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    /* border width */
+
+    background: linear-gradient(180deg,
+            #F9F490 0%,
+            #000000 100%);
+
+    -webkit-mask:
+        linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+
+    pointer-events: none;
+    transition: 0.3s ease-in-out;
+
+    @media (max-width: 1600px) {
+        border-radius: 18px;
+    }
+}

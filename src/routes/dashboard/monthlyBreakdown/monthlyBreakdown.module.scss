@@ -1,0 +1,19 @@
+@use '../../../scss/main.scss' as *;
+@use '../../../scss/breakpoints/breakpoints.scss' as *;
+@use '../../../scss/font/font.scss' as *;
+
+.monthlyBreakdown {
+    padding: 32px 0 0 0;
+
+    .title {
+        h2 {
+            font-size: 24px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+            text-transform: uppercase;
+            @include heading-font;
+            @include gradient-text;
+        }
+    }
+}

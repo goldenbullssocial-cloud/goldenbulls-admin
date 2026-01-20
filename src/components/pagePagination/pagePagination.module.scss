@@ -1,0 +1,66 @@
+@use '../../scss/main.scss' as *;
+@use '../../scss/breakpoints/breakpoints.scss' as *;
+@use '../../scss/font/font.scss' as *;
+
+.paginationBottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+
+    .rightalignment {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        div:last-child {
+            svg {
+                transform: rotate(180deg);
+            }
+        }
+    }
+
+    p {
+        color: #FFF;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: normal;
+        @include font-medium;
+    }
+
+    svg {
+        cursor: pointer;
+    }
+
+    span {
+        display: block;
+        color: #FFF;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: normal;
+        @include font-medium;
+    }
+
+    .size {
+        position: relative;
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        background: #212121;
+        color: #FFF;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: normal;
+        @include font-bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &::before {
+            @include border;
+        }
+    }
+}

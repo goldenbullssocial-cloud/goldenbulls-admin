@@ -1,0 +1,149 @@
+@use '../../scss/main.scss' as *;
+@use '../../scss/breakpoints/breakpoints.scss' as *;
+@use '../../scss/font/font.scss' as *;
+
+.coursesPageAlignment {
+    border-radius: 24px 0 0 0;
+    border-top: 1px solid #66666693;
+    border-left: 1px solid #66666693;
+    background: #0F0F0F;
+    padding: 32px;
+    min-height: calc(100dvh - 126px);
+
+
+    @include respond-to("xl") {
+        padding: 22px;
+    }
+
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        padding: 32px 0 0 0;
+
+        .griditems {
+            border-radius: 21.348px;
+            position: relative;
+            background: #000;
+            padding: 20px;
+
+            &::before {
+                @include border;
+            }
+
+            .cardImage {
+                img {
+                    width: 100%;
+                    height: 192px;
+                    object-fit: cover;
+                    display: block;
+                    border-radius: 12px;
+                }
+            }
+
+            .details {
+                padding: 20px 0 0 0;
+
+                h3 {
+                    color: #FFF;
+                    font-size: 20px;
+                    font-style: normal;
+                    font-weight: 500;
+                    line-height: normal;
+                    @include font-medium;
+                    margin: 0 0 10px 0;
+                }
+
+
+                .listAlignment {
+                    display: flex;
+                    align-items: center;
+                    gap: 14px;
+
+                    @include respond-to("sm") {
+                        gap: 10px;
+                    }
+
+                    .rating {
+                        display: flex;
+                        align-items: center;
+                        gap: 3px;
+
+                        span {
+                            display: block;
+                            font-size: 16px;
+                            font-style: normal;
+                            font-weight: 500;
+                            line-height: normal;
+                            @include font-medium;
+                            @include gradient-text;
+                        }
+                    }
+
+                    .dotButton {
+                        display: flex;
+                        align-items: center;
+                        gap: 14px;
+
+                        @include respond-to("sm") {
+                            gap: 10px;
+                        }
+
+                        .dot {
+                            width: 7px;
+                            height: 7px;
+                            background-color: #B6B6B6;
+                            border-radius: 7px;
+                        }
+
+                        button {
+                            background-color: transparent;
+                            border-radius: 50px;
+                            border: 1px solid var(--GOLD, #F9F490);
+                            font-size: 12px;
+                            font-style: normal;
+                            font-weight: 400;
+                            line-height: normal;
+                            padding: 4px 16px;
+                            @include font-normal;
+
+                            @include respond-to("sm") {
+                                font-size: 14px;
+                            }
+
+                            span {
+                                background: var(--GOLD, linear-gradient(90deg, #F9F490 0%, #E4AB40 25.48%, #FEFBA5 75%, #BD894E 100%));
+                                background-clip: text;
+                                -webkit-background-clip: text;
+                                -webkit-text-fill-color: transparent;
+                            }
+                        }
+                    }
+
+                    .time {
+                        display: flex;
+                        align-items: center;
+                        gap: 10px;
+
+                        @include respond-to("sm") {
+                            gap: 10px;
+                        }
+
+                        span {
+                            color: #B6B6B6;
+                            font-size: 16px;
+                            font-style: normal;
+                            font-weight: 500;
+                            line-height: normal;
+                            display: block;
+
+                            @include respond-to("sm") {
+                                font-size: 16px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

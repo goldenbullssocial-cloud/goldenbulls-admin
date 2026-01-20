@@ -1,0 +1,162 @@
+@use '../../../scss/main.scss' as *;
+@use '../../../scss/breakpoints/breakpoints.scss' as *;
+@use '../../../scss/font/font.scss' as *;
+
+.userDetailsModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(15px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .usermodal {
+        max-width: 479px;
+        width: 100%;
+        padding: 24px;
+        border-radius: 24px;
+        background: #000;
+
+        .modalHeader {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 0 24px 0;
+
+            h2 {
+                font-size: 20px;
+                font-style: normal;
+                font-weight: 400;
+                line-height: normal;
+                text-transform: uppercase;
+                display: inline;
+                @include heading-font;
+                @include gradient-text;
+            }
+
+            .closeIcon {
+                display: flex;
+                align-items: center;
+
+                svg {
+                    cursor: pointer;
+                    transition: .3s ease-in-out;
+
+                    &:hover {
+                        transform: rotate(180deg);
+                    }
+                }
+            }
+        }
+
+        .userInformation {
+            border-radius: 20px;
+            border: 1px solid #313131;
+            display: grid;
+            grid-template-columns: 72px 1fr;
+            gap: 16px;
+            padding: 20px;
+            align-items: center;
+
+            .profile {
+                border-radius: 150px;
+                background: #1C1C1C;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 72px;
+                height: 72px;
+                color: #B6B6B6;
+                font-size: 24px;
+                font-style: normal;
+                font-weight: 500;
+                line-height: normal;
+                @include font-medium;
+                border-radius: 50%;
+            }
+
+            h3 {
+                color: #F5F5F5;
+                font-size: 20px;
+                font-style: normal;
+                font-weight: 500;
+                line-height: normal;
+                @include font-medium;
+                margin: 0 0 4px 0;
+            }
+
+            .email {
+                display: flex;
+                align-items: center;
+                padding: 0 0 4px 0;
+                gap: 8px;
+
+                a {
+                    display: block;
+                    color: #B6B6B6;
+                    font-size: 16px;
+                    font-style: normal;
+                    font-weight: 400;
+                    line-height: normal;
+                    @include font-normal;
+                }
+            }
+
+            span {
+                display: block;
+                color: #71FF7A;
+                font-size: 16px;
+                font-style: normal;
+                font-weight: 400;
+                line-height: normal;
+                @include font-normal;
+            }
+        }
+
+        .textgrid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0;
+            padding: 24px 0 0 0;
+
+            .items {
+                padding: 0 18px;
+                border-right: 1px solid #313131;
+
+                &:first-child {
+                    padding-left: 0;
+                }
+
+                &:last-child {
+                    border: none;
+                    padding-right: 0;
+                }
+
+                h4 {
+                    color: #FFF;
+                    font-size: 16px;
+                    font-style: normal;
+                    font-weight: 500;
+                    line-height: normal;
+                    margin: 0 0 10px 0;
+                    @include font-medium;
+                }
+
+                p {
+                    color: #B6B6B6;
+                    font-size: 16px;
+                    font-style: normal;
+                    font-weight: 500;
+                    line-height: normal;
+                    @include font-normal;
+                }
+            }
+        }
+    }
+
+}

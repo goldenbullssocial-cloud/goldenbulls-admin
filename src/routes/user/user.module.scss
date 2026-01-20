@@ -1,0 +1,17 @@
+@use '../../scss/main.scss' as *;
+@use '../../scss/breakpoints/breakpoints.scss' as *;
+@use '../../scss/font/font.scss' as *;
+
+.userpageAlignment {
+    border-radius: 24px 0 0 0;
+    border-top: 1px solid #66666693;
+    border-left: 1px solid #66666693;
+    background: #0F0F0F;
+    padding: 32px;
+
+    @include respond-to("xl") {
+        padding: 22px;
+    }
+
+    
+}

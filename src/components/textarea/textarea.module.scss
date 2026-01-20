@@ -1,0 +1,46 @@
+@use '../../scss/main.scss' as *;
+@use '../../scss/breakpoints/breakpoints.scss' as *;
+@use '../../scss/font/font.scss' as *;
+
+.textarea {
+    label {
+        color: #FFF;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+        @include font-normal;
+        padding: 0 0 8px 0;
+        display: block;
+    }
+
+    textarea {
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.05);
+        width: 100%;
+        color: #fff;
+        border: 1px solid #66666693;
+        font-size: 16px;
+        font-weight: 400;
+        height: 194px;
+        overflow: auto;
+        outline: none;
+        resize: none;
+        line-height: normal;
+        @include font-normal;
+        transition: .3s ease-in-out;
+        padding: 16px;
+
+        &:focus {
+            border: 1px solid #F9F490;
+        }
+    }
+
+    ::placeholder {
+        color: rgba(255, 255, 255, 0.40);
+        font-size: 16px;
+        font-weight: 400;
+        line-height: normal;
+        @include font-normal;
+    }
+}

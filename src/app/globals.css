@@ -1,0 +1,90 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "SFPRODISPLAYREGULAR";
+  background: #000;
+}
+
+html {
+  /* user-select: none; */
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+}
+
+p:last-child {
+  margin: 0;
+}
+
+button {
+  outline: none;
+}
+a {
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.container-md {
+  max-width: calc(1440px + 40px);
+  padding: 0 20px;
+  margin: 0 auto;
+}
+
+.user-panel-layout {
+  display: flex;
+  background: #000;
+  gap: 14px;
+}
+
+.sidebar-panel {
+  width: 260px;
+}
+
+.children-layout {
+  width: calc(100% - 260px);
+}
+
+img {
+  user-select: none;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+/* ===== Chrome, Edge, Safari ===== */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0b0b0b;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #f5c26b 0%, #c89b3c 100%);
+  border-radius: 10px;
+  border: 2px solid #0b0b0b;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #ffd98a 0%, #e6b84f 100%);
+}
+
+/* ===== Firefox ===== */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #c89b3c #0b0b0b;
+}

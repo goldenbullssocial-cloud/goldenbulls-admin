@@ -2,15 +2,15 @@ import React from 'react'
 
 export default function DragIcon() {
   return (
-   <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
-  <path d="M25.3333 4H6.66667C5.19391 4 4 5.19391 4 6.66667V25.3333C4 26.8061 5.19391 28 6.66667 28H25.3333C26.8061 28 28 26.8061 28 25.3333V6.66667C28 5.19391 26.8061 4 25.3333 4Z" stroke="#B6B6B6" stroke-width="2.66667" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M9.33301 4V28" stroke="#B6B6B6" stroke-width="2.66667" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M4 10H9.33333" stroke="#B6B6B6" stroke-width="2.66667" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M4 16H28" stroke="#B6B6B6" stroke-width="2.66667" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M4 22H9.33333" stroke="#B6B6B6" stroke-width="2.66667" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M22.667 4V28" stroke="#B6B6B6" stroke-width="2.66667" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M22.667 10H28.0003" stroke="#B6B6B6" stroke-width="2.66667" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M22.667 22H28.0003" stroke="#B6B6B6" stroke-width="2.66667" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
+      <path d="M25.3333 4H6.66667C5.19391 4 4 5.19391 4 6.66667V25.3333C4 26.8061 5.19391 28 6.66667 28H25.3333C26.8061 28 28 26.8061 28 25.3333V6.66667C28 5.19391 26.8061 4 25.3333 4Z" stroke="#B6B6B6" strokeWidth="2.66667" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M9.33301 4V28" stroke="#B6B6B6" strokeWidth="2.66667" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M4 10H9.33333" stroke="#B6B6B6" strokeWidth="2.66667" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M4 16H28" stroke="#B6B6B6" strokeWidth="2.66667" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M4 22H9.33333" stroke="#B6B6B6" strokeWidth="2.66667" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M22.667 4V28" stroke="#B6B6B6" strokeWidth="2.66667" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M22.667 10H28.0003" stroke="#B6B6B6" strokeWidth="2.66667" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M22.667 22H28.0003" stroke="#B6B6B6" strokeWidth="2.66667" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   )
 }

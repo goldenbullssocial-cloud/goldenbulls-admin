@@ -5,12 +5,12 @@ export default function Button({ text, className, icon }) {
     return (
         <div className={classNames(styles.button, className, icon ? styles.buttonIconAlignment : "")}>
             <button aria-label={text}>
+                {text}
                 {
                     icon && (
                         <img src={icon} altl={icon} />
                     )
                 }
-                {text}
             </button>
         </div>
     )

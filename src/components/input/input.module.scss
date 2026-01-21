@@ -3,6 +3,14 @@
 @use '../../scss/font/font.scss' as *;
 
 .input {
+    .errorMessage {
+        font-size: 12px;
+        color: #ff4d4f;
+        display: block;
+        @include font-normal;
+        padding: 4px 0 0 0;
+    }
+
     &.inputChange {
         .relativeInput {
             input {

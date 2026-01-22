@@ -95,6 +95,9 @@
                 align-items: center;
                 padding: 0 0 4px 0;
                 gap: 8px;
+                word-wrap: break-word;
+                word-break: break-all;
+                overflow-wrap: break-word;
 
                 a {
                     display: block;
@@ -104,6 +107,10 @@
                     font-weight: 400;
                     line-height: normal;
                     @include font-normal;
+                    word-wrap: break-word;
+                    word-break: break-all;
+                    overflow-wrap: break-word;
+                    max-width: 100%;
                 }
             }
 

@@ -9,40 +9,55 @@
         background: rgba(255, 255, 255, 0.05);
         padding: 24px;
         margin: 0 0 24px 0;
+
+        .batchHeader {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+
+            h3 {
+                color: var(--White, #FFF);
+                font-size: 18px;
+                font-weight: 500;
+                margin: 0;
+            }
+
+            .remove {
+                width: 40px;
+                height: 40px;
+                cursor: pointer;
+                border: 1px solid #66666693;
+                display: flex;
+                background: rgba(255, 255, 255, 0.05);
+                align-items: center;
+                justify-content: center;
+                border-radius: 16px;
+
+                &:hover {
+                    border-color: var(--GOLD, #F9F490);
+                }
+            }
+        }
+
+        .batchGrid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+
+            @include respond-to("lg") {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            @include respond-to("md") {
+                grid-template-columns: 1fr;
+            }
+        }
     }
 
     .box:last-child {
         margin: 0;
-    }
-
-    .chapterGrid {
-        display: grid;
-        grid-template-columns: 1fr 130px;
-        gap: 24px;
-        padding: 0 0 24px 0;
-
-        &.chapterGridChange {
-            grid-template-columns: 1fr 215px;
-
-            .childgrid {
-                display: grid;
-                grid-template-columns: 1fr 52px;
-                gap: 24px;
-                align-items: flex-end;
-
-                .remove {
-                    width: 52px;
-                    height: 52px;
-                    cursor: pointer;
-                    border: 1px solid #66666693;
-                    display: flex;
-                    background: rgba(255, 255, 255, 0.05);
-                    align-items: center;
-                    justify-content: center;
-                    border-radius: 16px;
-                }
-            }
-        }
     }
 
     .buttonGrid {
@@ -126,5 +141,24 @@
         }
     }
 
+    .hiddenInput {
+        display: none;
+    }
+        .errorMessage {
+        color: #ff4d4f;
+        font-size: 12px;
+        margin-top: 4px;
+        display: block;
+        @include font-normal;
+    }
+}
+.previewWrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 8px;
+}
 
+.videoPreview {
+  max-height: 80px;
+  border-radius: 6px;
 }

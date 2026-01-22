@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import styles from "./addCenter.module.scss";
 import CloseIcon from "@/icons/closeIcon";
 import Input from "@/components/input";
@@ -12,124 +12,18 @@ import {
 import "react-country-state-city/dist/react-country-state-city.css";
 
 const SaveIcon = "/assets/icons/save.svg";
-const validateField = (name, value) => {
-  switch (name) {
-    case "name":
-      if (!value) return "Center name is required";
-      return "";
-    case "googleMapsLink":
-      if (!value) return "Google Maps link is required";
-      return "";
-    case "city":
-    case "state":
-    case "country":
-      if (!value.trim())
-        return `${name.charAt(0).toUpperCase() + name.slice(1)} is required`;
-      return "";
-    default:
-      return "";
-  }
-};
+
 export default function AddCenter({
+  onClose,
   onSave,
   selectedCountryId,
   selectedStateId,
   onCountryChange,
   onStateChange,
   onCityChange,
-  onClose,
+  onStateFocus,
+  form,
 }) {
-  const [formData, setFormData] = useState({
-    name: "",
-    googleMapsLink: "",
-    email: "",
-    city: "",
-    state: "",
-    country: "",
-  });
-
-  const [errors, setErrors] = useState({});
-  const [touched, setTouched] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  useEffect(() => {
-    // Validate all fields when they change and have been touched
-    const newErrors = {};
-    Object.keys(formData).forEach((field) => {
-      if (touched[field] || isSubmitting) {
-        newErrors[field] = validateField(field, formData[field]);
-      }
-    });
-    setErrors(newErrors);
-  }, [formData, touched, isSubmitting]);
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value.trimStart(),
-    }));
-  };
-  const LOCATION_RESET = {
-    country: ["state", "city"],
-    state: ["city"],
-    city: [],
-  };
-
-  const handleLocationChange = (type, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [type]: value?.name || "",
-    }));
-
-    setTouched((prev) => ({ ...prev, [type]: true }));
-  };
-
-  const handleBlur = (e) => {
-    const { name } = e.target;
-    setTouched((prev) => ({
-      ...prev,
-      [name]: true,
-    }));
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    // Mark all fields as touched to show validation errors
-    const newTouched = {};
-    Object.keys(formData).forEach((field) => {
-      newTouched[field] = true;
-    });
-    setTouched(newTouched);
-
-    // Validate all fields on submit
-    const newErrors = {};
-    let isValid = true;
-
-    Object.keys(formData).forEach((field) => {
-      const error = validateField(field, formData[field]);
-      if (error) {
-        newErrors[field] = error;
-        isValid = false;
-      }
-    });
-
-    setErrors(newErrors);
-
-    if (isValid) {
-      onSave(formData);
-    }
-  };
-
-  const isFormValid = () => {
-    return (
-      Object.values(errors).every((error) => !error) &&
-      Object.keys(touched).length > 0 &&
-      Object.values(formData).every((value) => Boolean(value))
-    );
-  };
   return (
     <div
       className={styles.addCenterModalWrapper}
@@ -145,25 +39,21 @@ export default function AddCenter({
             <CloseIcon />
           </div>
         </div>
-        <form className={styles.modalBody} onSubmit={handleSubmit}>
+        <form className={styles.modalBody} onSubmit={form.handleSubmit(onSave)}>
           <div className={styles.twoCol}>
             <Input
-              name="name"
+              name="centerName"
               label="Center Name"
               placeholder="Golden Bulls Mumbai Branch"
-              value={formData.name}
-              onChange={handleChange}
-              error={errors.name}
-              onBlur={handleBlur}
+              {...form.register("centerName")}
+              error={form.formState.errors.centerName?.message}
             />
             <Input
-              name="googleMapsLink"
+              name="location"
               label="Google Maps Link"
               placeholder="maps.google.com"
-              value={formData.googleMapsLink}
-              onChange={handleChange}
-              error={errors.googleMapsLink}
-              onBlur={handleBlur}
+              {...form.register("location")}
+              error={form.formState.errors.location?.message}
             />
           </div>
           <div className={styles.threeCol}>
@@ -171,50 +61,66 @@ export default function AddCenter({
               <label>Country</label>
               <CountrySelect
                 defaultValue={
-                  formData.country ? { name: formData.country } : undefined
+                  form.getValues("country")
+                    ? { name: form.getValues("country") }
+                    : undefined
                 }
                 onChange={(value) => {
-                  handleLocationChange("country", value);
+                  form.setValue("country", value?.name || "");
                   onCountryChange && onCountryChange(value);
                 }}
                 placeHolder="Select Country"
               />
-              {errors.country && (
-                <span className={styles.error}>{errors.country}</span>
+              {form.formState.errors.country && (
+                <span className={styles.error}>
+                  {form.formState.errors.country.message}
+                </span>
               )}
             </div>
             <div>
               <label>City</label>
               <CitySelect
-                value={formData.city ? { name: formData.city } : undefined}
-                containerClassName="w-full"
-                countryid={selectedCountryId ? Number(selectedCountryId) : 0}
-                stateid={selectedStateId ? Number(selectedStateId) : 0}
-                onChange={(value) => {
-                  handleLocationChange("city", value);
-                  onCityChange && onCityChange(value);
+                value={
+                  form.getValues("city")
+                    ? { name: form.getValues("city") }
+                    : null
+                }
+                countryid={selectedCountryId}
+                stateid={selectedStateId}
+                onChange={(val) => {
+                  form.setValue("city", val?.name || "");
+                  onCityChange(val);
                 }}
                 placeHolder="Select City"
                 disabled={!selectedStateId}
               />
-              {errors.city && (
-                <span className={styles.error}>{errors.city}</span>
+              {form.formState.errors.city && (
+                <span className={styles.error}>
+                  {form.formState.errors.city.message}
+                </span>
               )}
             </div>
             <div>
               <label>State</label>
               <StateSelect
-                value={formData.state ? { name: formData.state } : undefined}
-                countryid={selectedCountryId ? Number(selectedCountryId) : 0}
-                onChange={(value) => {
-                  handleLocationChange("state", value);
-                  onStateChange && onStateChange(value);
+                value={
+                  form.getValues("state")
+                    ? { name: form.getValues("state") }
+                    : null
+                }
+                countryid={selectedCountryId}
+                onChange={(val) => {
+                  form.setValue("state", val?.name || "");
+                  onStateChange(val);
                 }}
+                onFocus={onStateFocus}
                 placeHolder="Select State"
                 disabled={!selectedCountryId}
               />
-              {errors.state && (
-                <span className={styles.error}>{errors.state}</span>
+              {form.formState.errors.state && (
+                <span className={styles.error}>
+                  {form.formState.errors.state.message}
+                </span>
               )}
             </div>
           </div>

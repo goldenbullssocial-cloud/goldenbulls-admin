@@ -9,12 +9,30 @@ import {
   getAllCenter,
   updateCenter,
 } from "@/api/center";
+import ViewIcon from "../../../../public/assets/icons/Eye.svg";
+import EditIcon from "../../../../public/assets/icons/Edit.svg";
+import InactiveIcon from "../../../../public/assets/icons/InactiveUser.svg";
+import DeleteIcon from "../../../../public/assets/icons/Delete.svg";
 import Dropdown from "@/components/dropdown";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import UserHeader from "@/components/userHeader";
 import AddCenter from "../addCenter";
 import { toast } from "sonner";
+import CenterDetailsModal from "../centerDetailsModal";
+import DeleteCenter from "../deleteCenter";
+
+const formatDate = (dateString) => {
+  if (!dateString) return "N/A";
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  const seconds = String(date.getSeconds()).padStart(2, "0");
+  return `${day}/${month}/${year}, ${hours}:${minutes}:${seconds}`;
+};
 
 const centerFormSchema = z
   .object({
@@ -158,14 +176,15 @@ export default function CentersTable() {
 
   const onSubmit = async (data) => {
     try {
-        setIsLoading(true);
-        const centerData = {
-          name: data.name,
-          googleMapsLink: data.googleMapsLink,
-          country: data.country,
-          state: data.state,
-          city: data.city,
-        };
+      setIsLoading(true);
+      const centerData = {
+        centerName: data.centerName,
+        location: data.location,
+        country: data.country,
+        state: data.state,
+        city: data.city,
+        // isActive: data.isActive || "true",
+      };
 
       if (isEditMode && currentCenterId) {
         await updateCenter(currentCenterId, centerData);
@@ -214,11 +233,7 @@ export default function CentersTable() {
       label: "Edit",
       icon: EditIcon,
     },
-    {
-      key: "toggleStatus",
-      label: isActive ? "Inactive" : "Active",
-      icon: InactiveIcon,
-    },
+
     {
       key: "delete",
       label: "Delete",
@@ -226,15 +241,11 @@ export default function CentersTable() {
       variant: "danger",
     },
   ];
-  const handleAction = (action, customer) => {
-    if (action === "view") {
-      setViewingCustomer(customer);
-      setIsViewModalOpen(true);
-    }
-    if (action === "edit") handleEdit(customer);
-    if (action === "toggleStatus") handleStatusToggleClick(customer);
+  const handleAction = (action, center) => {
+    if (action === "view") handleView(center);
+    if (action === "edit") handleEdit(center);
     if (action === "delete") {
-      handleDeleteClick(customer);
+      handleDeleteClick(center);
     }
   };
 
@@ -270,14 +281,18 @@ export default function CentersTable() {
                 return (
                   <tr key={i}>
                     <td>{i + 1}</td>
-                    <td>{center.name}</td>
+                    <td>{center.centerName}</td>
                     <td>{center.location}</td>
                     <td>{center.city}</td>
                     <td>{center.state}</td>
                     <td>{center.country}</td>
-                    <td>{center.createdAt}</td>
+                    <td>{formatDate(center.createdAt)}</td>
                     <td>
-                      <span>{center.status}</span>
+                      <span
+                        className={`${styles.status} ${center.isActive ? styles.active : styles.inactive}`}
+                      >
+                        {center.isActive ? "Active" : "Inactive"}
+                      </span>
                     </td>
                     <td>
                       <Dropdown
@@ -293,6 +308,12 @@ export default function CentersTable() {
         </div>
         <PagePagination />
       </div>
+      {isViewModalOpen && (
+        <CenterDetailsModal
+          center={viewingCenter}
+          onClose={() => setIsViewModalOpen(false)}
+        />
+      )}
       {isAddCenterOpen && (
         <AddCenter
           isOpen={isAddCenterOpen}
@@ -302,12 +323,12 @@ export default function CentersTable() {
           selectedStateId={selectedStateId}
           onCityChange={(val) => {
             if (val) {
-              field.onChange(val.name);
+              form.setValue("city", val.name);
               form.clearErrors("city");
             }
           }}
           onCountryChange={(val) => {
-            field.onChange(val.name);
+            form.setValue("country", val.name);
             setSelectedCountryId(val.id);
             setSelectedStateId(null);
             form.setValue("state", "");
@@ -315,11 +336,19 @@ export default function CentersTable() {
             form.clearErrors(["state", "city"]);
           }}
           onStateChange={(val) => {
-            field.onChange(val?.name || "");
+            form.setValue("state", val?.name || "");
             setSelectedStateId(val?.id || null);
             form.setValue("city", "");
             form.clearErrors(["state", "city"]);
           }}
+          form={form}
+        />
+      )}
+      {isDeleteDialogOpen && (
+        <DeleteCenter
+          center={centerToDelete}
+          onClose={() => setIsDeleteDialogOpen(false)}
+          onDelete={confirmDelete}
         />
       )}
     </>

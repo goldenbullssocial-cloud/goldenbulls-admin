@@ -1,69 +1,142 @@
-import React from 'react'
-import styles from './createCourse.module.scss';
-import CloseIcon from '@/icons/closeIcon';
-import RecordedCourses from './recordedCourses';
-import LiveOnlineCoursesindex from './liveOnlineCourses';
-export default function CreateCourse() {
+import React, { useEffect, useState } from "react";
+import styles from "./createCourse.module.scss";
+import CloseIcon from "@/icons/closeIcon";
+
+import CourseForm from "./courseForm";
+import SyllabusCourses from "./syllabusCourses";
+import LiveOnlineCoursesindex from "./batchform";
+import BatchForm from "./batchform";
+
+export default function CreateCourse({
+  editCourse,
+  formErrors,
+  handleTrimInput,
+  handleIntroVideoChange,
+  handleContinue,
+  videoFile,
+  isSyllabusVisible,
+  formActiveTab,
+  instructors,
+  onClose,
+  createCourseOpen,
+  courseId,
+  onSuccess,
+  setFormActiveTab,
+  isLiveBatchVisible,
+  isPhysicalBatchVisible,
+  batches,
+  selectedCenter,
+  latestCourse,
+  setOpen,
+  setBatches,
+}) {
+  const handleTabClick = (tab) => {
+    setFormActiveTab(tab);
+  };
+
+  const getStepState = (stepNumber) => {
+    if (stepNumber === 1) {
+      return isSyllabusVisible ? "completed" : "active";
+    }
+    if (stepNumber === 2) {
+      return isSyllabusVisible ? "active" : "inactive";
+    }
+    return "inactive";
+  };
   return (
     <div className={styles.createCourseWrapper}>
       <div className={styles.createCourse}>
         <div className={styles.modalHeader}>
-          <h2>
-            Create Course
-          </h2>
-          <div className={styles.closeIcon}>
+          <h2>Create Course</h2>
+          <div className={styles.closeIcon} onClick={onClose}>
             <CloseIcon />
           </div>
         </div>
         <div className={styles.modalBody}>
           <div className={styles.tabGroup}>
-            <button className={styles.active}>
+            <button
+              className={formActiveTab === "recorded" ? styles.active : ""}
+              onClick={() => handleTabClick("recorded")}
+            >
               <span>Recorded Courses</span>
             </button>
-            <button>
+            <button
+              className={formActiveTab === "live" ? styles.active : ""}
+              onClick={() => handleTabClick("live")}
+            >
               <span>Live Online Courses</span>
             </button>
-            <button>
+            <button
+              className={formActiveTab === "physical" ? styles.active : ""}
+              onClick={() => handleTabClick("physical")}
+            >
               <span>In Person Courses</span>
             </button>
           </div>
           <div className={styles.spacer}></div>
           <div className={styles.contentGrid}>
             <div className={styles.items}>
-              <div className={styles.counterGrid}>
+              <div className={`${styles.counterGrid} ${getStepState(1)}`}>
                 <div>
-                  <div className={styles.counter}>1</div>
+                  <div className={`${styles.counter} ${getStepState(1)}`}>
+                    {getStepState(1) === "completed" ? "✓" : "1"}
+                  </div>
                   <div className={styles.line}></div>
                 </div>
-                <span>
-                  Course Details
-                </span>
+                <span>Course Details</span>
               </div>
-              <div className={styles.counterGrid}>
+              <div className={`${styles.counterGrid} ${getStepState(2)}`}>
                 <div>
-                  <div className={styles.counter}>2</div>
-                  <div className={styles.line}></div>
+                  <div className={`${styles.counter} ${getStepState(2)}`}>
+                    {getStepState(2) === "completed" ? "✓" : "2"}
+                  </div>
+                  {formActiveTab === "recorded" ? null : (
+                    <div className={styles.line}></div>
+                  )}
                 </div>
-                <span>
-                  Syllabus
-                </span>
+                <span>Syllabus</span>
               </div>
-              <div className={styles.counterGrid}>
-                <div>
-                  <div className={styles.counter}>2</div>
+              {formActiveTab !== "recorded" && (
+                <div className={`${styles.counterGrid} ${getStepState(3)}`}>
+                  <div>
+                    <div className={`${styles.counter} ${getStepState(3)}`}>
+                      {getStepState(3) === "completed" ? "✓" : "3"}
+                    </div>
+                  </div>
+                  <span>Batch</span>
                 </div>
-                <span>
-                  Batch
-                </span>
-              </div>
+              )}
             </div>
             <div className={styles.items}>
-              {/* <RecordedCourses /> */}
-              <LiveOnlineCoursesindex />
+              {createCourseOpen && (
+                <CourseForm
+                  editCourse={editCourse}
+                  formErrors={formErrors}
+                  handleTrimInput={handleTrimInput}
+                  handleIntroVideoChange={handleIntroVideoChange}
+                  handleContinue={handleContinue}
+                  videoFile={videoFile}
+                  formActiveTab={formActiveTab}
+                  instructors={instructors}
+                />
+              )}
+              {isSyllabusVisible && (
+                <SyllabusCourses courseId={courseId} onSuccess={onSuccess} />
+              )}
+              {isLiveBatchVisible ||
+                (isPhysicalBatchVisible && (
+                  <BatchForm
+                    batches={batches}
+                    selectedCenter={selectedCenter}
+                    latestCourse={latestCourse}
+                    setOpen={setOpen}
+                    setBatches={setBatches}
+                  />
+                ))}
             </div>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

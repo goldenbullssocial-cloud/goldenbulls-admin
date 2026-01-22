@@ -168,12 +168,40 @@
                             font-weight: 400;
                             line-height: normal;
                             @include font-normal;
+
+                            // Completed state - golden gradient background with checkmark
+                            &.completed {
+                                background: var(--GOLD, linear-gradient(90deg, #F9F490 0%, #E4AB40 25.48%, #FEFBA5 75%, #BD894E 100%));
+                                border: none;
+                                color: #000;
+                            }
+
+                            // Active state - golden border with golden text
+                            &.active {
+                                border: 2px solid #F9F490;
+                                color: #F9F490;
+                            }
+
+                            // Inactive state - grey border with grey text (default)
+                            &.inactive {
+                                border: 2px solid #B6B6B6;
+                                color: #B6B6B6;
+                            }
+                        }
+
+                        // Update text color based on state
+                        &.completed span,
+                        &.active span {
+                            color: #F9F490;
+                        }
+
+                        &.inactive span {
+                            color: #B6B6B6;
                         }
                     }
                 }
             }
         }
     }
-
 
 }

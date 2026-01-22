@@ -47,6 +47,16 @@
             .green {
               color: #71ff7a;
             }
+
+            .status {
+              &.active {
+                color: #71ff7a;
+              }
+
+              &.inactive {
+                color: #ff3333;
+              }
+            }
           }
         }
       }

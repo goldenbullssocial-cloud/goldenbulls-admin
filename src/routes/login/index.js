@@ -6,10 +6,13 @@ import styles from "./login.module.scss";
 import Input from "@/components/input";
 import { SignIn } from "@/api/auth";
 import { toast } from "sonner";
+import Image from "next/image";
 
 const LoginBullImage = "/assets/images/login-bull.png";
 const EmailIcon = "/assets/icons/email.svg";
 const LockIcon = "/assets/icons/lock.svg";
+const EyeOpenIcon = "/assets/icons/Eye.svg";
+const EyeCloseIcon = "/assets/icons/Lockeye.svg";
 const GoogleIcon = "/assets/icons/google-icon.svg";
 
 export default function Login() {
@@ -132,16 +135,28 @@ export default function Login() {
                   value={formData.password}
                   onChange={handleChange}
                   error={errors.password}
-                  endAdornment={
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="text-gray-500 hover:text-gray-700 focus:outline-none"
-                    >
-                      {/* {showPassword ? <LockIcon /> : <LockIcon />} */}
-                    </button>
-                  }
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className={styles.eyeButton}
+                >
+                  {showPassword ? (
+                    <Image
+                      src={EyeOpenIcon}
+                      alt="Eye Open"
+                      width={20}
+                      height={20}
+                    />
+                  ) : (
+                    <Image
+                      src={EyeCloseIcon}
+                      alt="Eye Close"
+                      width={20}
+                      height={20}
+                    />
+                  )}
+                </button>
               </div>
               <div className={styles.leftRightAlignment}>
                 <div className={styles.checkboxText}>
@@ -183,4 +198,3 @@ export default function Login() {
     </div>
   );
 }
-

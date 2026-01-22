@@ -16,4 +16,36 @@
             @include gradient-text;
         }
     }
+    .dashboardContainer {
+  padding: 24px;
+  background-color: #0F172A;
+  min-height: 100vh;
+}
+
+.chartRow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.chartColumn {
+  width: 100%;
+}
+
+@media (max-width: 1200px) {
+  .chartRow {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboardContainer {
+    padding: 16px;
+  }
+  
+  .chartRow {
+    gap: 16px;
+  }
+}
 }

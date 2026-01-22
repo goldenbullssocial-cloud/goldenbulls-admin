@@ -45,6 +45,7 @@ const validateField = (name, value) => {
       return "";
   }
 };
+
 export default function EditUserDetails({ customer, onClose, onSubmit }) {
   const [formData, setFormData] = useState({
     firstName: customer?.firstName || "",
@@ -76,7 +77,7 @@ export default function EditUserDetails({ customer, onClose, onSubmit }) {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: value.trimStart(),
     }));
   };
 

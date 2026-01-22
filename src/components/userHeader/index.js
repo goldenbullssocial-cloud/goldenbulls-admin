@@ -3,7 +3,15 @@ import React, { useEffect, useState } from "react";
 import styles from "./userHeader.module.scss";
 import Button from "../button";
 
-export default function UserHeader() {
+export default function UserHeader({
+  inputType = "text",
+  placeholder = "Search Courses and Algobots",
+  value = "",
+  onChange = () => {},
+  buttonText = "Search",
+  onClick = () => {},
+  disabled = false,
+}) {
   const [user, setUser] = useState({});
   const [isClient, setIsClient] = useState(false);
 
@@ -31,8 +39,13 @@ export default function UserHeader() {
         </div>
       </div>
       <div className={styles.rightContent}>
-        <input type="text" placeholder="Search Courses and Algobots" />
-        <Button text="Search" />
+        <input
+          type={inputType}
+          placeholder={placeholder}
+          value={value}
+          onChange={onChange}
+        />
+        <Button text={buttonText} onClick={onClick} disabled={disabled} />
       </div>
     </div>
   );

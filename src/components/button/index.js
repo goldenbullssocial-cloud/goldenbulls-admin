@@ -5,9 +5,6 @@ export default function Button({
   text,
   className,
   icon,
-  text,
-  className,
-  icon,
   onClick,
   type,
 }) {

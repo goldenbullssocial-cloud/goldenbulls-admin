@@ -1,7 +1,7 @@
 import React from "react";
-import styles from "./deleteUser.module.scss";
+import styles from "./deleteAlgobot.module.scss";
 import CloseIcon from "@/icons/closeIcon";
-export default function DeleteUser({ customer, onClose, onDelete }) {
+export default function DeleteAlgobot({ bot, onClose, onDelete }) {
   return (
     <div
       className={styles.deleteUserModalWrapper}
@@ -12,7 +12,7 @@ export default function DeleteUser({ customer, onClose, onDelete }) {
       >
         <div className={styles.modal}>
           <div className={styles.modalHeader}>
-            <h2>Delete User</h2>
+            <h2>Delete Bot</h2>
             <div className={styles.closeIcon}>
               <CloseIcon />
             </div>
@@ -20,11 +20,10 @@ export default function DeleteUser({ customer, onClose, onDelete }) {
           <div className={styles.text}>
             <p>
               Are you sure you want to permanently delete{" "}
-              {customer
-                ? ` ${customer.name}`
-                : " this user"}{" "}
-              They will no longer be able to access their account. And you will
-              no longer be able to restore their account and data.
+              {bot
+                ? ` ${bot?.title}`
+                : " this bot"}.{" "}
+              This action cannot be undone.
             </p>
           </div>
           <div className={styles.footerButtonalignment}>

@@ -854,7 +854,7 @@ export default function Courses() {
         }}
       />
       <div className={styles.coursesPageAlignment}>
-        <CoursesTab />
+        <CoursesTab activeTab={activeTab} setActiveTab={setActiveTab} />
         <CourseCard courses={courses} />
         {open && (
           <CreateCourse

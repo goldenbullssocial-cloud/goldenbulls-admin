@@ -276,7 +276,6 @@ export default function UserTable() {
   const handleSearchInputChange = (e) => {
     setSearchInput(e.target.value.trimStart());
   };
-  console.log("searchInput", customers);
 
   if (isLoading) {
     return (

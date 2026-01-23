@@ -1,6 +1,5 @@
+import { Toaster } from "sonner";
 import "./globals.css";
-
-
 
 export const metadata = {
   title: "Create Next App",
@@ -12,6 +11,19 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         {children}
+        <Toaster
+          position="bottom-right"
+          richColors
+          theme="dark"
+          toastOptions={{
+            style: {
+              background: "#1a1a1a",
+              color: "#fff",
+              border: "1px solid #333",
+              borderRadius: "8px",
+            },
+          }}
+        />
       </body>
     </html>
   );

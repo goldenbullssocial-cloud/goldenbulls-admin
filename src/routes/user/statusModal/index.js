@@ -7,7 +7,6 @@ export default function StatusModal({
   onStatusChange,
   statusLoading,
 }) {
-  console.log(customer, "customer");
   return (
     <div
       className={styles.deleteUserModalWrapper}

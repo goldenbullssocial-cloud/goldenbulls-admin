@@ -83,7 +83,6 @@ export default function Login() {
         email: formData.email,
         password: formData.password,
       });
-      console.log(response);
       if (response.data) {
         localStorage.setItem("token", response.data.payload.token);
         if (formData.rememberMe) {

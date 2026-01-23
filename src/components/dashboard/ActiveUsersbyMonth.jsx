@@ -74,25 +74,20 @@ const ActiveUsersbyMonth = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log("Fetching user signup report...");
         const result = await getUserSignupReport();
-        console.log("API Response:", result);
 
         if (result?.payload) {
           const formattedData = result.payload.map((item, index) => ({
             name: item.day || `Day ${index + 1}`,
             users: item.userCount || 0,
           }));
-          console.log("Formatted Data:", formattedData);
           setData(formattedData);
         } else {
-          console.warn("Unexpected API response format:", result);
           // Create sample data for testing
           const sampleData = Array.from({ length: 12 }, (_, i) => ({
             name: `Month ${i + 1}`,
             users: Math.floor(Math.random() * 1000) + 500,
           }));
-          console.log("Using sample data:", sampleData);
           setData(sampleData);
         }
       } catch (err) {

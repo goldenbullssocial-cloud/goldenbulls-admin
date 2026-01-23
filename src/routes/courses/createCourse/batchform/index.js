@@ -216,8 +216,6 @@ export default function BatchForm({
         selectedCenter,
       );
 
-      console.log("Submitting batch payload:", payload); 
-
       const res = await createNewBatch(payload);
       if (res.success) {
         toast.success("Batch created successfully");

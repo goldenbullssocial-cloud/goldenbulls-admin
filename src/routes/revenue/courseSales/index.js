@@ -20,18 +20,24 @@ export default function CourseSales() {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Sr no.</td>
-                            <td>Invoice</td>
-                            <td>Steve Harrington</td>
-                            <td>Forex Trading For Absolute Beginners</td>
-                            <td>Recorded</td>
-                            <td>$120</td>
-                            <td>1234567890123456</td>
-                            <td>
-                                <DownloadIcon />
-                            </td>
-                        </tr>
+                        {
+                            [...Array(12)].map((_, i) => {
+                                return (
+                                    <tr key={i}>
+                                        <td>Sr no.</td>
+                                        <td>Invoice</td>
+                                        <td>Steve Harrington</td>
+                                        <td>Forex Trading For Absolute Beginners</td>
+                                        <td>Recorded</td>
+                                        <td>$120</td>
+                                        <td>1234567890123456</td>
+                                        <td>
+                                            <DownloadIcon />
+                                        </td>
+                                    </tr>
+                                )
+                            })
+                        }
                     </tbody>
                 </table>
             </div>

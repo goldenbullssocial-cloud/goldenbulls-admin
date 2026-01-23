@@ -1,0 +1,39 @@
+@use '../../../scss/main.scss' as *;
+@use '../../../scss/breakpoints/breakpoints.scss' as *;
+@use '../../../scss/font/font.scss' as *;
+
+.bannerSection {
+    padding: 24px 0 0 0;
+
+    .headerAlignment {
+        display: flex;
+        padding: 0 0 24px 0;
+        align-items: center;
+        justify-content: space-between;
+
+        h3 {
+            font-size: 24px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+            text-transform: uppercase;
+            display: inline;
+            @include heading-font;
+            @include gradient-text;
+        }
+    }
+
+    .imageGrid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+
+        .items {
+            img {
+                display: block;
+                width: 100%;
+                border-radius: 16px;
+            }
+        }
+    }
+}

@@ -30,6 +30,7 @@ export default function AddAlgobot({
   plans,
   handleEditPlan,
   handleRemovePlan,
+  editingPlanId
 }) {
   return (
     <div className={styles.addAlgobotWrapper}>
@@ -178,6 +179,7 @@ export default function AddAlgobot({
         {step === 2 && (
           <form
             className={styles.modalBody}
+            onClick={(e) => e.stopPropagation()}
             onSubmit={handleSubmit(onSubmitSecond)}
           >
             <div className={styles.selectWrapper}>
@@ -281,7 +283,7 @@ export default function AddAlgobot({
                   className={styles.select}
                   {...register("botProviderId")}
                   disabled={isFetchingProviders}
-                  onValueChange={(value) => {
+                  onChange={(value) => {
                     setValue("botProviderId", value, {
                       shouldValidate: true,
                     });
@@ -303,7 +305,7 @@ export default function AddAlgobot({
                 <select
                   className={styles.select}
                   {...register("botId")}
-                  onValueChange={(value) => {
+                  onChange={(value) => {
                     setValue("botId", value, {
                       shouldValidate: true,
                     });
@@ -326,14 +328,14 @@ export default function AddAlgobot({
             </div>
             <div className={styles.modalFooter}>
               <button
-                type="button"
+                type="submit"
+                id="plan-form"
+                className={styles.planButton}
+                disabled={isLoading}
                 onClick={(e) => {
                   e.preventDefault();
                   handleAddPlan();
                 }}
-                id="plan-form"
-                className={styles.planButton}
-                disabled={isLoading}
               >
                 {planEdit ? "Update Plan" : "Add Plan"}
               </button>

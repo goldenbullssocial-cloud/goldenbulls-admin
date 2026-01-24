@@ -6,11 +6,11 @@ import AddBanner from './addBanner';
 import EmailModal from './emailModal';
 export default function Utility() {
     return (
-        <div className={styles.utility}>
+        <>
             <SocialLinks />
             <BannerSection />
-            <AddBanner />
-            <EmailModal />
-        </div>
+            {/* <AddBanner /> */}
+            {/* <EmailModal /> */}
+        </>
     )
 }

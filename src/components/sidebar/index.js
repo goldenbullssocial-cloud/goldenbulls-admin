@@ -121,19 +121,39 @@ export default function Sidebar() {
           <CouponsIcon />
           <span>Coupons</span>
         </div>
-        <div className={classNames(styles.menu)}>
+        <div
+          className={classNames(styles.menu, {
+            [styles.active]: isActive("/revenue"),
+          })}
+          onClick={() => router.push("/revenue")}
+        >
           <RevenueIcon />
           <span>Revenue</span>
         </div>
-        <div className={classNames(styles.menu)}>
+        <div
+          className={classNames(styles.menu, {
+            [styles.active]: isActive("/withdraw-requests"),
+          })}
+          onClick={() => router.push("/withdraw-requests")}
+        >
           <RequestsIcon />
           <span>Requests</span>
         </div>
-        <div className={classNames(styles.menu)}>
+        <div
+          className={classNames(styles.menu, {
+            [styles.active]: isActive("/utility"),
+          })}
+          onClick={() => router.push("/utility")}
+        >
           <UtilityIcon />
           <span>Utility</span>
         </div>
-        <div className={classNames(styles.menu)}>
+        <div
+          className={classNames(styles.menu, {
+            [styles.active]: isActive("/youtube"),
+          })}
+          onClick={() => router.push("/youtube")}
+        >
           <YoutubeIcon />
           <span>YouTube</span>
         </div>

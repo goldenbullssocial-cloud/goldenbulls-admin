@@ -163,6 +163,9 @@ export default function Algobots() {
       categoryId: "",
       shortDescription: "",
       description: "",
+      returns: "",
+      risk: "",
+      link: "",
       price: "",
       discount: "",
       botProviderId: "",
@@ -557,6 +560,9 @@ export default function Algobots() {
       categoryId: bot.categoryId || "",
       shortDescription: bot.shortDescription || "",
       description: bot.description,
+      returns: bot.return || "",
+      risk: bot.risk || "",
+      link: bot.link || "",
       price: "", // Clear the price field when editing
       discount: "",
       botProviderId: bot.botProviderId || "",
@@ -601,90 +607,15 @@ export default function Algobots() {
     setViewDialogOpen(true);
   };
 
-  // Add this Dialog component just before the main return statement, after all your other code
-  const BotDetailsDialog = () => (
-    <Dialog open={viewDialogOpen} onOpenChange={setViewDialogOpen}>
-      <DialogContent className="sm:max-w-[600px] h-[80vh] p-5 overflow-y-auto scroll-thin">
-        <DialogHeader>
-          <DialogTitle className="text-2xl">Bot Details</DialogTitle>
-        </DialogHeader>
-        {selectedBot && (
-          <div className="space-y-4">
-            <div className="relative h-64 w-full overflow-hidden rounded-lg">
-              <img
-                src={selectedBot.imageUrl || "/images/logo.svg"}
-                alt={selectedBot.title}
-                className="h-full w-full object-cover"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <h3 className="text-xl font-semibold">{selectedBot.title}</h3>
-              <p className="text-sm text-muted-foreground font-lexend">
-                {selectedBot.shortDescription}
-              </p>
-              <div
-                className="prose prose-sm max-w-none"
-                dangerouslySetInnerHTML={{
-                  __html: marked(selectedBot.description || ""),
-                }}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <h4 className="font-medium">Tutorial Link</h4>
-              <div className="grid">
-                {selectedBot.link?.map((links, index) => (
-                  <div key={index} className="py-3">
-                    <span className="font-medium">{links.language} : </span>
-
-                    <a
-                      href={links.url}
-                      target="_blank"
-                      className="text-sm text-blue-500 mr-2"
-                    >
-                      {links.url}
-                    </a>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <h4 className="font-medium">Plans</h4>
-              <div className="grid gap-2">
-                {selectedBot.strategyPlan?.map((plan, index) => (
-                  <div key={index} className="rounded-lg border p-3">
-                    <div className="flex justify-between">
-                      <span className="font-medium">{plan.planType}</span>
-                      <div>
-                        <span className="text-sm text-muted-foreground mr-2">
-                          ${plan.initialPrice}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex justify-end">
-                <Button onClick={() => setViewDialogOpen(false)}>Cancel</Button>
-              </div>
-            </div>
-          </div>
-        )}
-      </DialogContent>
-    </Dialog>
-  );
-
   // Reset form for creating new bot
   const handleCreateNew = () => {
     reset({
       title: "",
       categoryId: "",
       shortDescription: "",
+      returns: "",
+      risk: "",
+      link: "",
       description: "",
       price: "",
       discount: "",
@@ -1079,7 +1010,11 @@ export default function Algobots() {
       <UserHeader
         placeholder="Search algobots"
         buttonText="Add Algobot"
-        onClick={() => setIsOpen(true)}
+        onClick={() => {
+          handleCreateNew();
+          setIsEditMode(false);
+          setStep(1);
+        }}
       />
       <div className={styles.algobotsPageAlignment}>
         <div className={styles.grid}>

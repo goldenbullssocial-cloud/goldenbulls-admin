@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BaseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+const BaseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export const getAuthToken = () => {
   if (typeof window !== "undefined") {
@@ -45,7 +45,7 @@ export const createBanner = async (imageFile, isOnboarding, isBanner) => {
           ...getHeaders(),
           "Content-Type": "multipart/form-data",
         },
-      }
+      },
     );
 
     return res.data;
@@ -68,7 +68,7 @@ export const updateBanner = async (id, imageFile) => {
           ...getHeaders(),
           "Content-Type": "multipart/form-data",
         },
-      }
+      },
     );
 
     return res.data;
@@ -110,7 +110,7 @@ export const updateOnboardingStatus = async (isActive) => {
       {
         params: { isActive },
         headers: getHeaders(),
-      }
+      },
     );
 
     return {

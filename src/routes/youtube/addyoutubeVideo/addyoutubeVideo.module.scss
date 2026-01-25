@@ -1,120 +1,160 @@
-@use '../../../scss/main.scss' as *;
-@use '../../../scss/breakpoints/breakpoints.scss' as *;
-@use '../../../scss/font/font.scss' as *;
+@use "../../../scss/main.scss" as *;
+@use "../../../scss/breakpoints/breakpoints.scss" as *;
+@use "../../../scss/font/font.scss" as *;
 
 .addyoutubeVideoWrapper {
-    position: fixed;
-    top: 0;
-    left: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(15px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .modal {
+    max-width: 750px;
     width: 100%;
-    height: 100%;
-    z-index: 9999;
-    background: rgba(255, 255, 255, 0.04);
-    backdrop-filter: blur(15px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding: 24px;
+    border-radius: 24px;
+    background: #000;
 
-    .modal {
-        max-width: 750px;
-        width: 100%;
-        padding: 24px;
+    .modalHeader {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 0 24px 0;
+
+      h2 {
+        font-size: 20px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+        text-transform: uppercase;
+        display: inline;
+        @include heading-font;
+        @include gradient-text;
+      }
+
+      .closeIcon {
+        display: flex;
+        align-items: center;
+
+        svg {
+          cursor: pointer;
+          transition: 0.3s ease-in-out;
+
+          &:hover {
+            transform: rotate(180deg);
+          }
+        }
+      }
+    }
+
+    .modalBody {
+      padding: 24px 0 0 0;
+
+      .bottomSpacing {
+        padding: 0 0 24px 0;
+      }
+
+      .buttonRightAlignment {
+        display: flex;
+        justify-content: flex-end;
+        gap: 16px;
+        padding: 24px 0 0 0;
+      }
+
+      .text {
+        p {
+          color: var(--White, #fff);
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: normal;
+          @include font-normal;
+          margin: 0 0 12px 0;
+        }
+      }
+
+      .dragBox {
         border-radius: 24px;
-        background: #000;
+        border: 1px dashed #858585;
+        padding: 20px;
+        .imagePreview {
+          position: relative;
+          display: flex;
+          justify-content: center;
+          
+          img {
+            width: 40%;
+            cursor: pointer;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 12px;
+          }
 
-        .modalHeader {
+          .removeButton {
+            position: absolute;
+            top: -16px;
+            right: calc(50% - 100px);
+            width: 32px;
+            height: 32px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            padding: 4px;
+            border: none;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            padding: 0 0 24px 0;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
 
-            h2 {
-                font-size: 20px;
-                font-style: normal;
-                font-weight: 400;
-                line-height: normal;
-                text-transform: uppercase;
-                display: inline;
-                @include heading-font;
-                @include gradient-text;
+            &:hover {
+              background: #dc2626;
+              transform: scale(1.1);
+              box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
             }
 
-            .closeIcon {
-                display: flex;
-                align-items: center;
-
-                svg {
-                    cursor: pointer;
-                    transition: .3s ease-in-out;
-
-                    &:hover {
-                        transform: rotate(180deg);
-                    }
-                }
+            svg {
+              width: 16px;
+              height: 16px;
             }
+          }
         }
 
-        .modalBody {
-            padding: 24px 0 0 0;
-
-            .bottomSpacing {
-                padding: 0 0 24px 0;
-            }
-
-            .buttonRightAlignment {
-                display: flex;
-                justify-content: flex-end;
-                gap: 16px;
-                padding: 24px 0 0 0;
-            }
-
-
-            .text {
-                p {
-                    color: var(--White, #FFF);
-                    font-size: 16px;
-                    font-style: normal;
-                    font-weight: 400;
-                    line-height: normal;
-                    @include font-normal;
-                    margin: 0 0 12px 0;
-                }
-            }
-
-            .dragBox {
-                border-radius: 24px;
-                border: 1px dashed #858585;
-                padding: 20px;
-
-                .iconCenter {
-                    display: flex;
-                    justify-content: center;
-                    padding: 0 0 12px 0;
-                }
-
-                h5 {
-                    color: #B6B6B6;
-                    text-align: center;
-                    font-size: 18px;
-                    font-style: normal;
-                    font-weight: 400;
-                    line-height: normal;
-                    margin: 0 0 12px;
-                    @include font-normal;
-                }
-
-                p {
-                    color: #B6B6B6;
-                    font-size: 18px;
-                    font-style: normal;
-                    font-weight: 400;
-                    line-height: normal;
-                    text-align: center;
-                    @include font-normal;
-                }
-
-
-            }
+        .iconCenter {
+          display: flex;
+          justify-content: center;
+          padding: 0 0 12px 0;
         }
+
+        h5 {
+          color: #b6b6b6;
+          text-align: center;
+          font-size: 18px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: normal;
+          margin: 0 0 12px;
+          @include font-normal;
+        }
+
+        p {
+          color: #b6b6b6;
+          font-size: 18px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: normal;
+          text-align: center;
+          @include font-normal;
+        }
+      }
     }
+  }
 }

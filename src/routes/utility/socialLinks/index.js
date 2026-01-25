@@ -4,6 +4,7 @@ import styles from "./socialLinks.module.scss";
 import EditIcon from "@/icons/editIcon";
 import { getUtility, updateUtility } from "@/api/utility";
 import UserHeader from "@/components/userHeader";
+import EmailModal from "../emailModal";
 export default function SocialLinks() {
   const [utilitySettings, setUtilitySettings] = useState({
     email: "",
@@ -150,13 +151,27 @@ export default function SocialLinks() {
           <div className={styles.grid}>
             {paginatedData.map((item) => {
               return (
-                <div className={styles.gridItems}>
-                  <div className={styles.cardHeaderAlignment}>
-                    <h3>{item.label}</h3>
-                    <EditIcon />
+                <>
+                  <div className={styles.gridItems} key={item.id}>
+                    <div className={styles.cardHeaderAlignment}>
+                      <h3>{item.label}</h3>
+                      <button onClick={() => handleEditClick(item.field)}>
+                        <EditIcon />
+                      </button>
+                    </div>
+                    <p>{item.value}</p>
                   </div>
-                  <p>{item.value}</p>
-                </div>
+                  {isEditDialogOpen && (
+                    <EmailModal
+                      onClose={() => setIsEditDialogOpen(false)}
+                      onSave={updateUtilitySetting}
+                      label={item.label}
+                      currentField={item.field}
+                      utilitySettings={utilitySettings}
+                      fieldLabels={fieldLabels}
+                    />
+                  )}
+                </>
               );
             })}
           </div>

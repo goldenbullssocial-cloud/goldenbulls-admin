@@ -1,39 +1,69 @@
-@use '../../../scss/main.scss' as *;
-@use '../../../scss/breakpoints/breakpoints.scss' as *;
-@use '../../../scss/font/font.scss' as *;
+@use "../../../scss/main.scss" as *;
+@use "../../../scss/breakpoints/breakpoints.scss" as *;
+@use "../../../scss/font/font.scss" as *;
 
 .bannerSection {
-    padding: 24px 0 0 0;
+  padding: 24px 0 0 0;
 
-    .headerAlignment {
-        display: flex;
-        padding: 0 0 24px 0;
-        align-items: center;
-        justify-content: space-between;
+  .headerAlignment {
+    display: flex;
+    padding: 0 0 24px 0;
+    align-items: center;
+    justify-content: space-between;
 
-        h3 {
-            font-size: 24px;
-            font-style: normal;
-            font-weight: 400;
-            line-height: normal;
-            text-transform: uppercase;
-            display: inline;
-            @include heading-font;
-            @include gradient-text;
-        }
+    h3 {
+      font-size: 24px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+      text-transform: uppercase;
+      display: inline;
+      @include heading-font;
+      @include gradient-text;
     }
+  }
 
-    .imageGrid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 16px;
+  .imageGrid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
 
-        .items {
-            img {
-                display: block;
-                width: 100%;
-                border-radius: 16px;
-            }
+    .items {
+      position: relative;
+
+      .imageContainer {
+        position: relative;
+        overflow: visible;
+        border-radius: 16px;
+
+        .images {
+          display: block;
+          width: 388px;
+          height: 218px;
+          object-fit: cover;
+          border-radius: 16px;
+          transition: transform 0.3s ease;
         }
+
+        .dropdownOverlay {
+          position: absolute;
+          top: 8px;
+          right: 8px;
+          background: rgba(0, 0, 0, 0.5);
+          padding-block: 4px;
+          opacity: 1;
+          visibility: visible;
+          transition: all 0.3s ease;
+          z-index: 100;
+          border-radius: 16px;
+        }
+
+        &:hover {
+          img {
+            transform: scale(1.02);
+          }
+        }
+      }
     }
+  }
 }

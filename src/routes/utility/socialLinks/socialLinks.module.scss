@@ -54,7 +54,10 @@
           padding: 0 0 8px 0;
           align-items: center;
           justify-content: space-between;
-
+          button {
+            background: transparent;
+            border: none;
+          }
           svg {
             cursor: pointer;
           }

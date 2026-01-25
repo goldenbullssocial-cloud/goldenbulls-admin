@@ -1,10 +1,24 @@
-import React from "react";
+"use client";
+import React, { useState, useRef, useEffect } from "react";
 import styles from "./bannerSection.module.scss";
 import Button from "@/components/button";
 import { toast } from "sonner";
 import z from "zod";
-import { createBanner, getAllBanners, updateBanner } from "@/api/banner";
+import {
+  createBanner,
+  deleteBanner,
+  getAllBanners,
+  updateBanner,
+} from "@/api/banner";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import AddBanner from "./addBanner";
+import ViewIcon from "../../../../public/assets/icons/Eye.svg";
+import EditIcon from "../../../../public/assets/icons/Edit.svg";
+import InactiveIcon from "../../../../public/assets/icons/InactiveUser.svg";
+import DeleteIcon from "../../../../public/assets/icons/Delete.svg";
+import Dropdown from "@/components/dropdown";
+import DeleteBanner from "./deleteBanner";
 // import { useForm } from "react-hook-form";
 const PlusIcon = "/assets/icons/plus.svg";
 const BannerImage = "/assets/images/banner1.png";
@@ -38,10 +52,10 @@ export default function BannerSection() {
   const fileInputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
 
-//   const form = useForm({
-//     resolver: zodResolver(formSchema),
-//     defaultValues: { image: null },
-//   });
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: { image: null },
+  });
 
   const {
     setValue,
@@ -72,7 +86,10 @@ export default function BannerSection() {
     fetchBanners();
   }, []);
 
-  const onSubmit = async (data) => {
+  const onSubmit = async () => {
+    const data = form.getValues();
+    console.log(data, "datata");
+
     try {
       setIsLoading(true);
 
@@ -171,21 +188,75 @@ export default function BannerSection() {
     setIsEditMode(false);
     setIsOpen(true);
   };
+  const getBannerActions = () => [
+    {
+      key: "edit",
+      label: "Edit",
+      icon: EditIcon,
+    },
+
+    {
+      key: "delete",
+      label: "Delete",
+      icon: DeleteIcon,
+      variant: "danger",
+    },
+  ];
+  const handleAction = (action, banner) => {
+    if (action === "edit") handleEdit(banner);
+
+    if (action === "delete") {
+      handleDeleteClick(banner?._id);
+    }
+  };
   return (
     <div className={styles.bannerSection}>
       <div className={styles.headerAlignment}>
         <h3>Banner Images of Mobile app</h3>
-        <Button text="Add Banner" icon={PlusIcon} />
+        <Button text="Add Banner" icon={PlusIcon} onClick={handleCreateNew} />
       </div>
       <div className={styles.imageGrid}>
-        {[...Array(6)].map(() => {
+        {banners.map((banner) => {
           return (
-            <div className={styles.items}>
-              <img src={BannerImage} alt="BannerImage" />
+            <div className={styles.items} key={banner._id}>
+              <div className={styles.imageContainer}>
+                <img
+                  className={styles.images}
+                  src={banner.image}
+                  alt="BannerImage"
+                />
+                <div className={styles.dropdownOverlay}>
+                  <Dropdown
+                    actions={getBannerActions(banner)}
+                    onSelect={(action) => handleAction(action, banner)}
+                  />
+                </div>
+              </div>
             </div>
           );
         })}
       </div>
+      {isOpen && (
+        <AddBanner
+          onClose={() => setIsOpen(false)}
+          onSubmit={onSubmit}
+          fileInputRef={fileInputRef}
+          handleFileChange={handleFileChange}
+          handleDragOver={handleDragOver}
+          handleDragLeave={handleDragLeave}
+          handleDrop={handleDrop}
+          openFileDialog={openFileDialog}
+          imageFile={imageFile}
+          removeImage={removeImage}
+          isDragging={isDragging}
+        />
+      )}
+      {deleteDialogOpen && (
+        <DeleteBanner
+          onClose={() => setDeleteDialogOpen(false)}
+          onDelete={confirmDelete}
+        />
+      )}
     </div>
   );
 }

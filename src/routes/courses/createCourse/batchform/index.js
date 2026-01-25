@@ -60,6 +60,7 @@ export default function BatchForm({
   batches = [],
   selectedCenter = null,
   latestCourse = null,
+  activeTab,
   setOpen = () => {},
   setBatches = () => {},
 }) {
@@ -105,18 +106,17 @@ export default function BatchForm({
       toast.error("At least one batch is required");
     }
   };
-
   const handleSubmitAll = async (e) => {
     e.preventDefault();
-    
+
     // Validate all batches first
     const errors = validateBatches(batchesList);
-    
+
     if (hasValidationErrors(errors)) {
-        toast.error("Please fix all errors before submitting");
-        return;
+      toast.error("Please fix all errors before submitting");
+      return;
     }
-    
+
     // Check if we have the required data
     if (!latestCourse?._id) {
       toast.error("Course information is missing");
@@ -155,17 +155,6 @@ export default function BatchForm({
       }
     }
 
-    // Tab-specific validation
-    if (activeTab === "physical") {
-      if (!batch.centerId) errors.centerId = "Center is required";
-    } else if (activeTab === "live") {
-      if (!batch.zoomLink) {
-        errors.zoomLink = "Meeting link is required";
-      } else if (!isValidUrl(batch.zoomLink)) {
-        errors.zoomLink = "Please enter a valid URL";
-      }
-    }
-
     // Sequential validation - check for duplicate start dates
     allBatches.forEach((otherBatch, otherIndex) => {
       if (otherIndex !== index && otherBatch.startDate && batch.startDate) {
@@ -198,6 +187,7 @@ export default function BatchForm({
       errors[index] = validateSingleBatch(batch, index, batches);
     });
     setBatchErrors(errors);
+
     return errors;
   };
 
@@ -225,7 +215,7 @@ export default function BatchForm({
         toast.error(res.message || "Failed to create batch");
       }
     } catch (error) {
-      console.error("Batch creation error:", error); 
+      console.error("Batch creation error:", error);
       toast.error("Failed to create batch");
     } finally {
       setIsSubmitting(false);
@@ -311,7 +301,10 @@ export default function BatchForm({
                 type="date"
                 name="startDate"
                 value={batch.startDate}
-                onChange={(e) => handleInputChange(index, e)}
+                onChange={(e) => {
+                  handleInputChange(index, e);
+                  handleUpdateBatch(index, "startDate", e.target.value);
+                }}
                 error={batchErrors[index]?.startDate}
               />
 
@@ -320,7 +313,10 @@ export default function BatchForm({
                 type="date"
                 name="endDate"
                 value={batch.endDate}
-                onChange={(e) => handleInputChange(index, e)}
+                onChange={(e) => {
+                  handleInputChange(index, e);
+                  handleUpdateBatch(index, "endDate", e.target.value);
+                }}
                 error={batchErrors[index]?.endDate}
               />
 
@@ -329,18 +325,26 @@ export default function BatchForm({
                 type="time"
                 name="batchTime"
                 value={batch.batchTime}
-                onChange={(e) => handleInputChange(index, e)}
+                onChange={(e) => {
+                  handleInputChange(index, e);
+                  handleUpdateBatch(index, "batchTime", e.target.value);
+                }}
                 error={batchErrors[index]?.batchTime}
               />
 
-              <Input
-                label="Zoom Link"
-                type="url"
-                name="zoomLink"
-                value={batch.zoomLink}
-                onChange={(e) => handleInputChange(index, e)}
-                error={batchErrors[index]?.zoomLink}
-              />
+              {activeTab === "live" && (
+                <Input
+                  label="Zoom Link"
+                  type="url"
+                  name="zoomLink"
+                  value={batch.zoomLink}
+                  onChange={(e) => {
+                    handleInputChange(index, e);
+                    handleUpdateBatch(index, "zoomLink", e.target.value);
+                  }}
+                  error={batchErrors[index]?.zoomLink}
+                />
+              )}
             </div>
           </div>
         ))}

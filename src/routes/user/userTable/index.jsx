@@ -23,6 +23,8 @@ import DeleteUser from "../deleteUser";
 import EditUserDetails from "../editUserDetails";
 import StatusModal from "../statusModal";
 import UserHeader from "@/components/userHeader";
+import NoDataFound from "@/components/noDataFound";
+import TableSkeleton from "@/components/tableSkeleton";
 
 // Define the form schema
 const customerFormSchema = z.object({
@@ -52,11 +54,12 @@ export default function UserTable() {
   const [viewingCustomer, setViewingCustomer] = useState(null);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(8);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [statusLoading, setStatusLoading] = useState(false);
   const [statusFilter, setStatusFilter] = useState("all");
+  const [isPaginationLoading, setIsPaginationLoading] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(customerFormSchema),
@@ -258,8 +261,13 @@ export default function UserTable() {
   };
 
   const handlePageChange = (page) => {
+    setIsPaginationLoading(true);
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
+    // Reset pagination loading after a short delay to show skeleton
+    setTimeout(() => {
+      setIsPaginationLoading(false);
+    }, 500);
   };
 
   const filteredCustomers = customers.filter((customer) => {
@@ -325,7 +333,11 @@ export default function UserTable() {
 
   return (
     <>
-      <UserHeader value={searchInput} onChange={handleSearchInputChange} />
+      <UserHeader
+        value={searchInput}
+        onChange={handleSearchInputChange}
+        NoButton
+      />
 
       <div className={styles.userTableAlignment}>
         <div className={styles.tableUi}>
@@ -345,54 +357,67 @@ export default function UserTable() {
               </tr>
             </thead>
             <tbody>
-              {filteredCustomers.map((customer, index) => {
-                const joinDate = new Date(customer.createdAt);
-                const formattedDate = joinDate.toLocaleString("en-GB", {
-                  day: "2-digit",
-                  month: "2-digit",
-                  year: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                  hour12: false,
-                });
+              {isPaginationLoading ? (
+                <tr>
+                  <td colSpan="10" style={{ padding: 0 }}>
+                    <TableSkeleton
+                      rows={Math.min(itemsPerPage, 10)}
+                      columns={10}
+                    />
+                  </td>
+                </tr>
+              ) : filteredCustomers.length > 0 ? (
+                filteredCustomers?.map((customer, index) => {
+                  const joinDate = new Date(customer.createdAt);
+                  const formattedDate = joinDate.toLocaleString("en-GB", {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: false,
+                  });
 
-                return (
-                  <tr key={customer._id || index}>
-                    <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                    <td>
-                      {customer?.firstName && customer?.lastName
-                        ? `${customer.firstName} ${customer.lastName}`
-                        : customer?.firstName ||
-                          customer?.lastName ||
-                          "N/A"}{" "}
-                    </td>
-                    <td>
-                      {customer.gender
-                        ? customer.gender.charAt(0).toUpperCase() +
-                          customer.gender.slice(1)
-                        : "N/A"}
-                    </td>
-                    <td>{customer.email || "N/A"}</td>
-                    <td>{customer.phone || "N/A"}</td>
-                    <td>{customer.referredBy || "N/A"}</td>
-                    <td>{customer.referralCode || "N/A"}</td>
-                    <td>{formattedDate}</td>
-                    <td>
-                      <span
-                        className={`${styles.status} ${customer.isActive ? styles.active : styles.inactive}`}
-                      >
-                        {customer.isActive ? "Active" : "Inactive"}
-                      </span>
-                    </td>
-                    <td>
-                      <Dropdown
-                        actions={getUserActions(customer.isActive)}
-                        onSelect={(action) => handleAction(action, customer)}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
+                  return (
+                    <tr key={customer._id || index}>
+                      <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                      <td>
+                        {customer?.firstName && customer?.lastName
+                          ? `${customer.firstName} ${customer.lastName}`
+                          : customer?.firstName ||
+                            customer?.lastName ||
+                            "N/A"}{" "}
+                      </td>
+                      <td>
+                        {customer.gender
+                          ? customer.gender.charAt(0).toUpperCase() +
+                            customer.gender.slice(1)
+                          : "N/A"}
+                      </td>
+                      <td>{customer.email || "N/A"}</td>
+                      <td>{customer.phone || "N/A"}</td>
+                      <td>{customer.referredBy || "N/A"}</td>
+                      <td>{customer.referralCode || "N/A"}</td>
+                      <td>{formattedDate}</td>
+                      <td>
+                        <span
+                          className={`${styles.status} ${customer.isActive ? styles.active : styles.inactive}`}
+                        >
+                          {customer.isActive ? "Active" : "Inactive"}
+                        </span>
+                      </td>
+                      <td>
+                        <Dropdown
+                          actions={getUserActions(customer.isActive)}
+                          onSelect={(action) => handleAction(action, customer)}
+                        />
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <NoDataFound />
+              )}
             </tbody>
           </table>
         </div>
@@ -430,7 +455,9 @@ export default function UserTable() {
         <PagePagination
           currentPage={currentPage}
           totalPages={totalPages}
-          onPageChange={(page) => setCurrentPage(page)}
+          itemsPerPage={itemsPerPage}
+          totalItems={totalItems}
+          onPageChange={handlePageChange}
         />
       </div>
     </>

@@ -4,6 +4,8 @@ import styles from "./editUserDetails.module.scss";
 import CloseIcon from "@/icons/closeIcon";
 import Input from "@/components/input";
 import Button from "@/components/button";
+import StyledSelect from "@/components/styledSelect";
+import { Country, State, City } from "country-state-city";
 
 const validateEmail = (email) => {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -45,6 +47,11 @@ const validateField = (name, value) => {
       return "";
   }
 };
+const toOption = (item) => ({
+  value: item.isoCode || item.name,
+  label: item.name,
+  data: item,
+});
 
 export default function EditUserDetails({ customer, onClose, onSubmit }) {
   const [formData, setFormData] = useState({
@@ -61,6 +68,11 @@ export default function EditUserDetails({ customer, onClose, onSubmit }) {
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [countryId, setCountryId] = useState(null);
+  const [stateId, setStateId] = useState(null);
+  const [country, setCountry] = useState(null);
+  const [state, setState] = useState(null);
+  const [city, setCity] = useState(null);
 
   useEffect(() => {
     // Validate all fields when they change and have been touched
@@ -72,6 +84,31 @@ export default function EditUserDetails({ customer, onClose, onSubmit }) {
     });
     setErrors(newErrors);
   }, [formData, touched, isSubmitting]);
+
+  useEffect(() => {
+    if (!customer) return;
+
+    const c = Country.getAllCountries().find(
+      (x) => x.name === customer.country,
+    );
+    if (c) {
+      const countryOpt = toOption(c);
+      setCountry(countryOpt);
+
+      const s = State.getStatesOfCountry(c.isoCode).find(
+        (x) => x.name === customer.state,
+      );
+      if (s) {
+        const stateOpt = toOption(s);
+        setState(stateOpt);
+
+        const ci = City.getCitiesOfState(c.isoCode, s.isoCode).find(
+          (x) => x.name === customer.city,
+        );
+        if (ci) setCity(toOption(ci));
+      }
+    }
+  }, [customer]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -160,7 +197,6 @@ export default function EditUserDetails({ customer, onClose, onSubmit }) {
               onChange={handleChange}
               onBlur={handleBlur}
               error={touched.firstName && errors.firstName}
-              
             />
             <Input
               smallInput
@@ -171,7 +207,6 @@ export default function EditUserDetails({ customer, onClose, onSubmit }) {
               onChange={handleChange}
               onBlur={handleBlur}
               error={touched.lastName && errors.lastName}
-              
             />
             <Input
               smallInput
@@ -183,7 +218,6 @@ export default function EditUserDetails({ customer, onClose, onSubmit }) {
               onChange={handleChange}
               onBlur={handleBlur}
               error={touched.phone && errors.phone}
-              
             />
             <Input
               smallInput
@@ -195,57 +229,123 @@ export default function EditUserDetails({ customer, onClose, onSubmit }) {
               onBlur={handleBlur}
               error={touched.email && errors.email}
               placeholder="Enter your email"
-              
             />
-            <Input
-              smallInput
-              label="City"
-              placeholder="Enter your city"
-              name="city"
-              value={formData.city}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              error={touched.city && errors.city}
-              
-            />
-            <Input
-              smallInput
-              label="State"
-              placeholder="Enter your state"
-              name="state"
-              value={formData.state}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              error={touched.state && errors.state}
-              
-            />
-            <Input
-              smallInput
-              label="Country"
-              placeholder="Enter your country"
-              name="country"
-              value={formData.country}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              error={touched.country && errors.country}
-              
-            />
-            <Input
-              smallInput
-              label="Gender"
-              placeholder="Select gender"
-              name="gender"
-              value={formData.gender}
-              error={touched.gender && errors.gender}
-              onChange={handleChange}
-            />
+
+            <div className={styles.field}>
+              <label>Country</label>
+              <StyledSelect
+                options={Country.getAllCountries().map(toOption)}
+                value={country}
+                onChange={(val) => {
+                  setCountry(val);
+                  setState(null);
+                  setCity(null);
+                  setFormData((p) => ({
+                    ...p,
+                    country: val.label,
+                    state: "",
+                    city: "",
+                  }));
+                }}
+                placeholder="Select Country"
+                onBlur={() =>
+                  setTouched((prev) => ({ ...prev, country: true }))
+                }
+                error={touched.country && errors.country}
+              />
+            </div>
+
+            <div className={styles.field}>
+              <label>State</label>
+              <StyledSelect
+                options={
+                  country
+                    ? State.getStatesOfCountry(country.data.isoCode).map(
+                        toOption,
+                      )
+                    : []
+                }
+                value={state}
+                onChange={(val) => {
+                  setState(val);
+                  setCity(null);
+                  setFormData((p) => ({
+                    ...p,
+                    state: val.label,
+                    city: "",
+                  }));
+                }}
+                placeholder="Select State"
+                isDisabled={!country}
+                onBlur={() => setTouched((prev) => ({ ...prev, state: true }))}
+                error={touched.state && errors.state}
+              />
+            </div>
+            <div className={styles.field}>
+              <label>City</label>
+              <StyledSelect
+                options={
+                  state
+                    ? City.getCitiesOfState(
+                        country.data.isoCode,
+                        state.data.isoCode,
+                      ).map(toOption)
+                    : []
+                }
+                value={city}
+                onChange={(val) => {
+                  setCity(val);
+                  setFormData((p) => ({
+                    ...p,
+                    city: val.label,
+                  }));
+                }}
+                placeholder="Select City"
+                isDisabled={!state}
+                onBlur={() => setTouched((prev) => ({ ...prev, city: true }))}
+                error={touched.city && errors.city}
+              />
+            </div>
+
+            <div className={styles.field}>
+              <label>Gender</label>
+              <StyledSelect
+                options={[
+                  { value: "male", label: "Male" },
+                  { value: "female", label: "Female" },
+                  { value: "other", label: "Other" },
+                ]}
+                value={
+                  formData.gender
+                    ? {
+                        value: formData.gender,
+                        label:
+                          formData.gender.charAt(0).toUpperCase() +
+                          formData.gender.slice(1),
+                      }
+                    : null
+                }
+                onChange={(val) => {
+                  setFormData((p) => ({
+                    ...p,
+                    gender: val.value,
+                  }));
+                }}
+                placeholder="Select gender"
+                onBlur={handleBlur}
+                error={touched.gender && errors.gender}
+              />
+            </div>
           </div>
           <div className={styles.button}>
             <Button
               type="submit"
-              text="Save Changes"
+              text={isSubmitting ? "Saving..." : "Save Changes"}
               disabled={!isFormValid() || isSubmitting}
               loading={isSubmitting}
+              className={
+                !isFormValid() || isSubmitting ? styles.disabledButton : ""
+              }
             />
           </div>
         </div>

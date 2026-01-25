@@ -13,6 +13,7 @@ export default function UserHeader({
   disabled = false,
   NoRightContent,
   NoSearch,
+  NoButton,
 }) {
   const [user, setUser] = useState({});
   const [isClient, setIsClient] = useState(false);
@@ -44,13 +45,15 @@ export default function UserHeader({
         <div className={styles.rightContent}>
           {!NoSearch && (
             <input
-              type={inputType}
+              type="search"
               placeholder={placeholder}
               value={value}
               onChange={onChange}
             />
           )}
-          <Button text={buttonText} onClick={onClick} disabled={disabled} />
+          {!NoButton && (
+            <Button text={buttonText} onClick={onClick} disabled={disabled} />
+          )}
         </div>
       )}
     </div>

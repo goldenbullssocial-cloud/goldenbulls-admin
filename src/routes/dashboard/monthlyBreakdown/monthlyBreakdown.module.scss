@@ -1,51 +1,50 @@
-@use '../../../scss/main.scss' as *;
-@use '../../../scss/breakpoints/breakpoints.scss' as *;
-@use '../../../scss/font/font.scss' as *;
+@use "../../../scss/main.scss" as *;
+@use "../../../scss/breakpoints/breakpoints.scss" as *;
+@use "../../../scss/font/font.scss" as *;
 
 .monthlyBreakdown {
-    padding: 32px 0 0 0;
+  padding: 32px 0 0 0;
 
-    .title {
-        h2 {
-            font-size: 24px;
-            font-style: normal;
-            font-weight: 400;
-            line-height: normal;
-            text-transform: uppercase;
-            @include heading-font;
-            @include gradient-text;
-        }
+  .title {
+    h2 {
+      font-size: 24px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+      text-transform: uppercase;
+      @include heading-font;
+      @include gradient-text;
     }
-    .dashboardContainer {
-  padding: 24px;
-  background-color: #0F172A;
-  min-height: 100vh;
-}
-
-.chartRow {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-  gap: 24px;
-  margin-bottom: 24px;
-}
-
-.chartColumn {
-  width: 100%;
-}
-
-@media (max-width: 1200px) {
-  .chartRow {
-    grid-template-columns: 1fr;
   }
-}
-
-@media (max-width: 768px) {
   .dashboardContainer {
-    padding: 16px;
+    min-height: 100vh;
+    padding-top: 16px;
   }
-  
+
   .chartRow {
-    gap: 16px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 24px;
+    margin-bottom: 24px;
   }
-}
+
+  .chartColumn {
+    width: 100%;
+  }
+
+  @media (max-width: 1200px) {
+    .chartRow {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .dashboardContainer {
+      padding: 16px;
+    }
+
+    .chartRow {
+      gap: 16px;
+    }
+  }
 }

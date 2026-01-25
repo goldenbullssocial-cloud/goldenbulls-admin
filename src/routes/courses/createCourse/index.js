@@ -29,6 +29,7 @@ export default function CreateCourse({
   latestCourse,
   setOpen,
   setBatches,
+  chaptersList,
 }) {
   const handleTabClick = (tab) => {
     setFormActiveTab(tab);
@@ -47,7 +48,7 @@ export default function CreateCourse({
     <div className={styles.createCourseWrapper}>
       <div className={styles.createCourse}>
         <div className={styles.modalHeader}>
-          <h2>Create Course</h2>
+          <h2>{editCourse ? "Edit Course" : "Create Course"}</h2>
           <div className={styles.closeIcon} onClick={onClose}>
             <CloseIcon />
           </div>
@@ -121,18 +122,35 @@ export default function CreateCourse({
                 />
               )}
               {isSyllabusVisible && (
-                <SyllabusCourses courseId={courseId} onSuccess={onSuccess} />
+                <SyllabusCourses
+                  courseId={courseId}
+                  onSuccess={onSuccess}
+                  editCourse={editCourse}
+                  existingChapters={chaptersList}
+                />
               )}
-              {isLiveBatchVisible ||
-                (isPhysicalBatchVisible && (
-                  <BatchForm
-                    batches={batches}
-                    selectedCenter={selectedCenter}
-                    latestCourse={latestCourse}
-                    setOpen={setOpen}
-                    setBatches={setBatches}
-                  />
-                ))}
+              {isLiveBatchVisible && (
+                <BatchForm
+                  key="live"
+                  batches={batches}
+                  selectedCenter={selectedCenter}
+                  latestCourse={latestCourse}
+                  activeTab={formActiveTab}
+                  setOpen={setOpen}
+                  setBatches={setBatches}
+                />
+              )}
+              {isPhysicalBatchVisible && (
+                <BatchForm
+                  key="physical"
+                  batches={batches}
+                  selectedCenter={selectedCenter}
+                  latestCourse={latestCourse}
+                  activeTab={formActiveTab}
+                  setOpen={setOpen}
+                  setBatches={setBatches}
+                />
+              )}
             </div>
           </div>
         </div>

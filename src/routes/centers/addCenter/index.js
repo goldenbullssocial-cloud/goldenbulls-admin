@@ -1,29 +1,77 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./addCenter.module.scss";
 import CloseIcon from "@/icons/closeIcon";
 import Input from "@/components/input";
 import Button from "@/components/button";
-import {
-  CitySelect,
-  CountrySelect,
-  StateSelect,
-} from "react-country-state-city";
-import "react-country-state-city/dist/react-country-state-city.css";
+import StyledSelect from "@/components/styledSelect";
+import { Country, State, City } from "country-state-city";
 
 const SaveIcon = "/assets/icons/save.svg";
 
+const toOption = (item) => ({
+  value: item.isoCode || item.name,
+  label: item.name,
+  data: item,
+});
+
 export default function AddCenter({
   onClose,
-  onSave,
-  selectedCountryId,
-  selectedStateId,
-  onCountryChange,
-  onStateChange,
-  onCityChange,
+  onSubmit,
   onStateFocus,
   form,
+  isEditMode,
+  isOpen,
+  isLoading,
 }) {
+  const [country, setCountry] = useState(null);
+  const [state, setState] = useState(null);
+  const [city, setCity] = useState(null);
+
+  useEffect(() => {
+    // Initialize values from form only in edit mode
+    if (isEditMode) {
+      const countryName = form.getValues("country");
+      const stateName = form.getValues("state");
+      const cityName = form.getValues("city");
+
+      if (countryName) {
+        const c = Country.getAllCountries().find((x) => x.name === countryName);
+        if (c) {
+          const countryOpt = toOption(c);
+          setCountry(countryOpt);
+
+          if (stateName) {
+            const s = State.getStatesOfCountry(c.isoCode).find(
+              (x) => x.name === stateName,
+            );
+            if (s) {
+              const stateOpt = toOption(s);
+              setState(stateOpt);
+
+              if (cityName) {
+                const ci = City.getCitiesOfState(c.isoCode, s.isoCode).find(
+                  (x) => x.name === cityName,
+                );
+                if (ci) setCity(toOption(ci));
+              }
+            }
+          }
+        }
+      }
+    }
+  }, [isEditMode]);
+
+  // Reset local state when form is reset or modal is closed
+  useEffect(() => {
+    if (!isOpen) {
+      setCountry(null);
+      setState(null);
+      setCity(null);
+    }
+  }, [isOpen]);
+  console.log(form.formState.errors);
+
   return (
     <div
       className={styles.addCenterModalWrapper}
@@ -34,17 +82,20 @@ export default function AddCenter({
     >
       <div className={styles.addCentermodal}>
         <div className={styles.modalHeader}>
-          <h2>add center</h2>
+          <h2>{isEditMode ? "Edit Center" : "Add Center"}</h2>
           <div className={styles.closeIcon} onClick={onClose}>
             <CloseIcon />
           </div>
         </div>
-        <form className={styles.modalBody} onSubmit={form.handleSubmit(onSave)}>
+        <form
+          className={styles.modalBody}
+          onSubmit={form.handleSubmit(onSubmit)}
+        >
           <div className={styles.twoCol}>
             <Input
               name="centerName"
               label="Center Name"
-              placeholder="Golden Bulls Mumbai Branch"
+              placeholder="Enter center name"
               {...form.register("centerName")}
               error={form.formState.errors.centerName?.message}
             />
@@ -59,73 +110,103 @@ export default function AddCenter({
           <div className={styles.threeCol}>
             <div>
               <label>Country</label>
-              <CountrySelect
-                defaultValue={
-                  form.getValues("country")
-                    ? { name: form.getValues("country") }
-                    : undefined
-                }
-                onChange={(value) => {
-                  form.setValue("country", value?.name || "");
-                  onCountryChange && onCountryChange(value);
-                }}
-                placeHolder="Select Country"
-              />
-              {form.formState.errors.country && (
-                <span className={styles.error}>
-                  {form.formState.errors.country.message}
-                </span>
-              )}
-            </div>
-            <div>
-              <label>City</label>
-              <CitySelect
-                value={
-                  form.getValues("city")
-                    ? { name: form.getValues("city") }
-                    : null
-                }
-                countryid={selectedCountryId}
-                stateid={selectedStateId}
+              <StyledSelect
+                options={Country.getAllCountries().map(toOption)}
+                value={country}
                 onChange={(val) => {
-                  form.setValue("city", val?.name || "");
-                  onCityChange(val);
+                  setCountry(val);
+                  setState(null);
+                  setCity(null);
+
+                  form.setValue("country", val?.label ?? "", {
+                    shouldValidate: true,
+                  });
+                  form.setValue("state", "", { shouldValidate: true });
+                  form.setValue("city", "", { shouldValidate: true });
+
+                  onCountryChange?.(val);
                 }}
-                placeHolder="Select City"
-                disabled={!selectedStateId}
+                placeholder="Select Country"
+                error={form.formState.errors.country?.message}
               />
-              {form.formState.errors.city && (
-                <span className={styles.error}>
-                  {form.formState.errors.city.message}
-                </span>
+              {form.formState.errors.country?.message && (
+                <p className={styles.error}>
+                  {form.formState.errors.country.message}
+                </p>
               )}
             </div>
             <div>
               <label>State</label>
-              <StateSelect
-                value={
-                  form.getValues("state")
-                    ? { name: form.getValues("state") }
-                    : null
+              <StyledSelect
+                options={
+                  country
+                    ? State.getStatesOfCountry(country.data.isoCode).map(
+                        toOption,
+                      )
+                    : []
                 }
-                countryid={selectedCountryId}
+                value={state}
                 onChange={(val) => {
-                  form.setValue("state", val?.name || "");
-                  onStateChange(val);
+                  setState(val);
+                  setCity(null);
+
+                  form.setValue("state", val?.label ?? "", {
+                    shouldValidate: true,
+                  });
+                  form.setValue("city", "", { shouldValidate: true });
+
+                  onStateChange?.(val);
                 }}
                 onFocus={onStateFocus}
-                placeHolder="Select State"
-                disabled={!selectedCountryId}
+                placeholder="Select State"
+                isDisabled={!country}
+                error={form.formState.errors.state?.message}
               />
-              {form.formState.errors.state && (
-                <span className={styles.error}>
+              {form.formState.errors.state?.message && (
+                <p className={styles.error}>
                   {form.formState.errors.state.message}
-                </span>
+                </p>
+              )}
+            </div>
+            <div>
+              <label>City</label>
+              <StyledSelect
+                options={
+                  state
+                    ? City.getCitiesOfState(
+                        country.data.isoCode,
+                        state.data.isoCode,
+                      ).map(toOption)
+                    : []
+                }
+                value={city}
+                onChange={(val) => {
+                  setCity(val);
+
+                  form.setValue("city", val?.label ?? "", {
+                    shouldValidate: true,
+                  });
+
+                  onCityChange?.(val);
+                }}
+                placeholder="Select City"
+                isDisabled={!state}
+                error={form.formState.errors.city?.message}
+              />
+              {form.formState.errors.city?.message && (
+                <p className={styles.error}>
+                  {form.formState.errors.city.message}
+                </p>
               )}
             </div>
           </div>
           <div className={styles.saveButton}>
-            <Button type="submit" text="Save" icon={SaveIcon} />
+            <Button
+              type="submit"
+              text={isEditMode ? "Update" : "Save"}
+              icon={SaveIcon}
+              disabled={isLoading}
+            />
           </div>
         </form>
       </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./syllabus.module.scss";
 import Input from "@/components/input";
 import Textarea from "@/components/textarea";
@@ -14,20 +14,39 @@ const SaveIcon = "/assets/icons/save.svg";
 export default function SyllabusCourses({
   courseId,
   onSuccess,
+  editCourse,
+  existingChapters = [],
 }) {
-  const [chapters, setChapters] = useState([
-    {
-      id: Date.now().toString(),
-      chapterName: "",
-      description: "",
-      duration: "",
-      videoFile: null,
-      videoUrl: "",
-      chapterNo: "",
-      chapterImage: null,
-      chapterImageUrl: "",
-    },
-  ]);
+  const [chapters, setChapters] = useState(() => {
+    // If editing and have existing chapters, use them
+    if (editCourse && existingChapters && existingChapters.length > 0) {
+      return existingChapters.map((chapter) => ({
+        id: chapter.id || chapter._id || Date.now().toString(),
+        chapterName: chapter.chapterName || "",
+        description: chapter.description || "",
+        duration: chapter.duration || "",
+        videoFile: null,
+        videoUrl: chapter.videoUrl || "",
+        chapterNo: chapter.chapterNo || "",
+        chapterImage: chapter.chapterImage || null,
+        chapterImageUrl: chapter.chapterImageUrl || "",
+      }));
+    }
+    // Otherwise, return empty form for new course
+    return [
+      {
+        id: Date.now().toString(),
+        chapterName: "",
+        description: "",
+        duration: "",
+        videoFile: null,
+        videoUrl: "",
+        chapterNo: "",
+        chapterImage: null,
+        chapterImageUrl: "",
+      },
+    ];
+  });
 
   const [loading, setLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -35,6 +54,39 @@ export default function SyllabusCourses({
   const [imagePreview, setImagePreview] = useState(null);
   const [videoPreviews, setVideoPreviews] = useState({});
   const [isVideoDragOver, setIsVideoDragOver] = useState(false);
+
+  // Update chapters when existingChapters prop changes
+  useEffect(() => {
+    if (editCourse && existingChapters && existingChapters.length > 0) {
+      const formattedChapters = existingChapters.map((chapter) => ({
+        id: chapter.id || chapter._id || Date.now().toString(),
+        chapterName: chapter.chapterName || "",
+        description: chapter.description || "",
+        duration: chapter.duration || "",
+        videoFile: null,
+        videoUrl: chapter.videoUrl || "",
+        chapterNo: chapter.chapterNo || "",
+        chapterImage: chapter.chapterImage || null,
+        chapterImageUrl: chapter.chapterImageUrl || "",
+      }));
+      setChapters(formattedChapters);
+    } else if (!editCourse) {
+      // Reset to empty form when not editing
+      setChapters([
+        {
+          id: Date.now().toString(),
+          chapterName: "",
+          description: "",
+          duration: "",
+          videoFile: null,
+          videoUrl: "",
+          chapterNo: "",
+          chapterImage: null,
+          chapterImageUrl: "",
+        },
+      ]);
+    }
+  }, [editCourse, existingChapters]);
 
   const handleVideoDragOver = (e) => {
     e.preventDefault();
@@ -380,13 +432,15 @@ export default function SyllabusCourses({
                 onDragLeave={(e) => handleVideoDragLeave(e)}
                 onDrop={(e) => handleVideoDrop(e, index)}
               >
-                {chapter.videoFile || videoPreviews[index] ? (
+                {chapter.videoFile ||
+                videoPreviews[index] ||
+                chapter.videoUrl ? (
                   <div className={styles.previewWrapper}>
                     <video
                       src={
                         chapter.videoFile
                           ? URL.createObjectURL(chapter.videoFile)
-                          : videoPreviews[index]
+                          : videoPreviews[index] || chapter.videoUrl
                       }
                       controls
                       className={styles.videoPreview}

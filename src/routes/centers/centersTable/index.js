@@ -86,12 +86,10 @@ export default function CentersTable() {
   const [centerToDelete, setCenterToDelete] = useState(null);
   const [currentCenterId, setCurrentCenterId] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [selectedCountryId, setSelectedCountryId] = useState(null);
-  const [selectedStateId, setSelectedStateId] = useState(null);
+
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [viewingCenter, setViewingCenter] = useState(null);
   const [isViewModalOpen, setIsViewModalOpen] = useState(false);
-
   const form = useForm({
     resolver: zodResolver(centerFormSchema),
     defaultValues: {
@@ -112,9 +110,9 @@ export default function CentersTable() {
         search: debouncedSearchTerm,
       });
 
-      setCenters(response.payload.data);
-      setTotalItems(response.payload.count);
-      setTotalPages(response.payload.totalPages);
+      setCenters(response.payload?.data || []);
+      setTotalItems(response.payload?.totalRecords || 0);
+      setTotalPages(response.payload?.totalPages || 1);
     } catch (error) {
       console.error("Error fetching centers:", error);
       toast.error("Failed to fetch centers");
@@ -175,6 +173,8 @@ export default function CentersTable() {
   };
 
   const onSubmit = async (data) => {
+    console.log(data);
+
     try {
       setIsLoading(true);
       const centerData = {
@@ -258,7 +258,18 @@ export default function CentersTable() {
         onChange={(e) => setSearchTerm(e.target.value.trimStart())}
         value={searchTerm}
         buttonText="Add Center"
-        onClick={() => setIsAddCenterOpen(true)}
+        onClick={() => {
+          setIsAddCenterOpen(true);
+          form.reset({
+            centerName: "",
+            location: "",
+            city: "",
+            state: "",
+            country: "",
+          });
+          setIsEditMode(false);
+          setEditingCenter(null);
+        }}
       />
       <div className={styles.centersTableAlignment}>
         <div className={styles.tableUi}>
@@ -306,7 +317,13 @@ export default function CentersTable() {
             </tbody>
           </table>
         </div>
-        <PagePagination />
+        <PagePagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+          itemsPerPage={itemsPerPage}
+          totalItems={totalItems}
+        />
       </div>
       {isViewModalOpen && (
         <CenterDetailsModal
@@ -316,32 +333,17 @@ export default function CentersTable() {
       )}
       {isAddCenterOpen && (
         <AddCenter
-          isOpen={isAddCenterOpen}
-          onClose={() => setIsAddCenterOpen(false)}
-          onSave={onSubmit}
-          selectedCountryId={selectedCountryId}
-          selectedStateId={selectedStateId}
-          onCityChange={(val) => {
-            if (val) {
-              form.setValue("city", val.name);
-              form.clearErrors("city");
-            }
-          }}
-          onCountryChange={(val) => {
-            form.setValue("country", val.name);
-            setSelectedCountryId(val.id);
-            setSelectedStateId(null);
-            form.setValue("state", "");
-            form.setValue("city", "");
-            form.clearErrors(["state", "city"]);
-          }}
-          onStateChange={(val) => {
-            form.setValue("state", val?.name || "");
-            setSelectedStateId(val?.id || null);
-            form.setValue("city", "");
-            form.clearErrors(["state", "city"]);
-          }}
+          isEditMode={isEditMode}
           form={form}
+          isOpen={isAddCenterOpen}
+          isLoading={isLoading}
+          onClose={() => {
+            setIsAddCenterOpen(false);
+            form.reset();
+            setIsEditMode(false);
+            setEditingCenter(null);
+          }}
+          onSubmit={onSubmit}
         />
       )}
       {isDeleteDialogOpen && (

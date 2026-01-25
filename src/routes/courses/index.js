@@ -6,7 +6,6 @@ import ClockInIcon from "@/icons/clockIcon";
 import StarIcon from "@/icons/starIcon";
 import CreateCourse from "./createCourse";
 import { getAllCourseCategory } from "@/api/category";
-import { getAllInstructors } from "@/api/instructor";
 import {
   createCourse,
   getCourses,
@@ -17,11 +16,15 @@ import {
   deleteBatch,
   getAllBatch,
   uploadImage,
+  getChapters,
 } from "@/api/course";
 import { toast } from "sonner";
 import UserHeader from "@/components/userHeader";
 import CourseCard from "./courseCard";
+import DetailCourseView from "./detailCourseView";
 import { getAllCenters } from "@/api/banner";
+import { format } from "date-fns";
+import DeleteCourse from "./deleteCourse";
 const CardImage = "/assets/images/course-user.png";
 
 export default function Courses() {
@@ -153,6 +156,30 @@ export default function Courses() {
       console.error("Error loading centers:", err);
       toast.error("Failed to load centers");
     }
+  };
+
+  const fetchCourseChapters = async (courseId) => {
+    try {
+      const response = await getChapters(courseId);
+      if (response.success && response.payload?.data) {
+        const chaptersData = response.payload.data.map((chapter) => ({
+          id: chapter._id,
+          chapterName: chapter.chapterName || "",
+          description: chapter.description || "",
+          duration: chapter.duration || "",
+          videoFile: null,
+          videoUrl: chapter.chapterVideo || "",
+          chapterNo: chapter.chapterNo || "",
+          chapterImage: chapter.thumbnail || null,
+          chapterImageUrl: chapter.thumbnail || "",
+        }));
+        setChaptersList(chaptersData);
+        return chaptersData;
+      }
+    } catch (error) {
+      console.error("Error fetching chapters:", error);
+    }
+    return [];
   };
 
   useEffect(() => {
@@ -338,28 +365,6 @@ export default function Courses() {
     }
   };
 
-  // Fetch instructors
-  const fetchInstructors = async () => {
-    setLoadingInstructors(true);
-    setInstructorError("");
-    try {
-      const response = await getAllInstructors({});
-      if (response.success && response.payload?.data) {
-        setInstructors(
-          response.payload.data.map((instructor) => ({
-            _id: instructor._id,
-            name: instructor.name,
-          })),
-        );
-      }
-    } catch (err) {
-      console.error("Error fetching instructors:", err);
-      setInstructorError("Failed to load instructors. Please try again later.");
-    } finally {
-      setLoadingInstructors(false);
-    }
-  };
-
   // Fetch courses with pagination and filtering
   const fetchCourses = async () => {
     setLoading(true);
@@ -402,7 +407,6 @@ export default function Courses() {
 
   // Fetch instructors and courses when component mounts
   useEffect(() => {
-    fetchInstructors();
     fetchCourses();
   }, []);
 
@@ -449,8 +453,12 @@ export default function Courses() {
         setLiveEndDate(new Date(editCourse.courseEnd));
         setPhysicalEndDate(new Date(editCourse.courseEnd));
       }
+
+      // Fetch existing chapters for the course
+      fetchCourseChapters(editCourse._id);
     } else {
       resetForm();
+      setChaptersList([]);
     }
   }, [editCourse]);
 
@@ -551,17 +559,6 @@ export default function Courses() {
         apiFormData.append("image", imageFile);
       }
 
-      // if (formData.get("city")) {
-      //   apiFormData.append("city", formData.get("city") || "");
-      // }
-
-      // if (formData.get("state")) {
-      //   apiFormData.append("state", formData.get("state") || "");
-      // }
-
-      // if (formData.get("country")) {
-      //   apiFormData.append("country", formData.get("country") || "");
-      // }
       const categoryId = formData.get("courseCategory");
       if (categoryId) {
         apiFormData.append("courseCategory", categoryId.toString());
@@ -582,8 +579,20 @@ export default function Courses() {
           if (!editCourse) {
             setIsSyllabusVisible(true);
           } else {
-            setOpen(false);
-            setEditCourse(null);
+            if (activeTab === "recorded") {
+              console.log("recorded");
+              setCreateCourseOpen(false);
+              setIsSyllabusVisible(true);
+            }
+
+            if (activeTab === "live") {
+              setCreateCourseOpen(false);
+              setIsSyllabusVisible(true);
+            }
+            if (activeTab === "physical") {
+              setCreateCourseOpen(false);
+              setIsSyllabusVisible(true);
+            }
           }
           toast.success(
             editCourse
@@ -598,7 +607,12 @@ export default function Courses() {
             },
           );
           // Refresh course list
-          const refreshed = await getCourses();
+          const refreshed = await getCourses({
+            page: currentPage,
+            limit: itemsPerPage,
+            search: debouncedSearchTerm,
+            courseType: activeTab,
+          });
           setCourses(refreshed.payload.data);
         } else {
           toast.error(
@@ -609,6 +623,8 @@ export default function Courses() {
           );
         }
       } catch (err) {
+        console.log("err", err);
+
         if (err.response?.status === 413) {
           toast.error("File too large", {
             description:
@@ -843,6 +859,36 @@ export default function Courses() {
     const form = document.querySelector("form");
     form?.reset();
   };
+  console.log(isLiveBatchVisible, isPhysicalBatchVisible, isSyllabusVisible);
+
+  const handleDeleteCourse = async (id) => {
+    setDeleteDialogOpen(false);
+    try {
+      const data = await deleteCourse(id);
+      if (data.success) {
+        toast.success("Course deleted successfully", {
+          description: data?.message || "The course has been deleted.",
+        });
+        // Refresh course list
+        const refreshed = await getCourses({
+          page: currentPage,
+          limit: itemsPerPage,
+          search: debouncedSearchTerm,
+          courseType: activeTab,
+        });
+        setCourses(refreshed.payload.data);
+      } else {
+        toast.error("Failed to delete course", {
+          description: data?.message || "An error occurred.",
+        });
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Failed to delete course", {
+        description: err instanceof Error ? err.message : "An error occurred.",
+      });
+    }
+  };
 
   return (
     <>
@@ -851,11 +897,38 @@ export default function Courses() {
         onClick={() => {
           setOpen(true);
           setCreateCourseOpen(true);
+          setIsSyllabusVisible(false);
+          setIsPhysicalBatchVisible(false);
+          setIsLiveBatchVisible(false);
+          setIsChaptersVisible(false);
         }}
+        placeholder="Search Courses"
+        onChange={(e) => setSearchTerm(e.target.value.trimStart())}
+        value={searchTerm}
       />
       <div className={styles.coursesPageAlignment}>
         <CoursesTab activeTab={activeTab} setActiveTab={setActiveTab} />
-        <CourseCard courses={courses} />
+
+        <CourseCard
+          courses={courses}
+          onView={(course) => {
+            setSelectedCourse(course);
+            setViewCourseModalOpen(true);
+          }}
+          onEdit={(course) => {
+            setEditCourse(course);
+            setOpen(true);
+            setCreateCourseOpen(true);
+            setIsSyllabusVisible(false);
+            setIsPhysicalBatchVisible(false);
+            setIsLiveBatchVisible(false);
+            setIsChaptersVisible(false);
+          }}
+          onDelete={(course) => {
+            setCourseToDelete(course);
+            setDeleteDialogOpen(true);
+          }}
+        />
         {open && (
           <CreateCourse
             editCourse={editCourse}
@@ -910,9 +983,25 @@ export default function Courses() {
             latestCourse={latestCourse}
             setOpen={setOpen}
             setBatches={setPhysicalBatches || setLiveBatches}
+            chaptersList={chaptersList}
+          />
+        )}
+        {viewCourseModalOpen && (
+          <DetailCourseView
+            course={selectedCourse}
+            onClose={() => setViewCourseModalOpen(false)}
           />
         )}
       </div>
+      {deleteDialogOpen && (
+        <DeleteCourse
+          course={courseToDelete}
+          onClose={() => setDeleteDialogOpen(false)}
+          onDelete={() =>
+            courseToDelete && handleDeleteCourse(courseToDelete._id)
+          }
+        />
+      )}
     </>
   );
 }

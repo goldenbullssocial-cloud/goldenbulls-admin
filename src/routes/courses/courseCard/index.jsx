@@ -3,6 +3,11 @@ import styles from "./courseCard.module.scss";
 import ClockInIcon from "@/icons/clockIcon";
 import StarIcon from "@/icons/starIcon";
 import Image from "next/image";
+import ViewIcon from "../../../../public/assets/icons/Eye.svg";
+import EditIcon from "../../../../public/assets/icons/Edit.svg";
+import InactiveIcon from "../../../../public/assets/icons/InactiveUser.svg";
+import DeleteIcon from "../../../../public/assets/icons/Delete.svg";
+import Dropdown from "@/components/dropdown";
 export default function CourseCard({
   courses,
   activeTab,
@@ -10,6 +15,29 @@ export default function CourseCard({
   onEdit,
   onDelete,
 }) {
+  const getUserActions = (isActive) => [
+    {
+      key: "view",
+      label: "View",
+      icon: ViewIcon,
+    },
+    {
+      key: "edit",
+      label: "Edit",
+      icon: EditIcon,
+    },
+    {
+      key: "delete",
+      label: "Delete",
+      icon: DeleteIcon,
+      variant: "danger",
+    },
+  ];
+  const handleAction = (action, course) => {
+    if (action === "view") onView(course);
+    if (action === "edit") onEdit(course);
+    if (action === "delete") onDelete(course);
+  };
   return (
     <div className={styles.grid}>
       {courses?.map((course, i) => {
@@ -49,6 +77,10 @@ export default function CourseCard({
                     <span>{course?.instructor?.rating || "4.5"}</span>
                   </div>
                 </div>
+                <Dropdown
+                  actions={getUserActions(course.isActive)}
+                  onSelect={(action) => handleAction(action, course)}
+                />
               </div>
             </div>
           </div>

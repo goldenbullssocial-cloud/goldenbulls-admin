@@ -175,18 +175,19 @@ export default function CourseForm({
         </div>
         <div className={styles.twoCol}>
           <div className={styles.instructorField}>
-            <label className={styles.label}>Instructor Name</label>
-            <select
-              name="instructor"
-              className={styles.select}
-              defaultValue={editCourse?.instructor || ""}
-            >
-              {instructors?.map((instructor) => (
-                <option key={instructor._id} value={instructor._id}>
-                  {instructor.name}
-                </option>
-              ))}
-            </select>
+            <Input
+            label="Instructor Name"
+            placeholder="Instructor Name"
+            name="instructorName"
+            defaultValue={editCourse?.instructorName || ""}
+            onBlur={handleTrimInput}
+            onKeyDown={(e) => {
+              if (e.key === " " && !e.target.value.trim()) {
+                e.preventDefault();
+              }
+            }}
+            error={formErrors.description}
+          />
           </div>
           <div className={styles.languageField}>
             <label className={styles.label}>Language</label>

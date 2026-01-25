@@ -119,7 +119,8 @@
         position: relative;
         border-radius: 25.929px;
         padding: 20px;
-        background: #0c0c0c;
+ background:
+          "linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(153, 153, 153, 0) 60.58%)";
         max-width: 90%;
 
         @include respond-to("sm") {

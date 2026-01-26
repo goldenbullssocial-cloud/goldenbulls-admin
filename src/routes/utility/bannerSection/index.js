@@ -88,7 +88,6 @@ export default function BannerSection() {
 
   const onSubmit = async () => {
     const data = form.getValues();
-    console.log(data, "datata");
 
     try {
       setIsLoading(true);

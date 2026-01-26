@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "./syllabus.module.scss";
 import Input from "@/components/input";
 import Textarea from "@/components/textarea";
@@ -8,7 +8,12 @@ import RemoveIcon from "@/icons/removeIcon";
 import Button from "@/components/button";
 import PlusIcon from "@/icons/plusIcon";
 import { toast } from "sonner";
-import { createChapter, uploadImage } from "@/api/course";
+import {
+  createChapter,
+  uploadImage,
+  deleteChapter,
+  updateChapter,
+} from "@/api/course";
 const SaveIcon = "/assets/icons/save.svg";
 
 export default function SyllabusCourses({
@@ -18,10 +23,9 @@ export default function SyllabusCourses({
   existingChapters = [],
 }) {
   const [chapters, setChapters] = useState(() => {
-    // If editing and have existing chapters, use them
     if (editCourse && existingChapters && existingChapters.length > 0) {
       return existingChapters.map((chapter) => ({
-        id: chapter.id || chapter._id || Date.now().toString(),
+        id: chapter.id,
         chapterName: chapter.chapterName || "",
         description: chapter.description || "",
         duration: chapter.duration || "",
@@ -35,7 +39,6 @@ export default function SyllabusCourses({
     // Otherwise, return empty form for new course
     return [
       {
-        id: Date.now().toString(),
         chapterName: "",
         description: "",
         duration: "",
@@ -55,36 +58,50 @@ export default function SyllabusCourses({
   const [videoPreviews, setVideoPreviews] = useState({});
   const [isVideoDragOver, setIsVideoDragOver] = useState(false);
 
+  const initialLoad = useRef(true);
+
   // Update chapters when existingChapters prop changes
   useEffect(() => {
     if (editCourse && existingChapters && existingChapters.length > 0) {
-      const formattedChapters = existingChapters.map((chapter) => ({
-        id: chapter.id || chapter._id || Date.now().toString(),
-        chapterName: chapter.chapterName || "",
-        description: chapter.description || "",
-        duration: chapter.duration || "",
-        videoFile: null,
-        videoUrl: chapter.videoUrl || "",
-        chapterNo: chapter.chapterNo || "",
-        chapterImage: chapter.chapterImage || null,
-        chapterImageUrl: chapter.chapterImageUrl || "",
-      }));
-      setChapters(formattedChapters);
-    } else if (!editCourse) {
-      // Reset to empty form when not editing
-      setChapters([
-        {
-          id: Date.now().toString(),
-          chapterName: "",
-          description: "",
-          duration: "",
+      // Only update if it's the initial load or if existingChapters has actually changed
+      if (
+        initialLoad.current ||
+        JSON.stringify(chapters) !== JSON.stringify(existingChapters)
+      ) {
+        const formattedChapters = existingChapters.map((chapter) => ({
+          id: chapter.id,
+          chapterName: chapter.chapterName || "",
+          description: chapter.description || "",
+          duration: chapter.duration || "",
           videoFile: null,
-          videoUrl: "",
-          chapterNo: "",
-          chapterImage: null,
-          chapterImageUrl: "",
-        },
-      ]);
+          videoUrl: chapter.videoUrl || "",
+          chapterNo: chapter.chapterNo || "",
+          chapterImage: chapter.chapterImage || null,
+          chapterImageUrl: chapter.chapterImageUrl || "",
+        }));
+        setChapters(formattedChapters);
+        initialLoad.current = false;
+      }
+    } else if (!editCourse) {
+      // Only reset to empty form if we're not in edit mode and don't have any chapters yet
+      if (
+        chapters.length === 0 ||
+        (chapters.length === 1 && !chapters[0].chapterName)
+      ) {
+        setChapters([
+          {
+            id: Date.now().toString(),
+            chapterName: "",
+            description: "",
+            duration: "",
+            videoFile: null,
+            videoUrl: "",
+            chapterNo: "",
+            chapterImage: null,
+            chapterImageUrl: "",
+          },
+        ]);
+      }
     }
   }, [editCourse, existingChapters]);
 
@@ -213,7 +230,6 @@ export default function SyllabusCourses({
     setChapters([
       ...chapters,
       {
-        id: Date.now().toString(),
         chapterName: "",
         description: "",
         duration: "",
@@ -226,8 +242,24 @@ export default function SyllabusCourses({
     ]);
   };
 
-  const handleDeleteChapter = (index) => {
-    setChapters((prev) => prev.filter((_, i) => i !== index));
+  const handleDeleteChapter = async (index) => {
+    const chapterToDelete = chapters[index];
+
+    try {
+      if (chapterToDelete.id && courseId) {
+        await deleteChapter(chapterToDelete.id);
+        // Update local state after successful deletion from backend
+        setChapters((prev) => prev.filter((_, i) => i !== index));
+      } else {
+        // For unsaved chapters, just update local state
+        setChapters((prev) => prev.filter((_, i) => i !== index));
+      }
+
+      toast.success("Chapter deleted successfully");
+    } catch (error) {
+      console.error("Error deleting chapter:", error);
+      toast.error("Failed to delete chapter");
+    }
   };
 
   const validateAllChapters = () => {
@@ -327,7 +359,11 @@ export default function SyllabusCourses({
           data.append("chapterImage", chapter.chapterImage);
         }
 
-        await createChapter(data);
+        if (chapter.id) {
+          await updateChapter(chapter.id, data);
+        } else {
+          await createChapter(data);
+        }
       }
 
       toast.success("All chapters created successfully!");
@@ -352,6 +388,7 @@ export default function SyllabusCourses({
       setIsSubmitting(false);
     }
   };
+
   return (
     <>
       <form

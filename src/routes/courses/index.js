@@ -580,7 +580,6 @@ export default function Courses() {
             setIsSyllabusVisible(true);
           } else {
             if (activeTab === "recorded") {
-              console.log("recorded");
               setCreateCourseOpen(false);
               setIsSyllabusVisible(true);
             }
@@ -623,8 +622,6 @@ export default function Courses() {
           );
         }
       } catch (err) {
-        console.log("err", err);
-
         if (err.response?.status === 413) {
           toast.error("File too large", {
             description:
@@ -859,7 +856,6 @@ export default function Courses() {
     const form = document.querySelector("form");
     form?.reset();
   };
-  console.log(isLiveBatchVisible, isPhysicalBatchVisible, isSyllabusVisible);
 
   const handleDeleteCourse = async (id) => {
     setDeleteDialogOpen(false);
@@ -883,7 +879,6 @@ export default function Courses() {
         });
       }
     } catch (err) {
-      console.log(err);
       toast.error("Failed to delete course", {
         description: err instanceof Error ? err.message : "An error occurred.",
       });
@@ -897,6 +892,7 @@ export default function Courses() {
         onClick={() => {
           setOpen(true);
           setCreateCourseOpen(true);
+          setFormActiveTab(activeTab);
           setIsSyllabusVisible(false);
           setIsPhysicalBatchVisible(false);
           setIsLiveBatchVisible(false);
@@ -952,6 +948,7 @@ export default function Courses() {
                 setIsSyllabusVisible(true);
               }
             }}
+            setSelectedCenter={setSelectedCenter}
             videoFile={videoFile}
             formActiveTab={formActiveTab}
             instructors={instructors}

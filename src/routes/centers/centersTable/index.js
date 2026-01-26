@@ -173,7 +173,6 @@ export default function CentersTable() {
   };
 
   const onSubmit = async (data) => {
-    console.log(data);
 
     try {
       setIsLoading(true);

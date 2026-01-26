@@ -272,7 +272,12 @@ export default function CouponsTable() {
               </tbody>
             </table>
           </div>
-          <PagePagination />
+          <PagePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            itemsPerPage={itemsPerPage}
+            totalItems={totalItems}
+          />
         </div>
       </div>
       {isAddCouponOpen && (

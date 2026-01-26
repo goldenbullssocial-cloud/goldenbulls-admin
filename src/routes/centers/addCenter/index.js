@@ -70,7 +70,6 @@ export default function AddCenter({
       setCity(null);
     }
   }, [isOpen]);
-  console.log(form.formState.errors);
 
   return (
     <div

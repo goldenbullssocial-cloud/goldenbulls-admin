@@ -39,8 +39,6 @@ export const getWithdrawals = async (query = {}) => {
     const url = new URL(`${BaseUrl}/withdrawal/getAllRequest`);
     url.search = params.toString();
 
-    console.log("API Request URL:", url.toString());
-
     const res = await axios.get(url.toString(), {
       headers: getHeaders(),
     });

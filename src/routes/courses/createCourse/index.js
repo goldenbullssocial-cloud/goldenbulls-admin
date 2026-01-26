@@ -30,8 +30,12 @@ export default function CreateCourse({
   setOpen,
   setBatches,
   chaptersList,
+  setSelectedCenter,
 }) {
   const handleTabClick = (tab) => {
+    if (editCourse) {
+      return;
+    }
     setFormActiveTab(tab);
   };
 
@@ -149,6 +153,7 @@ export default function CreateCourse({
                   activeTab={formActiveTab}
                   setOpen={setOpen}
                   setBatches={setBatches}
+                  setSelectedCenter={setSelectedCenter}
                 />
               )}
             </div>

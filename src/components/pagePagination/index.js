@@ -26,7 +26,11 @@ export default function PagePagination({
         Showing {startItem} to {endItem} out of {totalItems} Entries
       </p>
       <div className={styles.rightalignment}>
-        <div onClick={handlePrev} disabled={currentPage === 1}>
+        <div
+          onClick={handlePrev}
+          disabled={currentPage === 1}
+          className={currentPage === 1 ? styles.disabled : ""}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -53,7 +57,11 @@ export default function PagePagination({
         <span>Previous</span>
         <div className={styles.size}>{currentPage}</div>
         <span>Next</span>
-        <div onClick={handleNext} disabled={currentPage === totalPages}>
+        <div
+          onClick={handleNext}
+          disabled={currentPage === totalPages}
+          className={currentPage === totalPages ? styles.disabled : ""}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"

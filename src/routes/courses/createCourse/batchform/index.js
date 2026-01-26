@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styles from "./batchForm.module.scss";
 import Input from "@/components/input";
 import RemoveIcon from "@/icons/removeIcon";
@@ -11,6 +11,8 @@ import {
   createNewBatch,
   getAllBatch,
 } from "@/api/course";
+import { getAllCenters } from "@/api/banner";
+import StyledSelect from "@/components/styledSelect";
 
 const SaveIcon = "/assets/icons/save.svg";
 
@@ -42,6 +44,7 @@ const formatDateForApi = (dateString) => {
 
 const createBatchPayload = (batches, courseId, activeTab, selectedCenter) => ({
   batch: batches.map((b) => ({
+    ...(b._id && { _id: b._id }), // Include existing batch ID if it exists
     startDate: formatDateForApi(b.startDate),
     endDate: formatDateForApi(b.endDate),
     courseId: courseId || "",
@@ -63,12 +66,89 @@ export default function BatchForm({
   activeTab,
   setOpen = () => {},
   setBatches = () => {},
+  setSelectedCenter = () => {},
 }) {
   const [batchesList, setBatchesList] = useState(
     batches.length > 0 ? batches : [INITIAL_BATCH],
   );
   const [batchErrors, setBatchErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [centers, setCenters] = useState([]);
+  const [isLoadingCenters, setIsLoadingCenters] = useState(false);
+
+  useEffect(() => {
+    const fetchCenters = async () => {
+      try {
+        setIsLoadingCenters(true);
+        const response = await getAllCenters();
+        if (response?.success) {
+          setCenters(response.payload?.data || []);
+        }
+      } catch (error) {
+        console.error("Error fetching centers:", error);
+        toast.error("Failed to load centers");
+      } finally {
+        setIsLoadingCenters(false);
+      }
+    };
+
+    fetchCenters();
+  }, []);
+  const toLocalDateInput = (date) => {
+    if (!date) return "";
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  // Add this useEffect hook after the existing useEffect for fetching centers
+  useEffect(() => {
+    const fetchBatches = async () => {
+      if (latestCourse?._id) {
+        try {
+          setIsLoading(true);
+          const response = await getAllBatch(latestCourse._id);
+
+          if (response && response.payload?.data?.length > 0) {
+            const formattedBatches = response?.payload?.data?.map((batch) => ({
+              _id: batch._id,
+              id: batch._id, // Using _id as id for consistency
+              startDate: toLocalDateInput(batch.startDate),
+              endDate: toLocalDateInput(batch.endDate),
+
+              batchTime: batch.time || "",
+              zoomLink: batch.meetingLink || "",
+              centerId: batch.centerId?._id || "",
+              centerName: batch.centerId?.centerName || "",
+              location: batch.location || "",
+            }));
+            setBatchesList(formattedBatches);
+            console.log(batchesList, "batchLis");
+
+            // If there's a centerId in the first batch, set it as selected
+            if (formattedBatches[0]?.centerId) {
+              const center = centers.find(
+                (c) => c._id === formattedBatches[0].centerId,
+              );
+              if (center) {
+                setSelectedCenter(center);
+              }
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching batches:", error);
+          toast.error("Failed to load batches");
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    fetchBatches();
+  }, [latestCourse?._id, centers]);
 
   // Batch management functions
   const createNewBatchObject = () => ({
@@ -95,17 +175,13 @@ export default function BatchForm({
   };
 
   const handleAddBatch = () => {
+    if (batches.length >= 10) {
+      toast.error("You can only add up to 10 batches");
+      return;
+    }
     setBatchesList((prev) => [...prev, createNewBatchObject()]);
   };
 
-  const handleDelete = (index) => {
-    if (batchesList.length > 1) {
-      removeBatchAtIndex(index);
-      toast.success("Batch removed");
-    } else {
-      toast.error("At least one batch is required");
-    }
-  };
   const handleSubmitAll = async (e) => {
     e.preventDefault();
 
@@ -131,11 +207,9 @@ export default function BatchForm({
     await handleCreateBatch(batchesList, setBatches);
   };
 
-  // Validation functions
   const validateSingleBatch = (batch, index, allBatches) => {
     const errors = {};
 
-    // Required field validation
     if (!batch.startDate) errors.startDate = "Start date is required";
     if (!batch.endDate) errors.endDate = "End date is required";
 
@@ -167,16 +241,16 @@ export default function BatchForm({
     });
 
     // Chronological validation - ensure start dates are in sequence
-    if (index > 0) {
-      const prevBatch = allBatches[index - 1];
-      if (prevBatch.startDate && batch.startDate) {
-        const prevStart = new Date(prevBatch.startDate);
-        const currentStart = new Date(batch.startDate);
-        if (currentStart <= prevStart) {
-          errors.startDate = `Start date must be after previous batch's start date (${prevStart.toDateString()})`;
-        }
-      }
-    }
+    // if (index > 0) {
+    //   const prevBatch = allBatches[index - 1];
+    //   if (prevBatch.startDate && batch.startDate) {
+    //     const prevStart = new Date(prevBatch.startDate);
+    //     const currentStart = new Date(batch.startDate);
+    //     if (currentStart <= prevStart) {
+    //       errors.startDate = `Start date must be after previous batch's start date (${prevStart.toDateString()})`;
+    //     }
+    //   }
+    // }
 
     return errors;
   };
@@ -195,46 +269,78 @@ export default function BatchForm({
     return Object.values(errors).some((err) => Object.keys(err).length > 0);
   };
 
-  // API functions
-  const handleCreateBatch = async (batches, setBatchesCallback) => {
+  const handleCreateBatch = async (batches, setBatches) => {
     try {
+      const errors = validateBatches(batches);
+      const hasErrors = Object.values(errors).some(
+        (err) => Object.keys(err).length > 0,
+      );
+      if (hasErrors) {
+        toast.error("Please fix the batch errors before submitting.");
+        return;
+      }
+
       setIsSubmitting(true);
-      const payload = createBatchPayload(
-        batches,
-        latestCourse?._id,
-        activeTab,
-        selectedCenter,
+
+      // Process all batches
+      await Promise.all(
+        batches.map(async (batch) => {
+          const batchData = {
+            startDate: batch.startDate
+              ? new Date(batch.startDate).toISOString().split("T")[0]
+              : null,
+            endDate: batch.endDate
+              ? new Date(batch.endDate).toISOString().split("T")[0]
+              : null,
+            courseId: latestCourse?._id || "",
+            ...(activeTab === "physical" &&
+              selectedCenter?._id && {
+                centerId: selectedCenter._id,
+              }),
+            ...(activeTab === "live" && {
+              meetingLink: batch.meetingLink || null,
+            }),
+            time: batch.batchTime || null,
+          };
+
+          if (batch._id) {
+            await handleUpdateBatch(batch._id, batchData, setBatches);
+          } else {
+            const res = await createNewBatch({ batch: [batchData] });
+            if (res.success) {
+              toast.success("Batch created successfully");
+              const updated = await getAllBatch(latestCourse?._id || "");
+              setBatches(updated.payload || []);
+            } else {
+              throw new Error(res.message || "Failed to create batch");
+            }
+          }
+        }),
       );
 
-      const res = await createNewBatch(payload);
-      if (res.success) {
-        toast.success("Batch created successfully");
-        setBatchesCallback(res.payload || []);
-        setOpen(false);
-      } else {
-        toast.error(res.message || "Failed to create batch");
-      }
+      setOpen(false);
     } catch (error) {
-      console.error("Batch creation error:", error);
-      toast.error("Failed to create batch");
+      console.error("Batch operation error:", error);
+      toast.error(error.message || "Failed to process batches");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleUpdateBatch = async (id, updatedData, setBatchesCallback) => {
+  const handleUpdateBatch = async (id, updatedData, setBatches) => {
     try {
       setIsSubmitting(true);
       const batchData = {
         ...updatedData,
-        ...(updatedData.zoomLink && { zoomLink: updatedData.zoomLink }),
+        ...(updatedData.meetingLink && {
+          meetingLink: updatedData.meetingLink,
+        }),
       };
-
       const res = await updateBatch(id, batchData);
       if (res.success) {
         toast.success("Batch updated successfully");
         const updated = await getAllBatch(latestCourse?._id || "");
-        setBatchesCallback(updated.payload || []);
+        setBatches(updated.payload || []);
       } else {
         toast.error(res.message || "Failed to update batch");
       }
@@ -288,7 +394,9 @@ export default function BatchForm({
                 <button
                   className={styles.remove}
                   type="button"
-                  onClick={() => handleDelete(index)}
+                  onClick={() =>
+                    handleDeleteBatch(batch._id, setBatchesList, index)
+                  }
                 >
                   <RemoveIcon />
                 </button>
@@ -303,7 +411,6 @@ export default function BatchForm({
                 value={batch.startDate}
                 onChange={(e) => {
                   handleInputChange(index, e);
-                  handleUpdateBatch(index, "startDate", e.target.value);
                 }}
                 error={batchErrors[index]?.startDate}
               />
@@ -315,7 +422,6 @@ export default function BatchForm({
                 value={batch.endDate}
                 onChange={(e) => {
                   handleInputChange(index, e);
-                  handleUpdateBatch(index, "endDate", e.target.value);
                 }}
                 error={batchErrors[index]?.endDate}
               />
@@ -327,11 +433,56 @@ export default function BatchForm({
                 value={batch.batchTime}
                 onChange={(e) => {
                   handleInputChange(index, e);
-                  handleUpdateBatch(index, "batchTime", e.target.value);
                 }}
                 error={batchErrors[index]?.batchTime}
               />
 
+              {activeTab === "physical" && (
+                <div className={styles.formGroup}>
+                  <label>Center</label>
+                  <StyledSelect
+                    options={batchesList.map((batch) => ({
+                      value: batch?.centerId,
+                      label: batch.centerName,
+                    }))}
+                    value={
+                      batch.centerId
+                        ? {
+                            value: batch.centerId,
+                            label: centers.find((c) => c._id === batch.centerId)
+                              ?.centerName,
+                          }
+                        : null
+                    }
+                    onChange={(val) => {
+                      if (val) {
+                        const selectedCenter = centers.find(
+                          (c) => c._id === val.value,
+                        );
+                        updateBatchAtIndex(index, {
+                          centerId: val.value,
+                          location: selectedCenter?.centerName || "",
+                        });
+                        setSelectedCenter(selectedCenter);
+                      } else {
+                        // Handle clear action
+                        updateBatchAtIndex(index, {
+                          centerId: "",
+                          location: "",
+                        });
+                        setSelectedCenter(null);
+                      }
+                    }}
+                    placeholder="Select Center"
+                    isDisabled={isLoadingCenters}
+                    error={batchErrors[index]?.centerId}
+                    isClearable
+                    isSearchable
+                    className="center-select"
+                    classNamePrefix="select"
+                  />
+                </div>
+              )}
               {activeTab === "live" && (
                 <Input
                   label="Zoom Link"
@@ -340,7 +491,6 @@ export default function BatchForm({
                   value={batch.zoomLink}
                   onChange={(e) => {
                     handleInputChange(index, e);
-                    handleUpdateBatch(index, "zoomLink", e.target.value);
                   }}
                   error={batchErrors[index]?.zoomLink}
                 />

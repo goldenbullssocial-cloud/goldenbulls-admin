@@ -2,7 +2,6 @@ import React from "react";
 import styles from "./deleteCourse.module.scss";
 import CloseIcon from "@/icons/closeIcon";
 export default function DeleteCourse({ course, onClose, onDelete }) {
-  console.log(course);
   return (
     <div
       className={styles.deleteUserModalWrapper}

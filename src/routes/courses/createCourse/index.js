@@ -122,7 +122,6 @@ export default function CreateCourse({
                   handleContinue={handleContinue}
                   videoFile={videoFile}
                   formActiveTab={formActiveTab}
-                  instructors={instructors}
                 />
               )}
               {isSyllabusVisible && (

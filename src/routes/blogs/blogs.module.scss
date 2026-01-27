@@ -1,0 +1,50 @@
+.blogsContainer {
+  padding: 24px;
+  min-height: calc(100vh - 64px);
+
+  .ant-card {
+    border-radius: 8px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+    margin-bottom: 24px;
+
+    .ant-card-head {
+      border-bottom: 1px solid #f0f0f0;
+
+      .ant-card-head-title {
+        font-weight: 600;
+      }
+    }
+  }
+
+  .ant-table {
+    border-radius: 8px;
+    overflow: hidden;
+
+    .ant-table-thead > tr > th {
+      background: #fafafa;
+      font-weight: 600;
+    }
+  }
+
+  .ant-btn {
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  .ant-tag {
+    margin-right: 8px;
+    margin-bottom: 8px;
+  }
+
+  .ant-form-item {
+    margin-bottom: 16px;
+  }
+
+  .cover-image-preview {
+    max-width: 200px;
+    max-height: 150px;
+    margin-top: 8px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+  }
+}

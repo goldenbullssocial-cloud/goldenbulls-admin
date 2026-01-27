@@ -2,7 +2,7 @@
 import React, { useLayoutEffect, useState } from "react";
 import styles from "./performanceOverview.module.scss";
 import { useRouter } from "next/navigation";
-import { getDashboardReportData, getTotalRevenueData } from "@/api/dashboard";
+import { getDashboardReportData, getRevenueBreakdownData, getTotalRevenueData } from "@/api/dashboard";
 import MonthlyBreakdown from "../monthlyBreakdown";
 
 const MoneyIcon = "/assets/icons/money.svg";
@@ -10,6 +10,30 @@ const UsersIcon = "/assets/icons/people.svg";
 const courseIcon = "/assets/icons/course.svg";
 const BotIcon = "/assets/icons/bot.svg";
 const TelegramIcon = "/assets/icons/telegram.svg";
+const getDateRange = (period) => {
+  const endDate = new Date();
+  const startDate = new Date();
+
+  switch (period) {
+    case "weekly":
+      startDate.setDate(endDate.getDate() - 7);
+      break;
+    case "monthly":
+      startDate.setMonth(endDate.getMonth() - 1);
+      break;
+    case "yearly":
+      startDate.setFullYear(endDate.getFullYear() - 1);
+      break;
+    default:
+      startDate.setDate(endDate.getDate() - 7);
+  }
+
+  return {
+    startDate: startDate.toISOString().split("T")[0],
+    endDate: endDate.toISOString().split("T")[0],
+  };
+};
+
 export default function PerformanceOverview() {
   const router = useRouter();
   const [checked, setChecked] = useState(false);
@@ -100,9 +124,9 @@ export default function PerformanceOverview() {
         <h2>performance overview</h2>
       </div>
       <div className={styles.grid}>
-        {stats.map((stat) => {
+        {stats.map((stat,i) => {
           return (
-            <div className={styles.griditems}>
+            <div key={i} className={styles.griditems}>
               <div className={styles.textstyle}>
                 <p>{stat.title}</p>
                 <span>{stat.value}</span>

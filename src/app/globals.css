@@ -40,6 +40,25 @@ a {
   margin: 0 auto;
 }
 
+/* Modal overlay styles */
+body.modal-open {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+/* Ensure modal stays on top of all elements */
+.modalOverlay {
+  position: fixed !important;
+  z-index: 9999 !important;
+}
+
+.modalContent {
+  z-index: 10000 !important;
+  position: relative;
+}
+
 .user-panel-layout {
   display: flex;
   background: #000;

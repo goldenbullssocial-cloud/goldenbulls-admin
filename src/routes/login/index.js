@@ -83,10 +83,16 @@ export default function Login() {
         email: formData.email,
         password: formData.password,
       });
+      console.log(response);
+      
       if (response.data) {
-        localStorage.setItem("token", response.data.payload.token);
+        const { token, user } = response.data.payload;
+        localStorage.setItem("token", token);
+
         if (formData.rememberMe) {
           localStorage.setItem("rememberMe", "true");
+        } else {
+          localStorage.removeItem("rememberMe");
         }
         router.push("/dashboard");
       }

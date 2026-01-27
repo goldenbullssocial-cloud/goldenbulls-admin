@@ -43,6 +43,9 @@
       .bottomSpacing {
         padding: 0 0 16px 0;
         position: relative;
+        input {
+          padding-left: 40px;
+        }
       }
 
       .eyeButton {

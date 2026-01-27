@@ -32,6 +32,7 @@ const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
 
   const d = payload[0].payload;
+  const hasUsers = d?.userDetails?.length > 0;
 
   return (
     <div
@@ -42,7 +43,8 @@ const CustomTooltip = ({ active, payload, label }) => {
         borderRadius: 24,
         padding: "4px",
         color: "#E2E8F0",
-        minWidth: 220,
+        minWidth: 300,
+        maxWidth: 400,
         marginBottom: "10px",
       }}
     >
@@ -96,11 +98,11 @@ const CustomTooltip = ({ active, payload, label }) => {
             justifyContent: "space-between",
             fontSize: 16,
             fontWeight: 500,
-            marginTop: 6,
+            marginBottom: hasUsers ? 10 : 0,
           }}
         >
           <span>Active Users</span>
-          <span>{d.users?.toLocaleString() || 0}</span>
+          <span>{d?.users?.toLocaleString() || 0}</span>
         </div>
       </div>
     </div>
@@ -117,31 +119,29 @@ const ActiveUsersbyMonth = () => {
         const result = await getUserSignupReport();
 
         if (result?.payload) {
-          // Map daily data to monthly format
+          // Process the monthly data from the API
           const monthlyData = MONTHS.map((month, index) => {
             if (month === "") return { month, users: null };
 
-            const totalUsers = result.payload.reduce(
-              (sum, day) => sum + day.userCount,
-              0,
+            // Find the corresponding month data from the API response
+            const monthData = result.payload.find(
+              (item) => item.monthIndex === index, // Adjust for 0-based index
             );
-            const avgUsersPerMonth = Math.floor(totalUsers / 12);
 
             return {
-              month: month,
-              users:
-                avgUsersPerMonth > 0
-                  ? avgUsersPerMonth + Math.floor(Math.random() * 10)
-                  : Math.floor(Math.random() * 100) + 50,
+              month,
+              users: monthData?.userCount || 0,
+              userDetails: monthData?.users || [],
             };
-          });
+          }); // Remove empty month entries
+
           setData(monthlyData);
         } else {
-          // Create sample data for testing - all months from Jan to Dec
-          const sampleData = Array.from({ length: 14 }, (_, i) => ({
-            month: MONTHS[i],
-            users:
-              MONTHS[i] === "" ? null : Math.floor(Math.random() * 1000) + 500,
+          // Fallback to sample data if no payload
+          const sampleData = Array.from({ length: 12 }, (_, i) => ({
+            month: MONTHS[i + 1], // Skip the first empty string
+            users: Math.floor(Math.random() * 10) + 5,
+            userDetails: [],
           }));
           setData(sampleData);
         }
@@ -181,7 +181,6 @@ const ActiveUsersbyMonth = () => {
 
   return (
     <div className={styles.activeUsersContainer}>
-
       <div className={styles.activeUsersChart}>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
@@ -194,13 +193,9 @@ const ActiveUsersbyMonth = () => {
                 <stop offset="100%" stopColor="#FFD700" stopOpacity={0.05} />
               </linearGradient>
             </defs>
-            <CartesianGrid
-              strokeDasharray="3 3"
-              stroke="#2D3748"
-            />
+            <CartesianGrid strokeDasharray="3 3" stroke="#2D3748" />
             <XAxis
               dataKey="month"
-              ticks={MONTHS}
               interval={0}
               tick={{ fill: "#9CA3AF" }}
               axisLine={{ stroke: "#4B5563" }}
@@ -212,13 +207,13 @@ const ActiveUsersbyMonth = () => {
                 style: { fill: "#fff", fontSize: 24, fontWeight: 500 },
               }}
             />
+
             <YAxis
-              ticks={[0, 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550]}
-              domain={[0, 550]}
               tick={{ fill: "#9CA3AF" }}
               axisLine={{ stroke: "#4B5563" }}
               tickLine={false}
-              tickFormatter={(v) => (v === 0 ? "" : `$${v}`)}
+              tickFormatter={(v) => (v === 0 ? "" : ` ${v}`)}
+              allowDecimals={false}
             />
             <Tooltip
               cursor={false}

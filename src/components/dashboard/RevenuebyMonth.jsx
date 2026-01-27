@@ -185,7 +185,6 @@ export default function RevenueByMonth() {
 
           <XAxis
             dataKey="month"
-            ticks={MONTHS}
             interval={0}
             tick={{ fill: "#9CA3AF" }}
             axisLine={{ stroke: "#4B5563" }}
@@ -217,7 +216,7 @@ export default function RevenueByMonth() {
                 <div
                   style={{
                     position: "absolute",
-                    transform: `translate(${x-110}px, ${y + 20}px)`, 
+                    transform: `translate(${x - 110}px, ${y + 20}px)`,
                     pointerEvents: "none",
                   }}
                 >

@@ -30,8 +30,10 @@ export default function AddAlgobot({
   plans,
   handleEditPlan,
   handleRemovePlan,
-  editingPlanId
+  editingPlanId,
 }) {
+  console.log("bot");
+
   return (
     <div className={styles.addAlgobotWrapper}>
       <div className={styles.modal}>
@@ -283,8 +285,8 @@ export default function AddAlgobot({
                   className={styles.select}
                   {...register("botProviderId")}
                   disabled={isFetchingProviders}
-                  onChange={(value) => {
-                    setValue("botProviderId", value, {
+                  onChange={(e) => {
+                    setValue("botProviderId", e.target.value, {
                       shouldValidate: true,
                     });
                   }}
@@ -305,8 +307,8 @@ export default function AddAlgobot({
                 <select
                   className={styles.select}
                   {...register("botId")}
-                  onChange={(value) => {
-                    setValue("botId", value, {
+                  onChange={(e) => {
+                    setValue("botId", e.target.value, {
                       shouldValidate: true,
                     });
                   }}

@@ -20,9 +20,8 @@
     width: 100%;
     max-width: 700px;
     display: grid;
-    grid-template-columns: 1fr 147px;
+    grid-template-columns: 1fr 200px;
     gap: 16px;
-    grid-template-columns: 1fr 147px;
 
     &:has(input):not(:has(button)),
     &:has(button):not(:has(input)) {

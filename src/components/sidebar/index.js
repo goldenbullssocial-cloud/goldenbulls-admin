@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import styles from "./sidebar.module.scss";
+import classNames from "classnames";
 import LibraryIcon from "@/icons/libraryIcon";
 import CoursesIcon from "@/icons/coursesIcon";
-
-import classNames from "classnames";
 import DashboardIcon from "@/icons/dashboardIcon";
 import UserIcon from "@/icons/userIcon";
 import UpIcon from "@/icons/upIcon";
@@ -17,15 +16,56 @@ import CouponsIcon from "@/icons/couponsIcon";
 import RevenueIcon from "@/icons/revenueIcon";
 import RequestsIcon from "@/icons/requestsIcon";
 import UtilityIcon from "@/icons/utilityIcon";
+import BlogsIcon from "@/icons/blogsIcon";
+import BlogCategoriesIcon from "@/icons/blogCategoriesIcon";
 import YoutubeIcon from "@/icons/youtubeIcon";
+import LogoutIcon from "@/icons/logoutIcon";
 const Logo = "/assets/logo/logo.svg";
 
 export default function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [user, setUser] = useState({});
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+  const modalRef = useRef(null);
+
+  // Handle body scroll and overlay when modal is open
+  useEffect(() => {
+    if (showLogoutModal) {
+      // Add class to body when modal is open
+      document.body.classList.add("modal-open");
+      // Prevent scrolling
+      document.body.style.overflow = "hidden";
+    } else {
+      // Remove class when modal is closed
+      document.body.classList.remove("modal-open");
+      // Re-enable scrolling
+      document.body.style.overflow = "auto";
+    }
+
+    // Cleanup function
+    return () => {
+      document.body.classList.remove("modal-open");
+      document.body.style.overflow = "auto";
+    };
+  }, [showLogoutModal]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setShowLogoutModal(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+  console.log(user, user);
 
   // Function to check if a path is active
   const isActive = (path) => {
@@ -36,14 +76,45 @@ export default function Sidebar() {
   };
 
   const handleLogoutClick = () => {
-    setShowLogoutDialog(true);
+    setShowLogoutModal(true);
+    setIsDropdownOpen(false);
   };
 
-  const handleLogout = () => {
+  const handleSignOut = async () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    router.push("/");
+    window.location.href = "/";
   };
+
+  const handleCancelLogout = () => {
+    setShowLogoutModal(false);
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const dropdown = document.querySelector(`.${styles.profileDropdown}`);
+      const profileBox = document.querySelector(`.${styles.profileBox}`);
+
+      if (
+        dropdown &&
+        profileBox &&
+        !dropdown.contains(event.target) &&
+        !profileBox.contains(event.target)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed);
@@ -62,113 +133,167 @@ export default function Sidebar() {
     }
   }, []);
   return (
-    <aside className={styles.sidebar}>
-      <div className={styles.sidebarlogo}>
-        <img src={Logo} alt="Logo" />
-      </div>
-      <div className={styles.asideBody}>
-        <div
-          className={classNames(styles.menu, {
-            [styles.active]: isActive("/dashboard"),
-          })}
-          onClick={() => router.push("/dashboard")}
-        >
-          <DashboardIcon />
-          <span>Dashboard</span>
+    <>
+      <aside className={styles.sidebar}>
+        <div className={styles.sidebarlogo}>
+          <img src={Logo} alt="Logo" />
         </div>
-        <div
-          className={classNames(styles.menu, {
-            [styles.active]: isActive("/user"),
-          })}
-          onClick={() => router.push("/user")}
-        >
-          <UsersIcon />
-          <span>Users</span>
-        </div>
-        <div
-          className={classNames(styles.menu, {
-            [styles.active]: isActive("/centers"),
-          })}
-          onClick={() => router.push("/centers")}
-        >
-          <CentersIcon />
-          <span>Centers</span>
-        </div>
-        <div
-          className={classNames(styles.menu, {
-            [styles.active]: isActive("/courses"),
-          })}
-          onClick={() => router.push("/courses")}
-        >
-          <CoursesIcon />
-          <span>Courses</span>
-        </div>
-        <div
-          className={classNames(styles.menu, {
-            [styles.active]: isActive("/algobots"),
-          })}
-          onClick={() => router.push("/algobots")}
-        >
-          <AlgobotsIcon />
-          <span>Algobots</span>
-        </div>
-        <div
-          className={classNames(styles.menu, {
-            [styles.active]: isActive("/coupons"),
-          })}
-          onClick={() => router.push("/coupons")}
-        >
-          <CouponsIcon />
-          <span>Coupons</span>
-        </div>
-        <div
-          className={classNames(styles.menu, {
-            [styles.active]: isActive("/revenue"),
-          })}
-          onClick={() => router.push("/revenue")}
-        >
-          <RevenueIcon />
-          <span>Revenue</span>
-        </div>
-        <div
-          className={classNames(styles.menu, {
-            [styles.active]: isActive("/withdraw-requests"),
-          })}
-          onClick={() => router.push("/withdraw-requests")}
-        >
-          <RequestsIcon />
-          <span>Requests</span>
-        </div>
-        <div
-          className={classNames(styles.menu, {
-            [styles.active]: isActive("/utility"),
-          })}
-          onClick={() => router.push("/utility")}
-        >
-          <UtilityIcon />
-          <span>Utility</span>
-        </div>
-        <div
-          className={classNames(styles.menu, {
-            [styles.active]: isActive("/youtube"),
-          })}
-          onClick={() => router.push("/youtube")}
-        >
-          <YoutubeIcon />
-          <span>YouTube</span>
-        </div>
-      </div>
-      <div className={styles.asideFooter}>
-        <div className={styles.profileBox}>
-          <div className={styles.profile}>
-            <UserIcon />
+        <div className={styles.asideBody}>
+          <div
+            className={classNames(styles.menu, {
+              [styles.active]: isActive("/dashboard"),
+            })}
+            onClick={() => router.push("/dashboard")}
+          >
+            <DashboardIcon />
+            <span>Dashboard</span>
           </div>
-          <div className={styles.textgrid}>
-            <span>{user.name || "User"}</span>
-            <UpIcon />
+          <div
+            className={classNames(styles.menu, {
+              [styles.active]: isActive("/user"),
+            })}
+            onClick={() => router.push("/user")}
+          >
+            <UsersIcon />
+            <span>Users</span>
+          </div>
+          <div
+            className={classNames(styles.menu, {
+              [styles.active]: isActive("/centers"),
+            })}
+            onClick={() => router.push("/centers")}
+          >
+            <CentersIcon />
+            <span>Centers</span>
+          </div>
+          <div
+            className={classNames(styles.menu, {
+              [styles.active]: isActive("/courses"),
+            })}
+            onClick={() => router.push("/courses")}
+          >
+            <CoursesIcon />
+            <span>Courses</span>
+          </div>
+          <div
+            className={classNames(styles.menu, {
+              [styles.active]: isActive("/algobots"),
+            })}
+            onClick={() => router.push("/algobots")}
+          >
+            <AlgobotsIcon />
+            <span>Algobots</span>
+          </div>
+          <div
+            className={classNames(styles.menu, {
+              [styles.active]: isActive("/coupons"),
+            })}
+            onClick={() => router.push("/coupons")}
+          >
+            <CouponsIcon />
+            <span>Coupons</span>
+          </div>
+          <div
+            className={classNames(styles.menu, {
+              [styles.active]: isActive("/revenue"),
+            })}
+            onClick={() => router.push("/revenue")}
+          >
+            <RevenueIcon />
+            <span>Revenue</span>
+          </div>
+          <div
+            className={classNames(styles.menu, {
+              [styles.active]: isActive("/withdraw-requests"),
+            })}
+            onClick={() => router.push("/withdraw-requests")}
+          >
+            <RequestsIcon />
+            <span>Requests</span>
+          </div>
+          <div
+            className={classNames(styles.menu, {
+              [styles.active]: isActive("/utility"),
+            })}
+            onClick={() => router.push("/utility")}
+          >
+            <UtilityIcon />
+            <span>Utility</span>
+          </div>
+          <div
+            className={classNames(styles.menu, {
+              [styles.active]: isActive("/blog-categories"),
+            })}
+            onClick={() => router.push("/blog-categories")}
+          >
+            <BlogCategoriesIcon />
+            <span>Blog Categories</span>
+          </div>
+            <div
+              className={classNames(styles.menu, {
+                [styles.active]: isActive("/blogs"),
+              })}
+              onClick={() => router.push("/blogs")}
+            >
+              <BlogsIcon />
+              <span>Blogs</span>
+            </div>
+          <div
+            className={classNames(styles.menu, {
+              [styles.active]: isActive("/youtube"),
+            })}
+            onClick={() => router.push("/youtube")}
+          >
+            <YoutubeIcon />
+            <span>YouTube</span>
           </div>
         </div>
-      </div>
-    </aside>
+        <div className={styles.asideFooter}>
+          <div className={styles.profileBox} onClick={toggleDropdown}>
+            <div className={styles.profile}>
+              <UserIcon />
+            </div>
+            <div className={styles.textgrid}>
+              <span>{user.name || "Admin"}</span>
+              <UpIcon
+                className={classNames({ [styles.rotate]: isDropdownOpen })}
+              />
+            </div>
+            {isDropdownOpen && (
+              <div className={styles.profileDropdown}>
+                <div
+                  className={styles.dropdownItem}
+                  onClick={handleLogoutClick}
+                >
+                  <LogoutIcon className={styles.dropdownIcon} />
+                  <span>Logout</span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Logout Confirmation Modal */}
+      </aside>
+      {showLogoutModal && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent} ref={modalRef}>
+            <h3>Confirm Logout</h3>
+            <p>Are you sure you want to log out?</p>
+            <div className={styles.modalActions}>
+              <button
+                className={styles.cancelButton}
+                onClick={handleCancelLogout}
+              >
+                Cancel
+              </button>
+              <button className={styles.logoutButton} onClick={handleSignOut}>
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

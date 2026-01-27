@@ -21,6 +21,8 @@ import AddCenter from "../addCenter";
 import { toast } from "sonner";
 import CenterDetailsModal from "../centerDetailsModal";
 import DeleteCenter from "../deleteCenter";
+import NoDataFound from "@/components/noDataFound";
+import TableSkeleton from "@/components/tableSkeleton";
 
 const formatDate = (dateString) => {
   if (!dateString) return "N/A";
@@ -173,7 +175,6 @@ export default function CentersTable() {
   };
 
   const onSubmit = async (data) => {
-
     try {
       setIsLoading(true);
       const centerData = {
@@ -251,7 +252,6 @@ export default function CentersTable() {
   return (
     <>
       <UserHeader
-        type="search"
         inputType="Center"
         placeholder="Search Centers"
         onChange={(e) => setSearchTerm(e.target.value.trimStart())}
@@ -287,32 +287,45 @@ export default function CentersTable() {
               </tr>
             </thead>
             <tbody>
-              {centers.map((center, i) => {
-                return (
-                  <tr key={i}>
-                    <td>{i + 1}</td>
-                    <td>{center.centerName}</td>
-                    <td>{center.location}</td>
-                    <td>{center.city}</td>
-                    <td>{center.state}</td>
-                    <td>{center.country}</td>
-                    <td>{formatDate(center.createdAt)}</td>
-                    <td>
-                      <span
-                        className={`${styles.status} ${center.isActive ? styles.active : styles.inactive}`}
-                      >
-                        {center.isActive ? "Active" : "Inactive"}
-                      </span>
-                    </td>
-                    <td>
-                      <Dropdown
-                        actions={getUserActions(center.isActive)}
-                        onSelect={(action) => handleAction(action, center)}
-                      />
-                    </td>
-                  </tr>
-                );
-              })}
+              {isLoading ? (
+                <tr>
+                  <td colSpan="9" style={{ padding: 0 }}>
+                    <TableSkeleton
+                      rows={Math.min(itemsPerPage, 10)}
+                      columns={9}
+                    />
+                  </td>
+                </tr>
+              ) : centers.length > 0 ? (
+                centers?.map((center, i) => {
+                  return (
+                    <tr key={i}>
+                      <td>{i + 1}</td>
+                      <td>{center.centerName}</td>
+                      <td>{center.location}</td>
+                      <td>{center.city}</td>
+                      <td>{center.state}</td>
+                      <td>{center.country}</td>
+                      <td>{formatDate(center.createdAt)}</td>
+                      <td>
+                        <span
+                          className={`${styles.status} ${center.isActive ? styles.active : styles.inactive}`}
+                        >
+                          {center.isActive ? "Active" : "Inactive"}
+                        </span>
+                      </td>
+                      <td>
+                        <Dropdown
+                          actions={getUserActions(center.isActive)}
+                          onSelect={(action) => handleAction(action, center)}
+                        />
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <NoDataFound />
+              )}
             </tbody>
           </table>
         </div>

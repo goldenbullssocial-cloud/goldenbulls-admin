@@ -59,6 +59,7 @@ export default function SyllabusCourses({
   const [isVideoDragOver, setIsVideoDragOver] = useState(false);
 
   const initialLoad = useRef(true);
+  console.log("existingChapters", existingChapters);
 
   // Update chapters when existingChapters prop changes
   useEffect(() => {
@@ -242,25 +243,23 @@ export default function SyllabusCourses({
     ]);
   };
 
-  const handleDeleteChapter = async (index) => {
-    const chapterToDelete = chapters[index];
+const handleDeleteChapter = async (index) => {
+  const chapterToDelete = chapters[index];
 
-    try {
-      if (chapterToDelete.id && courseId) {
-        await deleteChapter(chapterToDelete.id);
-        // Update local state after successful deletion from backend
-        setChapters((prev) => prev.filter((_, i) => i !== index));
-      } else {
-        // For unsaved chapters, just update local state
-        setChapters((prev) => prev.filter((_, i) => i !== index));
-      }
-
-      toast.success("Chapter deleted successfully");
-    } catch (error) {
-      console.error("Error deleting chapter:", error);
-      toast.error("Failed to delete chapter");
+  try {
+    if (chapterToDelete.id && courseId) {
+      await deleteChapter(chapterToDelete.id);
     }
-  };
+    // Always update local state, whether it was a backend deletion or local only
+    const updatedChapters = chapters.filter((_, i) => i !== index);
+    setChapters(updatedChapters);
+
+    toast.success("Chapter deleted successfully");
+  } catch (error) {
+    console.error("Error deleting chapter:", error);
+    toast.error("Failed to delete chapter");
+  }
+};
 
   const validateAllChapters = () => {
     let isValid = true;

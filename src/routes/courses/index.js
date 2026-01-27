@@ -11,10 +11,6 @@ import {
   getCourses,
   updateCourse,
   deleteCourse,
-  createNewBatch,
-  updateBatch,
-  deleteBatch,
-  getAllBatch,
   uploadImage,
   getChapters,
 } from "@/api/course";
@@ -38,11 +34,6 @@ export default function Courses() {
   });
   const [formActiveTab, setFormActiveTab] = useState("recorded");
   const [isTabSwitching, setIsTabSwitching] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState({
-    code: "IN",
-    phonecode: "91",
-  });
-
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -331,27 +322,27 @@ export default function Courses() {
       errors.videoFile = "Please upload an video";
     }
 
-    if (courseType === "physical") {
-      if (!formData.get("email")?.toString().trim()) {
-        errors.email = "Email is required";
-      } else if (
-        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
-          formData.get("email")?.toString().trim().toLowerCase() || "",
-        )
-      ) {
-        errors.email = "Please enter a valid email address";
-      }
+    // if (courseType === "physical") {
+    //   // if (!formData.get("email")?.toString().trim()) {
+    //   //   errors.email = "Email is required";
+    //   // } else if (
+    //   //   !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
+    //   //     formData.get("email")?.toString().trim().toLowerCase() || "",
+    //   //   )
+    //   // ) {
+    //   //   errors.email = "Please enter a valid email address";
+    //   // }
 
-      // For required phone
-      if (!formData.get("phone")?.toString().trim()) {
-        errors.phone = "Phone number is required";
-      }
-      // else if (
-      //   !/^[+\d\s-]{10,}$/.test(formData.get("phone")?.toString().trim() || "")
-      // ) {
-      //   errors.phone = "Please enter a valid phone number (min 10 digits)";
-      // }
-    }
+    //   // // For required phone
+    //   // if (!formData.get("phone")?.toString().trim()) {
+    //   //   errors.phone = "Phone number is required";
+    //   // }
+    //   // else if (
+    //   //   !/^[+\d\s-]{10,}$/.test(formData.get("phone")?.toString().trim() || "")
+    //   // ) {
+    //   //   errors.phone = "Please enter a valid phone number (min 10 digits)";
+    //   // }
+    // }
     return errors;
   };
 
@@ -472,7 +463,7 @@ export default function Courses() {
     e.preventDefault();
 
     // Prevent multiple submissions
-    if (isSubmitting) return;
+    if (isSubmitting) return false;
 
     setIsSubmitting(true);
     setFormErrors({});
@@ -501,10 +492,10 @@ export default function Courses() {
       setFormErrors(errors);
 
       // If there are errors, stop submission
-      // if (Object.keys(errors).length > 0) {
-      //   setIsSubmitting(false);
-      //   return;
-      // }
+      if (Object.keys(errors).length > 0) {
+        setIsSubmitting(false);
+        return false;
+      }
 
       // Create a new FormData for the API request
       const apiFormData = new FormData();
@@ -613,13 +604,18 @@ export default function Courses() {
             courseType: activeTab,
           });
           setCourses(refreshed.payload.data);
+          return true;
         } else {
           toast.error(
-            editCourse ? "Failed to update course" : "Failed to create course",
+            error.response?.data?.message ||
+              (editCourse
+                ? "Failed to update course"
+                : "Failed to create course"),
             {
-              description: data?.message || "An error occurred.",
+              description: error.response?.data?.error || error.message,
             },
           );
+          return false;
         }
       } catch (err) {
         if (err.response?.status === 413) {
@@ -911,6 +907,7 @@ export default function Courses() {
             setSelectedCourse(course);
             setViewCourseModalOpen(true);
           }}
+          loading={loading}
           onEdit={(course) => {
             setEditCourse(course);
             setOpen(true);
@@ -932,26 +929,17 @@ export default function Courses() {
             handleTrimInput={handleTrimInput}
             createCourseOpen={createCourseOpen}
             handleIntroVideoChange={handleIntroVideoChange}
-            handleContinue={(e) => {
-              handleCourseSubmit(e);
-              if (activeTab === "recorded") {
-                setCreateCourseOpen(false);
-                setIsSyllabusVisible(true);
-              }
+            handleContinue={async (e) => {
+              const isFormValid = await handleCourseSubmit(e);
+              if (!isFormValid) return; // Don't proceed if form is invalid
 
-              if (activeTab === "live") {
-                setCreateCourseOpen(false);
-                setIsSyllabusVisible(true);
-              }
-              if (activeTab === "physical") {
-                setCreateCourseOpen(false);
-                setIsSyllabusVisible(true);
-              }
+              // Only proceed if form is valid
+              setCreateCourseOpen(false);
+              setIsSyllabusVisible(true);
             }}
             setSelectedCenter={setSelectedCenter}
             videoFile={videoFile}
             formActiveTab={formActiveTab}
-            instructors={instructors}
             onClose={handleClose}
             isSyllabusVisible={isSyllabusVisible}
             courseId={latestCourse?._id}

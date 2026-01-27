@@ -878,6 +878,7 @@ export default function Algobots() {
     }, 0);
 
     // Handle nested bot and provider structure
+    console.log(plan.botId, "providerId");
     if (plan.botId && typeof plan.botId === "object") {
       const botId = plan.botId._id;
       const providerId = plan.botId.botProviderId?._id;
@@ -900,6 +901,7 @@ export default function Algobots() {
     } else {
       const botId = plan?.botId;
       const providerId = plan?.botProviderId;
+      console.log(providerId, "pros");
 
       if (providerId) {
         // First set the provider and wait for state update
@@ -914,6 +916,7 @@ export default function Algobots() {
             (b) => b.botProviderId === providerId || !b.botProviderId,
           );
           setFilteredBots(fb);
+          console.log(fb, filteredBots, "fb");
         }, 0);
       }
     }
@@ -1008,6 +1011,8 @@ export default function Algobots() {
   return (
     <>
       <UserHeader
+        onChange={(e) => setSearchTerm(e.target.value.trimStart())}
+        value={searchTerm}
         placeholder="Search algobots"
         buttonText="Add Algobot"
         onClick={() => {

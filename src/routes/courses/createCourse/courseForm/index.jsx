@@ -14,7 +14,6 @@ export default function CourseForm({
   handleContinue,
   videoFile,
   formActiveTab,
-  instructors,
 }) {
   const [selectedLanguage, setSelectedLanguage] = React.useState(
     editCourse?.language || "English",
@@ -58,10 +57,43 @@ export default function CourseForm({
       label: "Extreme",
     },
   ];
-
-  const handleLanguageAction = (language) => {
-    setSelectedLanguage(language);
+console.log("Form Errors:", formErrors);
+  const handleLanguageAction = (value) => {
+    setSelectedLanguage(value);
+    // Update the hidden input value when language changes
+    const form = document.querySelector("form");
+    if (form) {
+      const hiddenInput = form.querySelector('input[name="language"]');
+      if (hiddenInput) {
+        hiddenInput.value = value;
+      }
+    }
   };
+
+  // Add hidden input for language on component mount
+  React.useEffect(() => {
+    const form = document.querySelector("form");
+    if (form) {
+      // Remove any existing hidden language input
+      const existingInput = form.querySelector('input[name="language"]');
+      if (existingInput) existingInput.remove();
+
+      // Add new hidden input
+      const hiddenInput = document.createElement("input");
+      hiddenInput.type = "hidden";
+      hiddenInput.name = "language";
+      hiddenInput.value = selectedLanguage;
+      form.appendChild(hiddenInput);
+    }
+
+    // Cleanup function to remove the input when component unmounts
+    return () => {
+      if (form) {
+        const input = form.querySelector('input[name="language"]');
+        if (input) input.remove();
+      }
+    };
+  }, [selectedLanguage]);
 
   const handleLevelAction = (level) => {
     setSelectedLevel(level);
@@ -136,7 +168,7 @@ export default function CourseForm({
               <ImageUpload
                 name="courseVideo"
                 id="course-thumbnail"
-                error={formErrors.courseVideo}
+                error={formErrors.image}
                 onChange={handleImageChange}
                 initialImage={editCourse?.courseVideo || null}
               />
@@ -175,19 +207,38 @@ export default function CourseForm({
         </div>
         <div className={styles.twoCol}>
           <div className={styles.instructorField}>
-            <Input
-            label="Instructor Name"
-            placeholder="Instructor Name"
-            name="instructorName"
-            defaultValue={editCourse?.instructorName || ""}
-            onBlur={handleTrimInput}
-            onKeyDown={(e) => {
-              if (e.key === " " && !e.target.value.trim()) {
-                e.preventDefault();
-              }
-            }}
-            error={formErrors.description}
-          />
+            <div>
+              <Input
+                label="Instructor Name"
+                placeholder="Instructor Name"
+                name="instructor"
+                defaultValue={editCourse?.instructor || ""}
+                onBlur={(e) => {
+                  handleTrimInput(e);
+                  // Ensure the form's input is updated
+                  const form = e.target.closest("form");
+                  if (form) {
+                    const hiddenInput = form.querySelector(
+                      'input[name="instructor"]',
+                    );
+                    if (hiddenInput) {
+                      hiddenInput.value = e.target.value.trim();
+                    }
+                  }
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === " " && !e.target.value.trim()) {
+                    e.preventDefault();
+                  }
+                }}
+                error={formErrors.instructor}
+              />
+              <input
+                type="hidden"
+                name="instructor"
+                value={editCourse?.instructor || ""}
+              />
+            </div>
           </div>
           <div className={styles.languageField}>
             <label className={styles.label}>Language</label>
@@ -195,7 +246,26 @@ export default function CourseForm({
               name="language"
               className={styles.select}
               value={selectedLanguage}
-              onChange={(e) => handleLanguageAction(e.target.value)}
+              onChange={(e) => {
+                handleLanguageAction(e.target.value);
+                // Ensure the form's hidden input is updated
+                const form = e.target.closest("form");
+                if (form) {
+                  const hiddenInput = form.querySelector(
+                    'input[name="language"]',
+                  );
+                  if (hiddenInput) {
+                    hiddenInput.value = e.target.value;
+                  } else {
+                    // If hidden input doesn't exist, create it
+                    const newInput = document.createElement("input");
+                    newInput.type = "hidden";
+                    newInput.name = "language";
+                    newInput.value = e.target.value;
+                    form.appendChild(newInput);
+                  }
+                }
+              }}
             >
               {getLanguageActions().map((lang) => (
                 <option key={lang.key} value={lang.key}>

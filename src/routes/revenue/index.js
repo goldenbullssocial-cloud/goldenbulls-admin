@@ -6,6 +6,7 @@ import UserHeader from "@/components/userHeader";
 import { getPaymentHistory, downloadInvoice } from "@/api/payment";
 import { toast } from "sonner";
 import { Search } from "lucide-react";
+import PagePagination from "@/components/pagePagination";
 export default function Revenue() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
@@ -15,7 +16,7 @@ export default function Revenue() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(8);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [totalItems, setTotalItems] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [loadingInvoices, setLoadingInvoices] = useState({});
@@ -27,13 +28,10 @@ export default function Revenue() {
         let isType = "";
         if (activeTab === "courses") {
           isType = "Course";
-          setCurrentPage(1);
         } else if (activeTab === "algobots") {
           isType = "Bot";
-          setCurrentPage(1);
         } else if (activeTab === "telegram") {
           isType = "Telegram";
-          setCurrentPage(1);
         }
         const response = await getPaymentHistory({
           page: currentPage,
@@ -59,9 +57,17 @@ export default function Revenue() {
 
     fetchPayments();
   }, [currentPage, itemsPerPage, activeTab]);
+
+  // Reset page when tab changes
   useEffect(() => {
+    setCurrentPage(1);
     setSearchTerm("");
   }, [activeTab]);
+
+  // Reset page when search term changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
 
   const calculateExpiryDate = (purchaseDate, planDuration) => {
     if (!planDuration || planDuration === "N/A") return null;
@@ -291,6 +297,11 @@ export default function Revenue() {
           filteredPayments={filteredPayments}
           downloadPaymentInvoice={downloadPaymentInvoice}
           loadingInvoices={loadingInvoices}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          itemsPerPage={itemsPerPage}
+          totalItems={totalItems}
+          onPageChange={handlePageChange}
         />
       </div>
     </>

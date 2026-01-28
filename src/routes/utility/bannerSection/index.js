@@ -19,6 +19,8 @@ import InactiveIcon from "../../../../public/assets/icons/InactiveUser.svg";
 import DeleteIcon from "../../../../public/assets/icons/Delete.svg";
 import Dropdown from "@/components/dropdown";
 import DeleteBanner from "./deleteBanner";
+import PagePagination from "@/components/pagePagination";
+import NoDataFound from "@/components/noDataFound";
 // import { useForm } from "react-hook-form";
 const PlusIcon = "/assets/icons/plus.svg";
 const BannerImage = "/assets/images/banner1.png";
@@ -48,6 +50,10 @@ export default function BannerSection() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [bannerToDelete, setBannerToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalItems, setTotalItems] = useState(0);
+  const itemsPerPage = 4;
 
   const fileInputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -66,15 +72,29 @@ export default function BannerSection() {
   } = form;
   const imageFile = watch("image");
 
-  const fetchBanners = async () => {
+  const fetchBanners = async (page = 1) => {
     try {
       setIsFetching(true);
-      const response = await getAllBanners();
+      const response = await getAllBanners(page, itemsPerPage);
+      console.log("API Response:", response); // Debug log
       // Filter out banners where isOnboarding is true or not present
       const filteredBanners = (response?.payload?.data || []).filter(
         (banner) => banner.isOnboarding == false && banner.isBanner == true,
       );
       setBanners(filteredBanners);
+
+      // Calculate pagination based on the API response
+      const totalCount = response?.payload?.count || 0;
+      const calculatedTotalPages = Math.ceil(totalCount / itemsPerPage);
+
+      setTotalPages(calculatedTotalPages);
+      setTotalItems(totalCount);
+      setCurrentPage(page);
+      console.log("Pagination data:", {
+        totalCount,
+        calculatedTotalPages,
+        currentPage: page,
+      }); // Debug log
     } catch (error) {
       toast.error("Failed to fetch banners");
     } finally {
@@ -215,25 +235,29 @@ export default function BannerSection() {
         <Button text="Add Banner" icon={PlusIcon} onClick={handleCreateNew} />
       </div>
       <div className={styles.imageGrid}>
-        {banners.map((banner) => {
-          return (
-            <div className={styles.items} key={banner._id}>
-              <div className={styles.imageContainer}>
-                <img
-                  className={styles.images}
-                  src={banner.image}
-                  alt="BannerImage"
-                />
-                <div className={styles.dropdownOverlay}>
-                  <Dropdown
-                    actions={getBannerActions(banner)}
-                    onSelect={(action) => handleAction(action, banner)}
+        {banners.length > 0 ? (
+          banners.map((banner) => {
+            return (
+              <div className={styles.items} key={banner._id}>
+                <div className={styles.imageContainer}>
+                  <img
+                    className={styles.images}
+                    src={banner.image}
+                    alt="BannerImage"
                   />
+                  <div className={styles.dropdownOverlay}>
+                    <Dropdown
+                      actions={getBannerActions(banner)}
+                      onSelect={(action) => handleAction(action, banner)}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })
+        ) : (
+          <NoDataFound />
+        )}
       </div>
       {isOpen && (
         <AddBanner
@@ -256,6 +280,13 @@ export default function BannerSection() {
           onDelete={confirmDelete}
         />
       )}
+      <PagePagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        itemsPerPage={itemsPerPage}
+        totalItems={totalItems}
+        onPageChange={fetchBanners}
+      />
     </div>
   );
 }

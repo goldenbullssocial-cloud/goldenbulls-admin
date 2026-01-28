@@ -3,14 +3,29 @@ import styles from "./courseSales.module.scss";
 import PagePagination from "@/components/pagePagination";
 import DownloadIcon from "@/icons/downloadIcon";
 import { format } from "date-fns";
+import NoDataFound from "@/components/noDataFound";
 export default function CourseSales({
   activeTab,
   filteredPayments,
   downloadPaymentInvoice,
   loadingInvoices,
+  currentPage,
+  totalPages,
+  itemsPerPage,
+  totalItems,
+  onPageChange,
 }) {
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  // Calculate pagination based on filtered data
+  const filteredTotalItems = filteredPayments.length;
+  const filteredTotalPages = Math.ceil(filteredTotalItems / itemsPerPage);
+
+  // Get current page data from filtered payments
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentPaginatedData = filteredPayments.slice(startIndex, endIndex);
 
   const handlePaymentClick = (payment) => {
     setSelectedPayment(payment);
@@ -39,47 +54,52 @@ export default function CourseSales({
               </tr>
             </thead>
             <tbody>
-              {filteredPayments.map((payment, index) => {
-                return (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>
-                      {format(payment?.createdAt, "dd/MM/yyyy, hh:mm:ss")}
-                    </td>
-                    <td>
-                      {payment?.uid?.firstName + " " + payment?.uid?.lastName ||
-                        "N/A"}
-                    </td>
-                    <td>{payment?.courseId?.CourseName || "N/A"}</td>
-                    <td>{payment?.courseId?.courseType || "N/A"}</td>
-                    <td>{payment?.price || "N/A"}</td>
-                    <td>{payment?.orderId || "N/A"}</td>
-                    <td>
-                      <button
-                        onClick={() => downloadPaymentInvoice(payment)}
-                        disabled={loadingInvoices[payment._id]}
-                        className="border-none"
-                      >
-                        {loadingInvoices[payment._id] ? (
-                          <>
-                            <DownloadIcon
-                              className={`h-4 w-4 animate-pulse ${
-                                loadingInvoices[payment._id]
-                                  ? "cursor-not-allowed"
-                                  : ""
-                              }`}
-                            />
-                          </>
-                        ) : (
-                          <>
-                            <DownloadIcon className="h-4 w-4" />
-                          </>
-                        )}
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
+              {currentPaginatedData.length > 0 ? (
+                currentPaginatedData.map((payment, index) => {
+                  return (
+                    <tr key={payment._id || index}>
+                      <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                      <td>
+                        {format(payment?.createdAt, "dd/MM/yyyy, hh:mm:ss")}
+                      </td>
+                      <td>
+                        {payment?.uid?.firstName +
+                          " " +
+                          payment?.uid?.lastName || "N/A"}
+                      </td>
+                      <td>{payment?.courseId?.CourseName || "N/A"}</td>
+                      <td>{payment?.courseId?.courseType || "N/A"}</td>
+                      <td>{payment?.price || "N/A"}</td>
+                      <td>{payment?.orderId || "N/A"}</td>
+                      <td>
+                        <button
+                          onClick={() => downloadPaymentInvoice(payment)}
+                          disabled={loadingInvoices[payment._id]}
+                          className="border-none"
+                        >
+                          {loadingInvoices[payment._id] ? (
+                            <>
+                              <DownloadIcon
+                                className={`h-4 w-4 animate-pulse ${
+                                  loadingInvoices[payment._id]
+                                    ? "cursor-not-allowed"
+                                    : ""
+                                }`}
+                              />
+                            </>
+                          ) : (
+                            <>
+                              <DownloadIcon className="h-4 w-4" />
+                            </>
+                          )}
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <NoDataFound />
+              )}
             </tbody>
           </table>
         </div>
@@ -101,10 +121,10 @@ export default function CourseSales({
               </tr>
             </thead>
             <tbody>
-              {filteredPayments.map((payment, index) => {
+              {currentPaginatedData.map((payment, index) => {
                 return (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
+                  <tr key={payment._id || index}>
+                    <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                     <td>{payment?.createdAt}</td>
                     <td>{payment?.uid?.name || "N/A"}</td>
                     <td>{payment?.courseId?.CourseName || "N/A"}</td>
@@ -177,10 +197,10 @@ export default function CourseSales({
               </tr>
             </thead>
             <tbody>
-              {filteredPayments.map((payment, index) => {
+              {currentPaginatedData.map((payment, index) => {
                 return (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
+                  <tr key={payment._id || index}>
+                    <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                     <td>{payment?.createdAt}</td>
                     <td>{payment?.uid?.name || "N/A"}</td>
                     <td>{payment?.courseId?.courseType || "N/A"}</td>
@@ -246,7 +266,15 @@ export default function CourseSales({
           </div>
         </div>
       )}
-      <PagePagination />
+      {currentPaginatedData.length > 0 && (
+        <PagePagination
+          currentPage={currentPage}
+          totalPages={filteredTotalPages}
+          itemsPerPage={itemsPerPage}
+          totalItems={filteredTotalItems}
+          onPageChange={onPageChange}
+        />
+      )}
     </div>
   );
 }

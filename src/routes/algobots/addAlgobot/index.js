@@ -5,6 +5,7 @@ import Input from "@/components/input";
 import Textarea from "@/components/textarea";
 import Button from "@/components/button";
 import { Pencil, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 const SaveIcon = "/assets/icons/save.svg";
 export default function AddAlgobot({
   setIsOpen,
@@ -31,8 +32,8 @@ export default function AddAlgobot({
   handleEditPlan,
   handleRemovePlan,
   editingPlanId,
+  botPlanId,
 }) {
-
   return (
     <div className={styles.addAlgobotWrapper}>
       <div className={styles.modal}>
@@ -51,7 +52,9 @@ export default function AddAlgobot({
               Bot Details
             </div>
             <div
-              onClick={() => setStep(2)}
+              onClick={() =>
+                botPlanId ? setStep(2) : toast.error("Please add a plan first")
+              }
               className={`${styles.tab} ${step === 2 ? styles.active : ""}`}
             >
               Plans

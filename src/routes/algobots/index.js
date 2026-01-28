@@ -1063,9 +1063,9 @@ export default function Algobots() {
                         onSelect={(action) => handleAction(action, bot)}
                       />
                     </div>
-                    <div className={styles.buttonStyle}>
+                    {/* <div className={styles.buttonStyle}>
                       <Button text="Subscribe Now" />
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               );
@@ -1129,6 +1129,7 @@ export default function Algobots() {
             planEdit={planEdit}
             plans={plans}
             handleEditPlan={handleEditPlan}
+            botPlanId={botPlanId}
             handleRemovePlan={handleRemovePlan}
           />
         )}

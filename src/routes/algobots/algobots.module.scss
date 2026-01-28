@@ -119,10 +119,9 @@
         position: relative;
         border-radius: 25.929px;
         padding: 20px;
- background:
-          "linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(153, 153, 153, 0) 60.58%)";
+        // background: "linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(153, 153, 153, 0) 60.58%)";
         max-width: 90%;
-
+        background-color: #0c0c0c;
         @include respond-to("sm") {
           padding: 20px;
           max-width: 248px;
@@ -211,7 +210,7 @@
       color: #e1e1e1;
       font-size: 16px;
     }
-    
+
     .line {
       height: 1px;
       background: #66666693;

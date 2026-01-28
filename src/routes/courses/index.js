@@ -977,6 +977,22 @@ export default function Courses() {
           <DetailCourseView
             course={selectedCourse}
             onClose={() => setViewCourseModalOpen(false)}
+            onEdit={(course) => {
+              setEditCourse(course);
+              setOpen(true);
+              setCreateCourseOpen(true);
+              setFormActiveTab(activeTab);
+              setIsSyllabusVisible(false);
+              setIsPhysicalBatchVisible(false);
+              setIsLiveBatchVisible(false);
+              setIsChaptersVisible(false);
+              setViewCourseModalOpen(false);
+            }}
+            onDelete={() => {
+              setCourseToDelete(selectedCourse);
+              setDeleteDialogOpen(true);
+              setViewCourseModalOpen(false);
+            }}
           />
         )}
       </div>

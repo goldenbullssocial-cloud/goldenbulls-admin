@@ -129,6 +129,7 @@ export default function CreateCourse({
                   courseId={courseId}
                   onSuccess={onSuccess}
                   editCourse={editCourse}
+                  formActiveTab={formActiveTab}
                   existingChapters={chaptersList}
                 />
               )}

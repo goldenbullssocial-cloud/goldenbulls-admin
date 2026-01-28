@@ -19,6 +19,7 @@ const SaveIcon = "/assets/icons/save.svg";
 export default function SyllabusCourses({
   courseId,
   onSuccess,
+  formActiveTab,
   editCourse,
   existingChapters = [],
 }) {
@@ -242,23 +243,23 @@ export default function SyllabusCourses({
     ]);
   };
 
-const handleDeleteChapter = async (index) => {
-  const chapterToDelete = chapters[index];
+  const handleDeleteChapter = async (index) => {
+    const chapterToDelete = chapters[index];
 
-  try {
-    if (chapterToDelete.id && courseId) {
-      await deleteChapter(chapterToDelete.id);
+    try {
+      if (chapterToDelete.id && courseId) {
+        await deleteChapter(chapterToDelete.id);
+      }
+      // Always update local state, whether it was a backend deletion or local only
+      const updatedChapters = chapters.filter((_, i) => i !== index);
+      setChapters(updatedChapters);
+
+      toast.success("Chapter deleted successfully");
+    } catch (error) {
+      console.error("Error deleting chapter:", error);
+      toast.error("Failed to delete chapter");
     }
-    // Always update local state, whether it was a backend deletion or local only
-    const updatedChapters = chapters.filter((_, i) => i !== index);
-    setChapters(updatedChapters);
-
-    toast.success("Chapter deleted successfully");
-  } catch (error) {
-    console.error("Error deleting chapter:", error);
-    toast.error("Failed to delete chapter");
-  }
-};
+  };
 
   const validateAllChapters = () => {
     let isValid = true;
@@ -298,11 +299,12 @@ const handleDeleteChapter = async (index) => {
         chapterErrors.duration = "Duration must be a positive number";
         isValid = false;
       }
-
-      if (!chapter.videoFile && !chapter.videoUrl) {
-        chapterErrors.videoFile =
-          "Please upload a video file or provide a video URL";
-        isValid = false;
+      if (formActiveTab == "recorded") {
+        if (!chapter.videoFile && !chapter.videoUrl) {
+          chapterErrors.videoFile =
+            "Please upload a video file or provide a video URL";
+          isValid = false;
+        }
       }
 
       if (Object.keys(chapterErrors).length > 0) {
@@ -416,7 +418,13 @@ const handleDeleteChapter = async (index) => {
                   placeholder="Duration"
                   name="duration"
                   value={chapter.duration}
-                  onChange={(e) => handleInputChange(index, e)}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    // Only allow numbers
+                    if (value === "" || /^\d*\.?\d*$/.test(value)) {
+                      handleInputChange(index, e);
+                    }
+                  }}
                   error={errors[index]?.duration}
                 />
 
@@ -437,7 +445,13 @@ const handleDeleteChapter = async (index) => {
                 placeholder="Chapter Day"
                 name="chapterNo"
                 value={chapter.chapterNo}
-                onChange={(e) => handleInputChange(index, e)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  // Only allow numbers
+                  if (value === "" || /^\d+$/.test(value)) {
+                    handleInputChange(index, e);
+                  }
+                }}
                 error={errors[index]?.chapterNo}
               />
             </div>
@@ -456,57 +470,59 @@ const handleDeleteChapter = async (index) => {
                 </p>
               )}
             </div>
-            <div className={styles.chaapterVideo}>
-              <span>Chapter Video</span>
-              <div
-                className={`${styles.uploadBox} ${isVideoDragOver ? styles.dragOver : ""}`}
-                onClick={() =>
-                  document.getElementById(`video-upload-${index}`)?.click()
-                }
-                onDragOver={(e) => handleVideoDragOver(e)}
-                onDragLeave={(e) => handleVideoDragLeave(e)}
-                onDrop={(e) => handleVideoDrop(e, index)}
-              >
-                {chapter.videoFile ||
-                videoPreviews[index] ||
-                chapter.videoUrl ? (
-                  <div className={styles.previewWrapper}>
-                    <video
-                      src={
-                        chapter.videoFile
-                          ? URL.createObjectURL(chapter.videoFile)
-                          : videoPreviews[index] || chapter.videoUrl
-                      }
-                      controls
-                      className={styles.videoPreview}
-                    />
-                  </div>
-                ) : (
-                  <div className={styles.iconCenter}>
-                    <DragIcon />
-                  </div>
+            {formActiveTab === "recorded" && (
+              <div className={styles.chaapterVideo}>
+                <span>Chapter Video</span>
+                <div
+                  className={`${styles.uploadBox} ${isVideoDragOver ? styles.dragOver : ""}`}
+                  onClick={() =>
+                    document.getElementById(`video-upload-${index}`)?.click()
+                  }
+                  onDragOver={(e) => handleVideoDragOver(e)}
+                  onDragLeave={(e) => handleVideoDragLeave(e)}
+                  onDrop={(e) => handleVideoDrop(e, index)}
+                >
+                  {chapter.videoFile ||
+                  videoPreviews[index] ||
+                  chapter.videoUrl ? (
+                    <div className={styles.previewWrapper}>
+                      <video
+                        src={
+                          chapter.videoFile
+                            ? URL.createObjectURL(chapter.videoFile)
+                            : videoPreviews[index] || chapter.videoUrl
+                        }
+                        controls
+                        className={styles.videoPreview}
+                      />
+                    </div>
+                  ) : (
+                    <div className={styles.iconCenter}>
+                      <DragIcon />
+                    </div>
+                  )}
+
+                  <p className={styles.fileText}>
+                    Drag and drop video here, or click to select
+                  </p>
+
+                  {/* Hidden input */}
+                  <Input
+                    type="file"
+                    name="videoFile"
+                    accept="video/mp4,video/webm,video/quicktime"
+                    id={`video-upload-${index}`}
+                    className={styles.hiddenInput}
+                    onChange={(e) => handleInputChange(index, e)}
+                  />
+                </div>
+                {(errors[index]?.videoFile || errors[index]?.videoUrl) && (
+                  <p className={styles.errorMessage}>
+                    {errors[index].videoFile || errors[index].videoUrl}
+                  </p>
                 )}
-
-                <p className={styles.fileText}>
-                  Drag and drop video here, or click to select
-                </p>
-
-                {/* Hidden input */}
-                <Input
-                  type="file"
-                  name="videoFile"
-                  accept="video/mp4,video/webm,video/quicktime"
-                  id={`video-upload-${index}`}
-                  className={styles.hiddenInput}
-                  onChange={(e) => handleInputChange(index, e)}
-                />
               </div>
-              {(errors[index]?.videoFile || errors[index]?.videoUrl) && (
-                <p className={styles.errorMessage}>
-                  {errors[index].videoFile || errors[index].videoUrl}
-                </p>
-              )}
-            </div>
+            )}
           </div>
         ))}
         <div className={styles.buttonGrid}>

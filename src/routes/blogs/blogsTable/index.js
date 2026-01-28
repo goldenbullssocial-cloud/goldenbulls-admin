@@ -75,8 +75,8 @@ export default function BlogsTable() {
       const response = await getAllBlog(params);
 
       setBlogs(response?.payload?.data || []);
-      setTotalItems(response?.payload?.total || 0);
-      setTotalPages(Math.ceil((response?.payload?.total || 1) / itemsPerPage));
+      setTotalItems(response?.payload?.count);
+      setTotalPages(Math.ceil((response?.payload?.count || 1) / itemsPerPage));
     } catch (error) {
       console.error("Error fetching blogs:", error);
       toast.error("Failed to load blogs");

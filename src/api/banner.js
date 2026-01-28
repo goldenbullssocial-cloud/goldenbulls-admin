@@ -78,10 +78,11 @@ export const updateBanner = async (id, imageFile) => {
   }
 };
 
-export const getAllBanners = async () => {
+export const getAllBanners = async (page = 1, limit = 10) => {
   try {
     const res = await axios.get(`${BaseUrl}/banner/getBanner`, {
       headers: getHeaders(),
+      params: { page, limit },
     });
     return res.data;
   } catch (error) {

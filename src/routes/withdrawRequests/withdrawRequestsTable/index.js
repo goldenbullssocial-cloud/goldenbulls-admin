@@ -13,6 +13,7 @@ import { getWithdrawals } from "@/api/withdrawal";
 import { format } from "date-fns";
 import SettingsModal from "../settingsModal";
 import { getSocket } from "@/utils/webSocket";
+import NoDataFound from "@/components/noDataFound";
 const settingIcon = "/assets/icons/settings.svg";
 export default function WithdrawRequestsTable() {
   const [utilitySettings, setUtilitySettings] = useState(null);
@@ -128,51 +129,57 @@ export default function WithdrawRequestsTable() {
     return filtered;
   };
 
-  const fetchWithdrawals = async () => {
+  const fetchWithdrawals = async (page = 1) => {
     try {
       setIsFetching(true);
 
       const res = await getWithdrawals({
-        limit: 10000,
+        page,
+        limit: itemsPerPage,
+        search: debouncedSearch || undefined,
+        status: statusFilter !== "all" ? statusFilter : undefined,
       });
+
+      console.log("Withdrawals API Response:", res); // Debug log
+
       const allWithdrawals = res.payload?.data || [];
       setWithdrawals(allWithdrawals);
+
+      // Calculate pagination based on the API response
+      const totalCount = res.payload?.count || 0;
+      const calculatedTotalPages = Math.ceil(totalCount / itemsPerPage);
+
+      setTotalPages(calculatedTotalPages);
+      setTotalItems(totalCount);
+      setCurrentPage(page);
+
+      console.log("Pagination data:", {
+        totalCount,
+        calculatedTotalPages,
+        currentPage: page,
+      }); // Debug log
     } catch (err) {
       console.error("fetchWithdrawals error", err);
       toast.error("Failed to load withdrawals");
     } finally {
       setIsFetching(false);
-      getPaginatedWithdrawals();
     }
   };
 
-  const getPaginatedWithdrawals = () => {
-    const filtered = getFilteredWithdrawals(withdrawals);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    return filtered
-      .slice(startIndex, startIndex + itemsPerPage)
-      .map((withdrawal, index) => {
-        const serialNumber = startIndex + index + 1;
-        return {
-          ...withdrawal,
-          idx: serialNumber - 1,
-          serialNumber,
-        };
-      });
-  };
+  // Remove client-side pagination since we're using server-side pagination
+  // const getPaginatedWithdrawals = () => { ... }
+
+  // Remove client-side pagination effects since we're using server-side pagination
 
   useEffect(() => {
-    const filtered = getFilteredWithdrawals(withdrawals);
-    const total = filtered.length;
-    setTotalItems(total);
-    setTotalPages(Math.max(1, Math.ceil(total / itemsPerPage)));
-    setCurrentPage(1);
-  }, [withdrawals, statusFilter, debouncedSearch, itemsPerPage]);
-
-  useEffect(() => {
-    fetchWithdrawals();
+    fetchWithdrawals(currentPage);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Refetch when page, search, or filter changes
+  useEffect(() => {
+    fetchWithdrawals(currentPage);
+  }, [currentPage, statusFilter, debouncedSearch]);
 
   // Commission modal behaviour
   const openCommissionForAll = () => {
@@ -359,31 +366,48 @@ export default function WithdrawRequestsTable() {
                 </tr>
               </thead>
               <tbody>
-                {getPaginatedWithdrawals().map((withdrawal, index) => {
-                  return (
-                    <tr key={withdrawal._id}>
-                      <td>{index + 1}</td>
-                      <td>
-                        {format(withdrawal.createdAt, "dd/MM/yyyy HH:mm:ss")}
-                      </td>
-                      <td>{withdrawal.name || "N/A"}</td>
-                      <td>{withdrawal.email || "N/A"}</td>
-                      <td>{withdrawal.amount || "N/A"}</td>
-                      <td>{withdrawal.transactionId || "N/A"}</td>
-                      <td>{withdrawal.withdrawalType || "N/A"}</td>
-                      <td>
-                        <span className={styles.green}>Approved</span>
-                      </td>
-                      <td>
-                        <ThreeMenuIcon />
-                      </td>
-                    </tr>
-                  );
-                })}
+                {withdrawals?.length > 0 ? (
+                  withdrawals.map((withdrawal, index) => {
+                    return (
+                      <tr
+                        key={withdrawal._id}
+                        className={getRowClassName(withdrawal)}
+                      >
+                        <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                        <td>
+                          {format(withdrawal.createdAt, "dd/MM/yyyy HH:mm:ss")}
+                        </td>
+                        <td>{withdrawal.name || "N/A"}</td>
+                        <td>{withdrawal.email || "N/A"}</td>
+                        <td>{withdrawal.amount || "N/A"}</td>
+                        <td>{withdrawal.transactionId || "N/A"}</td>
+                        <td>{withdrawal.withdrawalType || "N/A"}</td>
+                        <td>
+                          <span
+                            className={`${styles[withdrawal.status] || styles.green}`}
+                          >
+                            {withdrawal.status || "N/A"}
+                          </span>
+                        </td>
+                        <td>
+                          <ThreeMenuIcon />
+                        </td>
+                      </tr>
+                    );
+                  })
+                ) : (
+                  <NoDataFound />
+                )}
               </tbody>
             </table>
           </div>
-          <PagePagination />
+          <PagePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            itemsPerPage={itemsPerPage}
+            totalItems={totalItems}
+            onPageChange={fetchWithdrawals}
+          />
         </div>
       </div>
       {commissionDialogOpen && (

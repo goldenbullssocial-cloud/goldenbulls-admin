@@ -12,6 +12,8 @@ import { updateWithdrawalNotification } from "@/api/withdrawalNotification";
 import { getWithdrawals } from "@/api/withdrawal";
 import { format } from "date-fns";
 import SettingsModal from "../settingsModal";
+import { getSocket } from "@/utils/webSocket";
+const settingIcon = "/assets/icons/settings.svg";
 export default function WithdrawRequestsTable() {
   const [utilitySettings, setUtilitySettings] = useState(null);
   const [isFetching, setIsFetching] = useState(true);
@@ -332,7 +334,11 @@ export default function WithdrawRequestsTable() {
     <>
       <UserHeader
         NoSearch
+        HeaderText="Withdraw Requests"
+        DescriptionText="Analyze income trends and detailed financial insights"
         buttonText="Settings"
+        // NoRightContent
+        icon={settingIcon}
         onClick={() => setCommissionDialogOpen(true)}
       />
       <div className={styles.withdrawRequestspage}>
@@ -380,7 +386,14 @@ export default function WithdrawRequestsTable() {
           <PagePagination />
         </div>
       </div>
-      {commissionDialogOpen && <SettingsModal onSave={submitCommission} onClose={() => setCommissionDialogOpen(false)} commissionPercent={commissionPercent} setCommissionPercent={setCommissionPercent} />}
-    </> 
+      {commissionDialogOpen && (
+        <SettingsModal
+          onSave={submitCommission}
+          onClose={() => setCommissionDialogOpen(false)}
+          commissionPercent={commissionPercent}
+          setCommissionPercent={setCommissionPercent}
+        />
+      )}
+    </>
   );
 }

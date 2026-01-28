@@ -59,7 +59,6 @@ export default function SyllabusCourses({
   const [isVideoDragOver, setIsVideoDragOver] = useState(false);
 
   const initialLoad = useRef(true);
-  console.log("existingChapters", existingChapters);
 
   // Update chapters when existingChapters prop changes
   useEffect(() => {
@@ -434,8 +433,8 @@ const handleDeleteChapter = async (index) => {
             </div>
             <div className={styles.bottomAlignment}>
               <Input
-                label="Chapter Number"
-                placeholder="Chapter Number"
+                label="Chapter Day"
+                placeholder="Chapter Day"
                 name="chapterNo"
                 value={chapter.chapterNo}
                 onChange={(e) => handleInputChange(index, e)}

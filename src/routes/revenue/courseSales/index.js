@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styles from "./courseSales.module.scss";
 import PagePagination from "@/components/pagePagination";
 import DownloadIcon from "@/icons/downloadIcon";
+import { format } from "date-fns";
 export default function CourseSales({
   activeTab,
   filteredPayments,
@@ -42,8 +43,13 @@ export default function CourseSales({
                 return (
                   <tr key={index}>
                     <td>{index + 1}</td>
-                    <td>{payment?.createdAt}</td>
-                    <td>{payment?.uid?.name || "N/A"}</td>
+                    <td>
+                      {format(payment?.createdAt, "dd/MM/yyyy, hh:mm:ss")}
+                    </td>
+                    <td>
+                      {payment?.uid?.firstName + " " + payment?.uid?.lastName ||
+                        "N/A"}
+                    </td>
                     <td>{payment?.courseId?.CourseName || "N/A"}</td>
                     <td>{payment?.courseId?.courseType || "N/A"}</td>
                     <td>{payment?.price || "N/A"}</td>

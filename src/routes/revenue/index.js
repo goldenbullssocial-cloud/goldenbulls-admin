@@ -258,22 +258,40 @@ export default function Revenue() {
 
   return (
     <>
-      <UserHeader NoRightContent />
+      <UserHeader
+        NoRightContent
+        HeaderText="Revenue"
+        DescriptionText="Analyze income trends and detailed financial insights"
+      />
       <div className={styles.revenuePageAlignment}>
         <div className={styles.tabCenter}>
           <div className={styles.tabGroup}>
-            <button className={activeTab === "courses" ? styles.active : ""} onClick={() => setActiveTab("courses")}>
+            <button
+              className={activeTab === "courses" ? styles.active : ""}
+              onClick={() => setActiveTab("courses")}
+            >
               <span>Course Sales</span>
             </button>
-            <button className={activeTab === "algobots" ? styles.active : ""} onClick={() => setActiveTab("algobots")}>
+            <button
+              className={activeTab === "algobots" ? styles.active : ""}
+              onClick={() => setActiveTab("algobots")}
+            >
               <span>Algobot Sales</span>
             </button>
-            <button className={activeTab === "telegram" ? styles.active : ""} onClick={() => setActiveTab("telegram")}>
+            <button
+              className={activeTab === "telegram" ? styles.active : ""}
+              onClick={() => setActiveTab("telegram")}
+            >
               <span>Telegram Sales</span>
             </button>
           </div>
         </div>
-        <CourseSales activeTab={activeTab} filteredPayments={filteredPayments} downloadPaymentInvoice={downloadPaymentInvoice} loadingInvoices={loadingInvoices} />
+        <CourseSales
+          activeTab={activeTab}
+          filteredPayments={filteredPayments}
+          downloadPaymentInvoice={downloadPaymentInvoice}
+          loadingInvoices={loadingInvoices}
+        />
       </div>
     </>
   );

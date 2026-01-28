@@ -1,156 +1,165 @@
-@use '../../../../scss/main.scss' as *;
-@use '../../../../scss/breakpoints/breakpoints.scss' as *;
-@use '../../../../scss/font/font.scss' as *;
+@use "../../../../scss/main.scss" as *;
+@use "../../../../scss/breakpoints/breakpoints.scss" as *;
+@use "../../../../scss/font/font.scss" as *;
 
 .recordedCoursesAlignment {
-    .box {
-        border-radius: 24px;
-        border: 1px solid var(--Linear, #666);
-        background: rgba(255, 255, 255, 0.05);
-        padding: 24px;
-        margin: 0 0 24px 0;
+  .box {
+    border-radius: 24px;
+    border: 1px solid var(--Linear, #666);
+    background: rgba(255, 255, 255, 0.05);
+    padding: 24px;
+    margin: 0 0 24px 0;
 
-        .batchHeader {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+    .batchHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
 
-            h3 {
-                color: var(--White, #FFF);
-                font-size: 18px;
-                font-weight: 500;
-                margin: 0;
-            }
-
-            .remove {
-                width: 40px;
-                height: 40px;
-                cursor: pointer;
-                border: 1px solid #66666693;
-                display: flex;
-                background: rgba(255, 255, 255, 0.05);
-                align-items: center;
-                justify-content: center;
-                border-radius: 16px;
-
-                &:hover {
-                    border-color: var(--GOLD, #F9F490);
-                }
-            }
-        }
-
-        .batchGrid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            margin-bottom: 20px;
-
-            @include respond-to("lg") {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            @include respond-to("md") {
-                grid-template-columns: 1fr;
-            }
-        }
-    }
-
-    .box:last-child {
+      h3 {
+        color: var(--White, #fff);
+        font-size: 18px;
+        font-weight: 500;
         margin: 0;
+      }
+
+      .remove {
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
+        border: 1px solid #66666693;
+        display: flex;
+        background: rgba(255, 255, 255, 0.05);
+        align-items: center;
+        justify-content: center;
+        border-radius: 16px;
+
+        &:hover {
+          border-color: var(--GOLD, #f9f490);
+        }
+      }
     }
 
-    .buttonGrid {
-        display: grid;
+    .batchGrid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+
+      @include respond-to("lg") {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      @include respond-to("md") {
         grid-template-columns: 1fr;
-        gap: 16px;
-        padding: 24px 0 0 0;
-
-        .addbutton {
-            button {
-                cursor: pointer;
-                width: 100%;
-                padding: 12px;
-                border-radius: 43.452px;
-                border: 0.869px solid var(--GOLD, #F9F490);
-                background-color: transparent;
-                justify-content: center;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-
-                span {
-                    @include font-normal;
-                    font-size: 20px;
-                    font-style: normal;
-                    background: var(--GOLD, linear-gradient(90deg, #F9F490 0%, #E4AB40 25.48%, #FEFBA5 75%, #BD894E 100%));
-                    background-clip: text;
-                    -webkit-background-clip: text;
-                    -webkit-text-fill-color: transparent;
-                    font-weight: 500;
-                    line-height: normal;
-                }
-            }
-        }
-
-        button {
-            width: 100%;
-        }
+      }
     }
+  }
 
-    input {
-        padding-left: 16px !important;
-    }
+  .box:last-child {
+    margin: 0;
+  }
 
-    .bottomAlignment {
-        padding: 0 0 24px 0;
-    }
+  .buttonGrid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 24px 0 0 0;
 
-    .chaapterVideo {
+    .addbutton {
+      button {
+        cursor: pointer;
+        width: 100%;
+        padding: 12px;
+        border-radius: 43.452px;
+        border: 0.869px solid var(--GOLD, #f9f490);
+        background-color: transparent;
+        justify-content: center;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
         span {
-            display: block;
-            color: var(--White, #FFF);
-            font-size: 16px;
-            font-style: normal;
-            font-weight: 400;
-            line-height: normal;
-            @include font-normal;
-            padding: 0 0 12px 0;
+          @include font-normal;
+          font-size: 20px;
+          font-style: normal;
+          background: var(
+            --GOLD,
+            linear-gradient(
+              90deg,
+              #f9f490 0%,
+              #e4ab40 25.48%,
+              #fefba5 75%,
+              #bd894e 100%
+            )
+          );
+          background-clip: text;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          font-weight: 500;
+          line-height: normal;
         }
-
-        .uploadBox {
-            border-radius: 24px;
-            border: 1px dashed #858585;
-            padding: 37px 20px;
-
-            .iconCenter {
-                display: flex;
-                justify-content: center;
-                padding: 0 0 12px 0;
-            }
-
-            p {
-                color: #B6B6B6;
-                font-size: 18px;
-                text-align: center;
-                font-style: normal;
-                font-weight: 400;
-                line-height: normal;
-                @include font-normal;
-            }
-        }
+      }
     }
 
-    .hiddenInput {
-        display: none;
+    button {
+      width: 100%;
     }
-        .errorMessage {
-        color: #ff4d4f;
-        font-size: 12px;
-        margin-top: 4px;
-        display: block;
+  }
+
+  input {
+    padding-left: 16px !important;
+  }
+
+  .bottomAlignment {
+    padding: 0 0 24px 0;
+  }
+
+  .chaapterVideo {
+    span {
+      display: block;
+      color: var(--White, #fff);
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+      @include font-normal;
+      padding: 0 0 12px 0;
+    }
+
+    .uploadBox {
+      border-radius: 24px;
+      border: 1px dashed #858585;
+      padding: 37px 20px;
+
+      .iconCenter {
+        display: flex;
+        justify-content: center;
+        padding: 0 0 12px 0;
+      }
+
+      p {
+        color: #b6b6b6;
+        font-size: 18px;
+        text-align: center;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
         @include font-normal;
+      }
     }
+  }
+
+  .hiddenInput {
+    display: none;
+  }
+  .errorMessage {
+    color: #ff4d4f;
+    font-size: 12px;
+    margin-top: 4px;
+    display: block;
+    @include font-normal;
+  }
 }
 .previewWrapper {
   display: flex;
@@ -161,4 +170,19 @@
 .videoPreview {
   max-height: 80px;
   border-radius: 6px;
+}
+
+.formGroup {
+  margin-bottom: 16px;
+
+  label {
+    display: block;
+    color: var(--White, #fff);
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    @include font-normal;
+    padding: 0 0 12px 0;
+  }
 }

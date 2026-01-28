@@ -142,7 +142,11 @@ export default function SocialLinks() {
 
   return (
     <>
-      <UserHeader NoRightContent />
+      <UserHeader
+        NoRightContent
+        HeaderText="Utility"
+        DescriptionText="Manage miscellaneous elements of web and app"
+      />
       <div className={styles.utility}>
         <div className={styles.socialLinks}>
           <div className={styles.title}>

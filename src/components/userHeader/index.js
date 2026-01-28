@@ -4,7 +4,6 @@ import styles from "./userHeader.module.scss";
 import Button from "../button";
 
 export default function UserHeader({
-  inputType = "text",
   placeholder = "Search Courses and Algobots",
   value = "",
   onChange = () => {},
@@ -14,6 +13,9 @@ export default function UserHeader({
   NoRightContent,
   NoSearch,
   NoButton,
+  icon,
+  DescriptionText,
+  HeaderText
 }) {
   const [user, setUser] = useState({});
   const [isClient, setIsClient] = useState(false);
@@ -33,12 +35,8 @@ export default function UserHeader({
       <div className={styles.leftContent}>
         <div className={styles.line}></div>
         <div>
-          <h2>
-            Hello <span>{isClient ? user?.name || "User" : "User"}</span>
-          </h2>
-          <p>
-            Keep learning, and grow your understanding of trading step by step.
-          </p>
+          <h2>{HeaderText}</h2>
+          <p>{DescriptionText}</p>
         </div>
       </div>
       {!NoRightContent && (
@@ -52,7 +50,13 @@ export default function UserHeader({
             />
           )}
           {!NoButton && (
-            <Button text={buttonText} onClick={onClick} disabled={disabled} />
+            <Button
+              text={buttonText}
+              onClick={onClick}
+              disabled={disabled}
+              icon={icon}
+              rightIcon
+            />
           )}
         </div>
       )}

@@ -11,6 +11,13 @@ import { createYoutube, getAllYoutube } from "@/api/youtube";
 import { uploadImage } from "@/api/course";
 import Image from "next/image";
 import { toast } from "sonner";
+import Dropdown from "@/components/dropdown";
+import EditIcon from "../../../public/assets/icons/Edit.svg";
+import DeleteIcon from "../../../public/assets/icons/Delete.svg";
+import PagePagination from "@/components/pagePagination";
+import NoDataFound from "@/components/noDataFound";
+const PlusIcon = "/assets/icons/plus.svg";
+
 const ytUrlRegex =
   /^(https?:\/\/)?(www\.)?(youtube\.com\/(watch\?v=|embed\/|v\/)|youtu\.be\/)[A-Za-z0-9_-]{11}([&?].*)?$/;
 
@@ -57,7 +64,6 @@ export default function Youtube() {
   const [isFetching, setIsFetching] = useState(true);
   const [items, setItems] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredItems, setFilteredItems] = useState([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -65,7 +71,9 @@ export default function Youtube() {
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(8);
+  const [totalItems, setTotalItems] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -102,8 +110,23 @@ export default function Youtube() {
       });
       // expecting response.payload.data like in previous examples
       const data = res?.payload?.data ?? res?.data ?? [];
+      const pagination = res?.payload?.count ?? {};
+
+      console.log("API Response:", res);
+      console.log("Pagination data:", pagination);
+      console.log("Data length:", data.length);
+
       setItems(data);
-      setFilteredItems(data);
+
+      // If backend provides pagination, use it. Otherwise, calculate from all data
+      if (pagination) {
+        setTotalItems(pagination);
+        setTotalPages(Math.ceil(pagination / itemsPerPage));
+      } else {
+        setTotalItems(data.length);
+        const hasMorePages = data.length === itemsPerPage;
+        setTotalPages(hasMorePages ? currentPage + 1 : currentPage);
+      }
     } catch (err) {
       console.error(err);
       toast.error("Failed to fetch YouTube items");
@@ -114,18 +137,7 @@ export default function Youtube() {
 
   useEffect(() => {
     fetchList();
-  }, []);
-
-  useEffect(() => {
-    if (!searchTerm.trim()) {
-      setFilteredItems(items);
-      return;
-    }
-    const q = searchTerm.toLowerCase();
-    setFilteredItems(
-      items.filter((it) => it?.description?.toLowerCase().includes(q)),
-    );
-  }, [searchTerm, items]);
+  }, [currentPage, itemsPerPage, searchTerm]);
 
   // Drag & drop handlers for thumbnail
   const handleDragOver = (e) => {
@@ -232,27 +244,29 @@ export default function Youtube() {
   };
 
   const onSubmit = async (data) => {
+    console.log("data", data);
+
     setIsLoading(true);
-    
+
     try {
       let requestData = {};
-      
+
       if (isEditMode && currentId) {
         // In edit mode, only include changed fields
         const originalItem = items.find((item) => item._id === currentId);
         if (!originalItem) {
           throw new Error("Original item not found");
         }
-        
+
         // Compare each field and only include if changed
         if (data.description !== originalItem.description) {
           requestData.description = data.description;
         }
-        
+
         if (data.videoUrl !== originalItem.videoUrl) {
           requestData.videoUrl = data.videoUrl;
         }
-        
+
         if (data.thumbnail && data.thumbnail !== originalItem.thumbnail) {
           requestData.thumbnail = data.thumbnail;
         }
@@ -340,72 +354,123 @@ export default function Youtube() {
     setIsOpen(true);
   };
 
-  // Simple pagination helpers
-  const paginated = filteredItems.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
-  );
+  const getActions = () => [
+    {
+      key: "edit",
+      label: "Edit",
+      icon: EditIcon,
+    },
+
+    {
+      key: "delete",
+      label: "Delete",
+      icon: DeleteIcon,
+      variant: "danger",
+    },
+  ];
+  const handleAction = (action, customer) => {
+    if (action === "edit") handleEdit(customer);
+    if (action === "delete") {
+      handleDeleteClick(customer);
+    }
+  };
+
+  // Display data directly from backend
+  const displayItems = items;
+
+  // Handle page change
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
   return (
     <>
       <UserHeader
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value.trimStart())}
         buttonText="Add Video"
-        onClick={() => setIsOpen(true)}
+        onClick={handleCreateNew}
+        icon={PlusIcon}
         placeholder="Search Video"
+        HeaderText="Youtube"
+        DescriptionText="Add, remove or update YouTube videos"
       />
       <div className={styles.youtubePageAlignment}>
         <div className={styles.grid}>
-          {paginated.map((item, index) => {
-            return (
-              <div className={styles.griitems} key={index}>
-                <div className={styles.image}>
-                  <Image
-                    width={1000}
-                    height={1000}
-                    src={item?.thumbnail}
-                    alt={item?.description}
-                  />
-                  <div className={styles.playButtonOverlay}>
+          {displayItems?.length > 0 ? (
+            displayItems?.map((item, index) => {
+              return (
+                <div className={styles.gridItems} key={index}>
+                  <div className={styles.image}>
                     <Image
-                      width={80}
-                      height={80}
+                      width={1000}
+                      height={1000}
+                      src={item?.thumbnail}
+                      alt={item?.description}
+                    />
+                    {/* <div className={styles.playButtonOverlay}>
+                    <Image
+                      width={60}
+                      height={60}
                       src={youtube}
                       alt="Play on YouTube"
                       className={styles.playButton}
                     />
+                  </div> */}
                   </div>
+                  <div className={styles.title}>
+                    <span className={styles.titleText}>
+                      {item?.description || "N/A"}
+                    </span>
+                    <div className={styles.dropdownContainer}>
+                      <Dropdown
+                        actions={getActions(item)}
+                        onSelect={(action) => handleAction(action, item)}
+                      />
+                    </div>
+                  </div>
+                  <a
+                    href={item.videoUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.videoLink}
+                    onClick={(e) => e.stopPropagation()}
+                  ></a>
                 </div>
-                <a
-                  href={item.videoUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={styles.videoLink}
-                  onClick={(e) => e.stopPropagation()}
-                ></a>
-              </div>
-            );
-          })}
+              );
+            })
+          ) : (
+            <NoDataFound />
+          )}
         </div>
-        {isOpen && (
-          <AddyoutubeVideo
-            onClose={() => setIsOpen(false)}
-            register={register}
-            removeThumbnail={removeThumbnail}
-            errors={errors}
-            setValue={setValue}
-            thumbnailFile={thumbnailFile}
-            fileInputRef={fileInputRef}
-            handleFileChange={handleFileChange}
-            handleDragOver={handleDragOver}
-            handleDragLeave={handleDragLeave}
-            handleDrop={handleDrop}
-            openFileDialog={openFileDialog}
-            imagePreview={imagePreview}
-            isUploading={isUploading}
-            onSubmit={onSubmit}
-            handleSubmit={handleSubmit}
-          />
-        )}
       </div>
+      {isOpen && (
+        <AddyoutubeVideo
+          onClose={() => setIsOpen(false)}
+          isEditMode={isEditMode}
+          currentId={currentId}
+          fileInputRef={fileInputRef}
+          handleFileChange={handleFileChange}
+          handleDragOver={handleDragOver}
+          handleDragLeave={handleDragLeave}
+          handleDrop={handleDrop}
+          openFileDialog={openFileDialog}
+          imagePreview={imagePreview}
+          isUploading={isUploading}
+          onSubmit={onSubmit}
+          handleSubmit={handleSubmit}
+          register={register}
+          errors={errors}
+          setValue={setValue}
+          removeThumbnail={removeThumbnail}
+        />
+      )}
+      <PagePagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        itemsPerPage={itemsPerPage}
+        totalItems={totalItems}
+        onPageChange={handlePageChange}
+      />
     </>
   );
 }

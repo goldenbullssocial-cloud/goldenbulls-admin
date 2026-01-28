@@ -32,7 +32,6 @@ export default function AddAlgobot({
   handleRemovePlan,
   editingPlanId,
 }) {
-  console.log("bot");
 
   return (
     <div className={styles.addAlgobotWrapper}>

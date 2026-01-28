@@ -5,9 +5,7 @@ import UserHeader from "@/components/userHeader";
 export default function Centers() {
   return (
     <>
-        <CentersTable />
-        {/* <AddCenter />
-            <CenterDetailsModal /> */}
+      <CentersTable />
     </>
   );
 }

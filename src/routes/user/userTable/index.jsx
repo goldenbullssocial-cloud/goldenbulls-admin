@@ -334,6 +334,8 @@ export default function UserTable() {
   return (
     <>
       <UserHeader
+        HeaderText="Users"
+        DescriptionText="Manage user accounts and their details"
         value={searchInput}
         onChange={handleSearchInputChange}
         NoButton

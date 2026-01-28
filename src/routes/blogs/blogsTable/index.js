@@ -15,6 +15,8 @@ import AddBlog from "../addBlog";
 import { toast } from "sonner";
 import DeleteBlog from "../deleteBlog";
 import { uploadImage } from "@/api/course";
+import NoDataFound from "@/components/noDataFound";
+const PlusIcon = "/assets/icons/plus.svg";
 
 const blogFormSchema = z.object({
   title: z
@@ -31,6 +33,7 @@ export default function BlogsTable() {
   const [blogs, setBlogs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
@@ -60,16 +63,20 @@ export default function BlogsTable() {
   const fetchBlogs = async () => {
     try {
       setIsLoading(true);
-      const response = await getAllBlog({
+      const params = {
         page: currentPage,
         limit: itemsPerPage,
-        search: searchTerm,
-      });
-      console.log(response, "response");
+      };
 
-      setBlogs(response.payload.data || []);
-      setTotalItems(response.payload.total || 0);
-      setTotalPages(Math.ceil((response.payload.total || 1) / itemsPerPage));
+      if (debouncedSearch) {
+        params.search = debouncedSearch;
+      }
+
+      const response = await getAllBlog(params);
+
+      setBlogs(response?.payload?.data || []);
+      setTotalItems(response?.payload?.total || 0);
+      setTotalPages(Math.ceil((response?.payload?.total || 1) / itemsPerPage));
     } catch (error) {
       console.error("Error fetching blogs:", error);
       toast.error("Failed to load blogs");
@@ -78,20 +85,30 @@ export default function BlogsTable() {
     }
   };
 
+  // Debounce search term
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+      setCurrentPage(1); // Reset to first page when searching
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
   useEffect(() => {
     fetchBlogs();
-  }, [currentPage, itemsPerPage, searchTerm]);
+  }, [currentPage, itemsPerPage, debouncedSearch]);
 
   const handleEdit = (blog) => {
     setIsEditMode(true);
-    setCurrentBlogId(blog._id);
+    setCurrentBlogId(blog?._id);
     setEditingBlog(blog);
     form.reset({
-      title: blog.title,
-      categoryId: blog.category?._id || "",
-      name: blog.name,
-      description: blog.description,
-      coverImage: blog.coverImage || null,
+      title: blog?.title || "",
+      categoryId: blog?.categoryId?._id || "",
+      name: blog?.name || "",
+      description: blog?.description || "",
+      coverImage: blog?.coverImage || null,
     });
     setIsAddBlogOpen(true);
   };
@@ -128,8 +145,8 @@ export default function BlogsTable() {
 
     try {
       setIsDeleting(true);
-      await deleteBlog(blogToDelete._id);
-      setBlogs(blogs.filter((b) => b._id !== blogToDelete._id));
+      await deleteBlog(blogToDelete?._id);
+      setBlogs(blogs?.filter((b) => b?._id !== blogToDelete?._id));
       toast.success("Blog post deleted successfully");
       setIsDeleteDialogOpen(false);
       setBlogToDelete(null);
@@ -140,44 +157,99 @@ export default function BlogsTable() {
       setIsDeleting(false);
     }
   };
-  console.log(imageFile, "imageFile");
 
   const onSubmit = async (data) => {
     try {
       setIsLoading(true);
-      const formData = new FormData();
-
-      // Append all fields to formData
-      Object.entries(data).forEach(([key, value]) => {
-        if (value !== null && value !== undefined) {
-          formData.append(key, value);
-        }
-      });
-
-      // Append image file if it exists
-      if (imageFile) {
-
-        try {
-          const imageResponse = await uploadImage(imageFile);
-          console.log(imageResponse, "image");
-
-          if (imageResponse?.success && imageResponse?.payload) {
-            formData.append("coverImage", imageResponse.payload);
-          } else {
-            throw new Error("Failed to upload image: Invalid response");
-          }
-        } catch (error) {
-          console.error("Error uploading image:", error);
-          toast.error("Failed to upload image");
-          setIsSubmitting(false);
-          return;
-        }
-      }
 
       if (isEditMode && currentBlogId) {
-        await updateBlog(currentBlogId, formData);
-        toast.success("Blog post updated successfully!");
+        // In edit mode, only include changed fields
+        const originalBlog = blogs?.find((blog) => blog?._id === currentBlogId);
+        if (!originalBlog) {
+          throw new Error("Original blog not found");
+        }
+
+        let requestData = {};
+        let hasChanges = false;
+
+        // Compare each field and only include if changed
+        if (data?.title !== originalBlog?.title) {
+          requestData.title = data.title;
+          hasChanges = true;
+        }
+
+        if (data?.categoryId !== originalBlog?.categoryId) {
+          requestData.categoryId = data.categoryId;
+          hasChanges = true;
+        }
+
+        if (data?.name !== originalBlog?.name) {
+          requestData.name = data.name;
+          hasChanges = true;
+        }
+
+        if (data?.description !== originalBlog?.description) {
+          requestData.description = data.description;
+          hasChanges = true;
+        }
+
+        // Handle image upload if new image is provided
+        if (imageFile) {
+          try {
+            const imageResponse = await uploadImage(imageFile);
+
+            if (imageResponse?.success && imageResponse?.payload) {
+              requestData.coverImage = imageResponse.payload;
+              hasChanges = true;
+            } else {
+              throw new Error("Failed to upload image: Invalid response");
+            }
+          } catch (error) {
+            console.error("Error uploading image:", error);
+            toast.error("Failed to upload image");
+            setIsLoading(false);
+            return;
+          }
+        }
+
+        // Only proceed with update if there are changes
+        if (hasChanges) {
+          await updateBlog(currentBlogId, requestData);
+          toast.success("Blog post updated successfully!");
+        } else {
+          toast.info("No changes detected");
+          setIsAddBlogOpen(false);
+          return;
+        }
       } else {
+        // For new blogs, use FormData as before
+        const formData = new FormData();
+
+        // Append all fields to formData
+        Object.entries(data).forEach(([key, value]) => {
+          if (value !== null && value !== undefined) {
+            formData.append(key, value);
+          }
+        });
+
+        // Append image file if it exists
+        if (imageFile) {
+          try {
+            const imageResponse = await uploadImage(imageFile);
+
+            if (imageResponse?.success && imageResponse?.payload) {
+              formData.append("coverImage", imageResponse.payload);
+            } else {
+              throw new Error("Failed to upload image: Invalid response");
+            }
+          } catch (error) {
+            console.error("Error uploading image:", error);
+            toast.error("Failed to upload image");
+            setIsLoading(false);
+            return;
+          }
+        }
+
         // Generate slug from title
         const title = formData.get("title");
         if (title) {
@@ -201,7 +273,7 @@ export default function BlogsTable() {
       await fetchBlogs();
     } catch (error) {
       console.error("Error saving blog post:", error);
-      toast.error(error.response?.data?.message || "Failed to save blog post");
+      toast.error(error?.response?.data?.message || "Failed to save blog post");
     } finally {
       setIsLoading(false);
     }
@@ -214,14 +286,13 @@ export default function BlogsTable() {
   const handleSearchInputChange = (e) => {
     setSearchTerm(e.target.value.trimStart());
   };
-console.log(blogs);
 
-  const filteredBlogs = blogs.filter(
+  const filteredBlogs = blogs?.filter(
     (blog) =>
-      blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      blog.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (blog.description &&
-        blog.description.toLowerCase().includes(searchTerm.toLowerCase())),
+      blog?.title?.toLowerCase()?.includes(searchTerm?.toLowerCase()) ||
+      blog?.name?.toLowerCase()?.includes(searchTerm?.toLowerCase()) ||
+      (blog?.description &&
+        blog?.description?.toLowerCase()?.includes(searchTerm?.toLowerCase())),
   );
 
   const handleAddNew = () => {
@@ -262,14 +333,22 @@ console.log(blogs);
 
   return (
     <>
-      <UserHeader buttonText="Add New Blog" onClick={handleAddNew} />
+      <UserHeader
+        buttonText="Add New Blog"
+        onClick={handleAddNew}
+        value={debouncedSearch}
+        onChange={(e) => setSearchTerm(e.target.value.trimStart())}
+        HeaderText="Blogs"
+        DescriptionText="View and control all blog posts"
+        icon={PlusIcon}
+      />
       <div className={styles.blogsPageAlignment}>
         <div className={styles.blogsTableAlignment}>
           <div className={styles.tableUi}>
             <table>
               <thead>
                 <tr>
-                  <th className={styles.indexCol}>#</th>
+                  <th className={styles.indexCol}>Sr no.</th>
                   <th className={styles.titleCol}>Title</th>
                   <th className={styles.authorCol}>Author</th>
                   <th className={styles.categoryCol}>Category</th>
@@ -281,38 +360,42 @@ console.log(blogs);
               <tbody>
                 {filteredBlogs.length > 0 ? (
                   filteredBlogs.map((blog, index) => (
-                    <tr key={blog._id}>
+                    <tr key={blog?._id}>
                       <td className={styles.indexCol}>{index + 1}</td>
                       <td
                         className={`${styles.blogTitle} ${styles.cellContent}`}
-                        title={blog.title}
+                        title={blog?.title}
                       >
-                        <div className={styles.truncate}>{blog.title}</div>
+                        <div className={styles.truncate}>
+                          {blog?.title || ""}
+                        </div>
                       </td>
-                      <td className={styles.cellContent} title={blog.name}>
-                        <div className={styles.truncate}>{blog.name}</div>
+                      <td className={styles.cellContent} title={blog?.name}>
+                        <div className={styles.truncate}>
+                          {blog?.name || ""}
+                        </div>
                       </td>
                       <td
                         className={styles.cellContent}
-                        title={blog.category?.name || "Uncategorized"}
+                        title={blog?.categoryId?.name || "Uncategorized"}
                       >
                         <div className={styles.truncate}>
-                          {blog.category?.name || "Uncategorized"}
+                          {blog?.categoryId?.name || "Uncategorized"}
                         </div>
                       </td>
                       <td className={styles.statusCol}>
                         <span
                           className={
-                            blog.isActive
+                            blog?.isActive
                               ? styles.activeStatus
                               : styles.inactiveStatus
                           }
                         >
-                          {blog.isActive ? "Active" : "Inactive"}
+                          {blog?.isActive ? "Active" : "Inactive"}
                         </span>
                       </td>
                       <td className={styles.dateCol}>
-                        {format(new Date(blog.createdAt), "MMM d, yyyy")}
+                        {format(new Date(blog?.createdAt), "MMM d, yyyy")}
                       </td>
                       <td className={styles.actionsCol}>
                         <Dropdown
@@ -323,12 +406,7 @@ console.log(blogs);
                     </tr>
                   ))
                 ) : (
-                  <tr>
-                    <td colSpan="7" className={styles.noData}>
-                      No blog posts found.
-                      {searchTerm && " Try a different search term."}
-                    </td>
-                  </tr>
+                  <NoDataFound />
                 )}
               </tbody>
             </table>
@@ -356,7 +434,7 @@ console.log(blogs);
           onClose={() => setIsDeleteDialogOpen(false)}
           onDelete={confirmDelete}
           isLoading={isDeleting}
-          blogTitle={blogToDelete?.title}
+          blogTitle={blogToDelete?.title || ""}
         />
       )}
     </>

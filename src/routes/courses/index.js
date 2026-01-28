@@ -885,6 +885,8 @@ export default function Courses() {
     <>
       <UserHeader
         buttonText="Create Course"
+        HeaderText="Courses"
+        DescriptionText="Create, organize, and manage all courses"
         onClick={() => {
           setOpen(true);
           setCreateCourseOpen(true);

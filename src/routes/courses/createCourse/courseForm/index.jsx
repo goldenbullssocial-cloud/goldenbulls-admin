@@ -57,7 +57,6 @@ export default function CourseForm({
       label: "Extreme",
     },
   ];
-console.log("Form Errors:", formErrors);
   const handleLanguageAction = (value) => {
     setSelectedLanguage(value);
     // Update the hidden input value when language changes

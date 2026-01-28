@@ -83,7 +83,6 @@ export default function Login() {
         email: formData.email,
         password: formData.password,
       });
-      console.log(response);
       
       if (response.data) {
         const { token, user } = response.data.payload;

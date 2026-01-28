@@ -10,7 +10,13 @@ import { ImageUpload } from "@/components/image-upload";
 
 const SaveIcon = "/assets/icons/save.svg";
 
-export default function AddBlog({ onClose, handleImageChange,isEditMode, form, onSubmit }) {
+export default function AddBlog({
+  onClose,
+  handleImageChange,
+  isEditMode,
+  form,
+  onSubmit,
+}) {
   const [categories, setCategories] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -20,7 +26,9 @@ export default function AddBlog({ onClose, handleImageChange,isEditMode, form, o
       try {
         setIsLoading(true);
         const response = await getAllBlogCategory();
-        setCategories(response.payload.data || []);
+        setCategories(response?.payload?.data || []);
+        console.log("Categories loaded:", response?.payload?.data);
+        console.log("Current categoryId value:", form.watch("categoryId"));
       } catch (error) {
         console.error("Error fetching categories:", error);
         toast.error("Failed to load categories");
@@ -101,9 +109,9 @@ export default function AddBlog({ onClose, handleImageChange,isEditMode, form, o
                 required
               >
                 <option value="">Select a category</option>
-                {categories.map((category) => (
-                  <option key={category._id} value={category._id}>
-                    {category.name}
+                {categories?.map((category) => (
+                  <option key={category?._id} value={category?._id}>
+                    {category?.name}
                   </option>
                 ))}
               </select>

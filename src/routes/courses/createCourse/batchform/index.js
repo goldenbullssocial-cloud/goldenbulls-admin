@@ -11,8 +11,8 @@ import {
   createNewBatch,
   getAllBatch,
 } from "@/api/course";
-import { getAllCenters } from "@/api/banner";
 import StyledSelect from "@/components/styledSelect";
+import { getAllCenters } from "@/api/banner";
 
 const SaveIcon = "/assets/icons/save.svg";
 
@@ -38,27 +38,6 @@ const isValidUrl = (url) => {
   }
 };
 
-const formatDateForApi = (dateString) => {
-  return dateString ? new Date(dateString).toISOString().split("T")[0] : null;
-};
-
-const createBatchPayload = (batches, courseId, activeTab, selectedCenter) => ({
-  batch: batches.map((b) => ({
-    ...(b._id && { _id: b._id }), // Include existing batch ID if it exists
-    startDate: formatDateForApi(b.startDate),
-    endDate: formatDateForApi(b.endDate),
-    courseId: courseId || "",
-    ...(activeTab === "physical" &&
-      selectedCenter?._id && {
-        centerId: selectedCenter._id,
-      }),
-    ...(activeTab === "live" && {
-      meetingLink: b.zoomLink || null,
-    }),
-    time: b.batchTime || null,
-  })),
-});
-
 export default function BatchForm({
   batches = [],
   selectedCenter = null,
@@ -83,18 +62,19 @@ export default function BatchForm({
         setIsLoadingCenters(true);
         const response = await getAllCenters();
         if (response?.success) {
-          setCenters(response.payload?.data || []);
+          setCenters(response?.payload?.data);
         }
       } catch (error) {
         console.error("Error fetching centers:", error);
         toast.error("Failed to load centers");
-      } finally {
+      } finally { 
         setIsLoadingCenters(false);
       }
     };
 
     fetchCenters();
   }, []);
+
   const toLocalDateInput = (date) => {
     if (!date) return "";
     const d = new Date(date);
@@ -126,8 +106,6 @@ export default function BatchForm({
               location: batch.location || "",
             }));
             setBatchesList(formattedBatches);
-            console.log(batchesList, "batchLis");
-
             // If there's a centerId in the first batch, set it as selected
             if (formattedBatches[0]?.centerId) {
               const center = centers.find(
@@ -439,11 +417,11 @@ export default function BatchForm({
 
               {activeTab === "physical" && (
                 <div className={styles.formGroup}>
-                  <label>Center</label>
+                  <label>Select Education Center</label>
                   <StyledSelect
-                    options={batchesList.map((batch) => ({
-                      value: batch?.centerId,
-                      label: batch.centerName,
+                    options={centers.map((center) => ({
+                      value: center._id,
+                      label: center.centerName,
                     }))}
                     value={
                       batch.centerId

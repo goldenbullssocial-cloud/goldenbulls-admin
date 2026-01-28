@@ -1,5 +1,6 @@
 import React from "react";
 import styles from "./pagePagination.module.scss";
+
 export default function PagePagination({
   currentPage,
   totalPages,
@@ -22,15 +23,10 @@ export default function PagePagination({
   return (
     <div className={styles.paginationBottom}>
       <p>
-        {" "}
         Showing {startItem} to {endItem} out of {totalItems} Entries
       </p>
       <div className={styles.rightalignment}>
-        <div
-          onClick={handlePrev}
-          disabled={currentPage === 1}
-          className={currentPage === 1 ? styles.disabled : ""}
-        >
+        <div onClick={handlePrev} disabled={currentPage === 1}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -45,6 +41,7 @@ export default function PagePagination({
               strokeLinecap="round"
               strokeLinejoin="round"
             />
+
             <path
               d="M12 19L5 12L12 5"
               stroke="white"
@@ -54,14 +51,14 @@ export default function PagePagination({
             />
           </svg>
         </div>
+
         <span>Previous</span>
+
         <div className={styles.size}>{currentPage}</div>
+
         <span>Next</span>
-        <div
-          onClick={handleNext}
-          disabled={currentPage === totalPages}
-          className={currentPage === totalPages ? styles.disabled : ""}
-        >
+
+        <div onClick={handleNext} disabled={currentPage === totalPages}>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="24"
@@ -76,6 +73,7 @@ export default function PagePagination({
               strokeLinecap="round"
               strokeLinejoin="round"
             />
+
             <path
               d="M12 19L5 12L12 5"
               stroke="white"

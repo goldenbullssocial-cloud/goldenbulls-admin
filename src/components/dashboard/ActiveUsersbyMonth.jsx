@@ -104,6 +104,18 @@ const CustomTooltip = ({ active, payload, label }) => {
           <span>Active Users</span>
           <span>{d?.users?.toLocaleString() || 0}</span>
         </div>
+        {hasUsers && (
+          <div style={{ fontSize: 12, color: "#A0AEC0" }}>
+            {d?.userDetails?.slice(0, 3).map((user, idx) => (
+              <div key={idx} style={{ marginBottom: 2 }}>
+                {user.name || user.email}
+              </div>
+            ))}
+            {d?.userDetails?.length > 3 && (
+              <div>+{d?.userDetails?.length - 3} more users</div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -123,9 +135,22 @@ const ActiveUsersbyMonth = () => {
           const monthlyData = MONTHS.map((month, index) => {
             if (month === "") return { month, users: null };
 
-            // Find the corresponding month data from the API response
+            // Find the corresponding month data from the API response by month name
             const monthData = result.payload.find(
-              (item) => item.monthIndex === index, // Adjust for 0-based index
+              (item) =>
+                item.month === month ||
+                (index === 1 && item.month === "January") ||
+                (index === 2 && item.month === "February") ||
+                (index === 3 && item.month === "March") ||
+                (index === 4 && item.month === "April") ||
+                (index === 5 && item.month === "May") ||
+                (index === 6 && item.month === "June") ||
+                (index === 7 && item.month === "July") ||
+                (index === 8 && item.month === "August") ||
+                (index === 9 && item.month === "September") ||
+                (index === 10 && item.month === "October") ||
+                (index === 11 && item.month === "November") ||
+                (index === 12 && item.month === "December"),
             );
 
             return {
@@ -133,7 +158,7 @@ const ActiveUsersbyMonth = () => {
               users: monthData?.userCount || 0,
               userDetails: monthData?.users || [],
             };
-          }); // Remove empty month entries
+          });
 
           setData(monthlyData);
         } else {

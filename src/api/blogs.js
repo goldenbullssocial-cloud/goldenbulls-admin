@@ -23,7 +23,7 @@ export const getAllBlog = async (params) => {
     }
 
     const queryString = searchParams.toString();
-    const url = `${API_BASE_URL}/blog/getAllBlog`;
+    const url = `${API_BASE_URL}/blog/getAllBlog?${queryString ? queryString : ""}`;
 
     const response = await axios.get(url);
     return response.data;

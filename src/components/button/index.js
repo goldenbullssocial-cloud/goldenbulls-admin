@@ -1,12 +1,13 @@
-import React from 'react'
-import styles from './button.module.scss';
-import classNames from 'classnames';
+import React from "react";
+import styles from "./button.module.scss";
+import classNames from "classnames";
 export default function Button({
   text,
   className,
   icon,
   onClick,
-  type,
+  type = "button",
+  rightIcon,
 }) {
   return (
     <div
@@ -17,8 +18,10 @@ export default function Button({
       )}
     >
       <button aria-label={text} onClick={onClick} type={type}>
+        {icon && rightIcon && <img src={icon} alt={icon} />}
+
         {text}
-        {icon && <img src={icon} altl={icon} />}
+        {icon && !rightIcon && <img src={icon} alt={icon} />}
       </button>
     </div>
   );

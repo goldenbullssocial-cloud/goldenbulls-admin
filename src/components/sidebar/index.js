@@ -65,7 +65,6 @@ export default function Sidebar() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-  console.log(user, user);
 
   // Function to check if a path is active
   const isActive = (path) => {

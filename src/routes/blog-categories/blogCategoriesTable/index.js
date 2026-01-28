@@ -20,6 +20,8 @@ import Dropdown from "@/components/dropdown";
 import AddBlogCategory from "../addBlogCategory";
 import { toast } from "sonner";
 import DeleteBlogCategory from "../deleteBlogCategory";
+import NoDataFound from "@/components/noDataFound";
+const PlusIcon = "/assets/icons/plus.svg";
 
 const blogCategoryFormSchema = z.object({
   categoryName: z
@@ -31,7 +33,6 @@ const blogCategoryFormSchema = z.object({
     .string()
     .max(500, "Description must be at most 500 characters")
     .optional(),
-
 });
 
 export default function BlogCategoriesTable() {
@@ -194,7 +195,13 @@ export default function BlogCategoriesTable() {
   };
   return (
     <>
-      <UserHeader buttonText="Add Category" onClick={handleAddNew} />
+      <UserHeader
+        buttonText="Add Category"
+        onClick={handleAddNew}
+        HeaderText="Blog Categories"
+        DescriptionText="View and Manage all blog categories"
+        icon={PlusIcon}
+      />
       <div className={styles.couponsPageAlignment}>
         <div className={styles.couponsTableAlignment}>
           <div className={styles.tableUi}>
@@ -208,25 +215,28 @@ export default function BlogCategoriesTable() {
                 </tr>
               </thead>
               <tbody>
-                {filteredCategories.map((category, index) => (
-                  <tr key={category._id}>
-                    <td>{index + 1}</td>
-                    <td>{category.name}</td>
-                    <td>
-                      {format(
-                        new Date(category.createdAt),
-                        "dd/MM/yyyy, HH:mm:ss",
-                      )}
-                    </td>
-                 
-                    <td>
-                      <Dropdown
-                        actions={getUserActions(category)}
-                        onSelect={(action) => handleAction(action, category)}
-                      />
-                    </td>
-                  </tr>
-                ))}
+                {filteredCategories?.length > 0 ? (
+                  filteredCategories.map((category, index) => (
+                    <tr key={category._id}>
+                      <td>{index + 1}</td>
+                      <td>{category.name}</td>
+                      <td>
+                        {format(
+                          new Date(category.createdAt),
+                          "dd/MM/yyyy, HH:mm:ss",
+                        )}
+                      </td>
+                      <td>
+                        <Dropdown
+                          actions={getUserActions(category)}
+                          onSelect={(action) => handleAction(action, category)}
+                        />
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <NoDataFound />
+                )}
               </tbody>
             </table>
           </div>

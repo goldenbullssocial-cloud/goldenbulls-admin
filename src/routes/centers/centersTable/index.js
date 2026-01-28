@@ -23,6 +23,7 @@ import CenterDetailsModal from "../centerDetailsModal";
 import DeleteCenter from "../deleteCenter";
 import NoDataFound from "@/components/noDataFound";
 import TableSkeleton from "@/components/tableSkeleton";
+const PlusIcon = "/assets/icons/plus.svg";
 
 const formatDate = (dateString) => {
   if (!dateString) return "N/A";
@@ -252,7 +253,8 @@ export default function CentersTable() {
   return (
     <>
       <UserHeader
-        inputType="Center"
+        HeaderText="Centers"
+        DescriptionText="Oversee training centers and branches"
         placeholder="Search Centers"
         onChange={(e) => setSearchTerm(e.target.value.trimStart())}
         value={searchTerm}
@@ -269,6 +271,7 @@ export default function CentersTable() {
           setIsEditMode(false);
           setEditingCenter(null);
         }}
+        icon={PlusIcon}
       />
       <div className={styles.centersTableAlignment}>
         <div className={styles.tableUi}>

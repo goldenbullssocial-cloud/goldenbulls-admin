@@ -1,12 +1,11 @@
 import socketIOClient from "socket.io-client";
-import { getCookie } from "../../cookie";
 
 const localdata = typeof window !== "undefined"
   ? localStorage.getItem("token")
   : null;
 
 
-const SOCKET_URL = process.env.NEXT_PUBLIC_SOCKET_URL;
+const SOCKET_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 let socket: any = null;
 if (localdata) {
   socket = socketIOClient(SOCKET_URL, {

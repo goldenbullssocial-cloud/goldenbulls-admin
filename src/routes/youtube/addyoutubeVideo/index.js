@@ -25,7 +25,7 @@ export default function AddyoutubeVideo({
   imagePreview,
   onSubmit,
   handleSubmit,
-}) {
+}) {  
   return (
     <div className={styles.addyoutubeVideoWrapper}>
       <div className={styles.modal}>
@@ -53,7 +53,7 @@ export default function AddyoutubeVideo({
                 if (e.key === "" && !e.currentTarget.value.trim())
                   e.preventDefault();
               }}
-              error={errors.description?.message}
+              error={errors?.description?.message}
             />
           </div>
           <div className={styles.bottomSpacing}>
@@ -64,7 +64,7 @@ export default function AddyoutubeVideo({
               leftSpaceRemove
               id="videoUrl"
               {...register("videoUrl")}
-              error={errors.videoUrl?.message}
+              error={errors?.videoUrl?.message}
             />
           </div>
           <div className={styles.text}>
@@ -75,7 +75,7 @@ export default function AddyoutubeVideo({
             ref={fileInputRef}
             onChange={handleFileChange}
             accept="image/*"
-            style={{ display: "none" }}
+            style={{ display: "none"}}
           />
 
           <div
@@ -118,10 +118,14 @@ export default function AddyoutubeVideo({
                 </>
               )}
             </div>
+            {errors?.thumbnail?.message && (
+              <p className={styles.error}>{errors?.thumbnail?.message}</p>
+            )}
           </div>
+
           <div className={styles.buttonRightAlignment}>
             <OutlineButton text="Cancel" icon={Close} onClick={onClose} />
-            <Button text="Save Banner" icon={SaveIcon} />
+            <Button type="submit" text="Save Banner" icon={SaveIcon} />
           </div>
         </form>
       </div>

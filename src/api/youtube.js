@@ -10,10 +10,19 @@ export const getAuthToken = () => {
 
 export const getAllYoutube = async (params) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/youtube/getAllYoutube`);
+    const queryString = new URLSearchParams();
+    if (params?.page) queryString.append("page", params.page);
+    if (params?.limit) queryString.append("limit", params.limit);
+    if (params?.search) queryString.append("search", params.search);
+
+    const url = queryString.toString()
+      ? `${API_BASE_URL}/youtube/getAllYoutube?${queryString.toString()}`
+      : `${API_BASE_URL}/youtube/getAllYoutube`;
+
+    const response = await axios.get(url);
     return response.data;
   } catch (error) {
-    console.error("Error fetching algo bots:", error);
+    console.error("Error fetching youtube videos:", error);
     throw error;
   }
 };

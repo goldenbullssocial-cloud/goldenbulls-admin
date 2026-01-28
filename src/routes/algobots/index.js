@@ -28,6 +28,7 @@ import EditIcon from "../../../public/assets/icons/Edit.svg";
 import InactiveIcon from "../../../public/assets/icons/InactiveUser.svg";
 import DeleteIcon from "../../../public/assets/icons/Delete.svg";
 import DeleteAlgobot from "./deleteAlgobot";
+import NoDataFound from "@/components/noDataFound";
 
 const formSchema = z.object({
   title: z
@@ -878,7 +879,6 @@ export default function Algobots() {
     }, 0);
 
     // Handle nested bot and provider structure
-    console.log(plan.botId, "providerId");
     if (plan.botId && typeof plan.botId === "object") {
       const botId = plan.botId._id;
       const providerId = plan.botId.botProviderId?._id;
@@ -901,7 +901,6 @@ export default function Algobots() {
     } else {
       const botId = plan?.botId;
       const providerId = plan?.botProviderId;
-      console.log(providerId, "pros");
 
       if (providerId) {
         // First set the provider and wait for state update
@@ -916,7 +915,6 @@ export default function Algobots() {
             (b) => b.botProviderId === providerId || !b.botProviderId,
           );
           setFilteredBots(fb);
-          console.log(fb, filteredBots, "fb");
         }, 0);
       }
     }
@@ -1011,6 +1009,8 @@ export default function Algobots() {
   return (
     <>
       <UserHeader
+        HeaderText="Algobots"
+        DescriptionText="Monitor, configure, and manage automated trading tools"
         onChange={(e) => setSearchTerm(e.target.value.trimStart())}
         value={searchTerm}
         placeholder="Search algobots"
@@ -1023,50 +1023,56 @@ export default function Algobots() {
       />
       <div className={styles.algobotsPageAlignment}>
         <div className={styles.grid}>
-          {algobots?.map((bot, i) => {
-            const months = parseInt(bot?.planType?.match(/\d+/)?.[0] || "3");
-            const monthlyPrice = (bot?.initialPrice / months).toFixed(2);
-            return (
-              <div key={i} className={styles.box}>
-                <div className={styles.detailsBox}>
-                  <h3>
-                    Returns:{" "}
-                    <span className={styles.green}>{bot?.return || 110}%</span>{" "}
-                    <small>(28 Days)</small>
-                  </h3>
-                  <h4>
-                    Risk: <span>{bot?.risk || "High"}</span>
-                  </h4>
-                </div>
-                <div className={styles.leftRightAlignment}>
-                  <p>{bot?.title}</p>
-                  <div className={styles.line}></div>
-                  <div className={styles.subscriptionPlan}>
-                    <select className={styles.planDropdown}>
-                      {bot?.strategyPlan?.map((plan) => {
-                        const months = parseInt(
-                          plan?.planType?.match(/\d+/)?.[0] || "1",
-                        );
-                        const monthlyPrice = (plan.price / months).toFixed(2);
-                        return (
-                          <option key={plan._id} value={`${months}months`}>
-                            ${monthlyPrice}/month
-                          </option>
-                        );
-                      })}
-                    </select>
-                    <Dropdown
-                      actions={getUserActions(bot.isActive)}
-                      onSelect={(action) => handleAction(action, bot)}
-                    />
+          {algobots?.length > 0 ? (
+            algobots?.map((bot, i) => {
+              const months = parseInt(bot?.planType?.match(/\d+/)?.[0] || "3");
+              const monthlyPrice = (bot?.initialPrice / months).toFixed(2);
+              return (
+                <div key={i} className={styles.box}>
+                  <div className={styles.detailsBox}>
+                    <h3>
+                      Returns:{" "}
+                      <span className={styles.green}>
+                        {bot?.return || 110}%
+                      </span>{" "}
+                      <small>(28 Days)</small>
+                    </h3>
+                    <h4>
+                      Risk: <span>{bot?.risk || "High"}</span>
+                    </h4>
                   </div>
-                  <div className={styles.buttonStyle}>
-                    <Button text="Subscribe Now" />
+                  <div className={styles.leftRightAlignment}>
+                    <p>{bot?.title}</p>
+                    <div className={styles.line}></div>
+                    <div className={styles.subscriptionPlan}>
+                      <select className={styles.planDropdown}>
+                        {bot?.strategyPlan?.map((plan) => {
+                          const months = parseInt(
+                            plan?.planType?.match(/\d+/)?.[0] || "1",
+                          );
+                          const monthlyPrice = (plan.price / months).toFixed(2);
+                          return (
+                            <option key={plan._id} value={`${months}months`}>
+                              ${monthlyPrice}/month
+                            </option>
+                          );
+                        })}
+                      </select>
+                      <Dropdown
+                        actions={getUserActions(bot.isActive)}
+                        onSelect={(action) => handleAction(action, bot)}
+                      />
+                    </div>
+                    <div className={styles.buttonStyle}>
+                      <Button text="Subscribe Now" />
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })
+          ) : (
+            <NoDataFound />
+          )}
         </div>
         {isOpen && (
           <AddAlgobot

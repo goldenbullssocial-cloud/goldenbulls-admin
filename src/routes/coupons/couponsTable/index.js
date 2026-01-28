@@ -18,6 +18,8 @@ import { createCoupon } from "@/api/coupon";
 import AddDiscountCoupon from "../addDiscountCoupon";
 import { toast } from "sonner";
 import DeleteCoupon from "../deleteCoupon";
+import NoDataFound from "@/components/noDataFound";
+const PlusIcon = "/assets/icons/plus.svg";
 
 const couponFormSchema = z.object({
   couponCode: z
@@ -218,6 +220,9 @@ export default function CouponsTable() {
   return (
     <>
       <UserHeader
+        icon={PlusIcon}
+        HeaderText="Coupons"
+        DescriptionText="Create and control discount codes and promotional offers"
         buttonText="Add Coupons"
         onClick={() => setIsAddCouponOpen(true)}
       />
@@ -238,37 +243,42 @@ export default function CouponsTable() {
                   <th>Action</th>
                 </tr>
               </thead>
-              <tbody>
-                {filteredCoupons.map((coupon, index) => (
-                  <tr>
-                    <td>{index + 1}</td>
-                    <td>{coupon.couponCode}</td>
-                    <td>{coupon.discount}%</td>
-                    <td>{coupon.usageLimit}</td>
-                    <td>{coupon.usageCount}</td>
-                    <td>
-                      {format(
-                        new Date(coupon.createdAt),
-                        "dd/MM/yyyy, HH:mm:ss",
-                      )}
-                    </td>
-                    <td>
-                      {format(
-                        new Date(coupon.expiryDate),
-                        "dd/MM/yyyy, HH:mm:ss",
-                      )}
-                    </td>
-                    <td>
-                      <span className={styles.green}>Active</span>
-                    </td>
-                    <td>
-                      <Dropdown
-                        actions={getUserActions(coupon.isActive)}
-                        onSelect={(action) => handleAction(action, coupon)}
-                      />
-                    </td>
-                  </tr>
-                ))}
+              <tbody>ṭ
+                {filteredCoupons?.length > 0 ? (
+                  filteredCoupons.map((coupon, index) => (
+                    <tr>
+                      <td>{index + 1}</td>
+                      <td>{coupon.couponCode}</td>
+                      <td>{coupon.discount}%</td>
+                      <td>{coupon.usageLimit}</td>
+                      <td>{coupon.usageCount}</td>
+                      <td>
+                        {format(
+                          new Date(coupon.createdAt),
+                          "dd/MM/yyyy, HH:mm:ss",
+                        )}
+                      </td>
+                      <td>
+                        {format(
+                          new Date(coupon.expiryDate),
+                          "dd/MM/yyyy, HH:mm:ss",
+                        )}
+                      </td>
+                      <td>
+                        <span className={styles.green}>Active</span>
+                      </td>
+                      <td>
+                        <Dropdown
+                          actions={getUserActions(coupon.isActive)}
+                          onSelect={(action) => handleAction(action, coupon)}
+                        />
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <NoDataFound />
+                )
+                }
               </tbody>
             </table>
           </div>

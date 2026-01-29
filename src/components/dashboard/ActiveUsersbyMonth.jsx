@@ -188,13 +188,6 @@ const ActiveUsersbyMonth = () => {
     fetchData();
   }, []);
 
-  if (loading) {
-    return (
-      <div style={{ padding: "20px", color: "#E2E8F0" }}>
-        Loading user data...
-      </div>
-    );
-  }
 
   if (error) {
     return (

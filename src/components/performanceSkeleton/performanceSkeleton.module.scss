@@ -1,0 +1,58 @@
+.skeletonItem {
+  border-radius: 24px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(153, 153, 153, 0) 100%
+  );
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px;
+  height: 120px;
+
+  .textSkeleton {
+    flex: 1;
+
+    .titleSkeleton {
+      width: 60%;
+      height: 22px;
+      margin-bottom: 12px;
+    }
+
+    .valueSkeleton {
+      width: 40%;
+      height: 48px;
+    }
+  }
+
+  .iconSkeleton {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 24px;
+
+    .iconPlaceholder {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+  }
+
+  .skeleton {
+    background: linear-gradient(90deg, #666 25%, #888 50%, #666 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+    border-radius: 4px;
+  }
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

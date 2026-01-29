@@ -7,8 +7,9 @@ import {
   getRevenueBreakdownData,
   getTotalRevenueData,
 } from "@/api/dashboard";
-import MonthlyBreakdown from "../monthlyBreakdown";
+import PerformanceSkeleton from "@/components/performanceSkeleton";
 import CommonLoader from "@/components/commonLoader";
+import MonthlyBreakdown from "../monthlyBreakdown";
 
 const MoneyIcon = "/assets/icons/money.svg";
 const UsersIcon = "/assets/icons/people.svg";
@@ -178,7 +179,7 @@ export default function PerformanceOverview() {
       </div>
       <div className={styles.grid}>
         {isLoadingStats ? (
-          <CommonLoader />
+          <PerformanceSkeleton count={5} />
         ) : (
           stats?.map((stat, i) => {
             return (

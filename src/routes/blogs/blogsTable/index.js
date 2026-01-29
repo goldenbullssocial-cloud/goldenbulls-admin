@@ -328,9 +328,6 @@ export default function BlogsTable() {
     if (action === "edit") handleEdit(blog);
     if (action === "delete") handleDeleteClick(blog);
   };
-  if (isLoading) {
-    return <CommonLoader />;
-  }
 
   return (
     <>
@@ -343,84 +340,88 @@ export default function BlogsTable() {
         DescriptionText="View and control all blog posts"
         icon={PlusIcon}
       />
-      <div className={styles.blogsPageAlignment}>
-        <div className={styles.blogsTableAlignment}>
-          <div className={styles.tableUi}>
-            <table>
-              <thead>
-                <tr>
-                  <th className={styles.indexCol}>Sr no.</th>
-                  <th className={styles.titleCol}>Title</th>
-                  <th className={styles.authorCol}>Author</th>
-                  <th className={styles.categoryCol}>Category</th>
-                  <th className={styles.statusCol}>Status</th>
-                  <th className={styles.dateCol}>Created Date</th>
-                  <th className={styles.actionsCol}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredBlogs.length > 0 ? (
-                  filteredBlogs.map((blog, index) => (
-                    <tr key={blog?._id}>
-                      <td className={styles.indexCol}>{index + 1}</td>
-                      <td
-                        className={`${styles.blogTitle} ${styles.cellContent}`}
-                        title={blog?.title}
-                      >
-                        <div className={styles.truncate}>
-                          {blog?.title || ""}
-                        </div>
-                      </td>
-                      <td className={styles.cellContent} title={blog?.name}>
-                        <div className={styles.truncate}>
-                          {blog?.name || ""}
-                        </div>
-                      </td>
-                      <td
-                        className={styles.cellContent}
-                        title={blog?.categoryId?.name || "Uncategorized"}
-                      >
-                        <div className={styles.truncate}>
-                          {blog?.categoryId?.name || "Uncategorized"}
-                        </div>
-                      </td>
-                      <td className={styles.statusCol}>
-                        <span
-                          className={
-                            blog?.isActive
-                              ? styles.activeStatus
-                              : styles.inactiveStatus
-                          }
+      {isLoading ? (
+        <CommonLoader />
+      ) : (
+        <div className={styles.blogsPageAlignment}>
+          <div className={styles.blogsTableAlignment}>
+            <div className={styles.tableUi}>
+              <table>
+                <thead>
+                  <tr>
+                    <th className={styles.indexCol}>Sr no.</th>
+                    <th className={styles.titleCol}>Title</th>
+                    <th className={styles.authorCol}>Author</th>
+                    <th className={styles.categoryCol}>Category</th>
+                    <th className={styles.statusCol}>Status</th>
+                    <th className={styles.dateCol}>Created Date</th>
+                    <th className={styles.actionsCol}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredBlogs.length > 0 ? (
+                    filteredBlogs.map((blog, index) => (
+                      <tr key={blog?._id}>
+                        <td className={styles.indexCol}>{index + 1}</td>
+                        <td
+                          className={`${styles.blogTitle} ${styles.cellContent}`}
+                          title={blog?.title}
                         >
-                          {blog?.isActive ? "Active" : "Inactive"}
-                        </span>
-                      </td>
-                      <td className={styles.dateCol}>
-                        {format(new Date(blog?.createdAt), "MMM d, yyyy")}
-                      </td>
-                      <td className={styles.actionsCol}>
-                        <Dropdown
-                          actions={getBlogActions()}
-                          onSelect={(action) => handleAction(action, blog)}
-                        />
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <NoDataFound />
-                )}
-              </tbody>
-            </table>
+                          <div className={styles.truncate}>
+                            {blog?.title || ""}
+                          </div>
+                        </td>
+                        <td className={styles.cellContent} title={blog?.name}>
+                          <div className={styles.truncate}>
+                            {blog?.name || ""}
+                          </div>
+                        </td>
+                        <td
+                          className={styles.cellContent}
+                          title={blog?.categoryId?.name || "Uncategorized"}
+                        >
+                          <div className={styles.truncate}>
+                            {blog?.categoryId?.name || "Uncategorized"}
+                          </div>
+                        </td>
+                        <td className={styles.statusCol}>
+                          <span
+                            className={
+                              blog?.isActive
+                                ? styles.activeStatus
+                                : styles.inactiveStatus
+                            }
+                          >
+                            {blog?.isActive ? "Active" : "Inactive"}
+                          </span>
+                        </td>
+                        <td className={styles.dateCol}>
+                          {format(new Date(blog?.createdAt), "MMM d, yyyy")}
+                        </td>
+                        <td className={styles.actionsCol}>
+                          <Dropdown
+                            actions={getBlogActions()}
+                            onSelect={(action) => handleAction(action, blog)}
+                          />
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <NoDataFound />
+                  )}
+                </tbody>
+              </table>
+            </div>
+            <PagePagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              itemsPerPage={itemsPerPage}
+              totalItems={totalItems}
+              onPageChange={handlePageChange}
+            />
           </div>
-          <PagePagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            itemsPerPage={itemsPerPage}
-            totalItems={totalItems}
-            onPageChange={handlePageChange}
-          />
         </div>
-      </div>
+      )}
       {isAddBlogOpen && (
         <AddBlog
           onClose={() => setIsAddBlogOpen(false)}

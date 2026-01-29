@@ -287,10 +287,6 @@ export default function UserTable() {
     setSearchInput(e.target.value.trimStart());
   };
 
-  if (isLoading) {
-    return <CommonLoader />;
-  }
-
   if (error) {
     return <div className="text-red-500 p-4">{error}</div>;
   }
@@ -339,127 +335,133 @@ export default function UserTable() {
         NoButton
       />
 
-      <div className={styles.userTableAlignment}>
-        <div className={styles.tableUi}>
-          <table>
-            <thead>
-              <tr>
-                <th>Sr no.</th>
-                <th>Name</th>
-                <th>Gender</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Referred By</th>
-                <th>Reference ID</th>
-                <th>Join Date</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {isPaginationLoading ? (
+      {isLoading ? (
+        <CommonLoader />
+      ) : (
+        <div className={styles.userTableAlignment}>
+          <div className={styles.tableUi}>
+            <table>
+              <thead>
                 <tr>
-                  <td colSpan="10" style={{ padding: 0 }}>
-                    <TableSkeleton
-                      rows={Math.max(itemsPerPage, 15)}
-                      columns={10}
-                    />
-                  </td>
+                  <th>Sr no.</th>
+                  <th>Name</th>
+                  <th>Gender</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Referred By</th>
+                  <th>Reference ID</th>
+                  <th>Join Date</th>
+                  <th>Status</th>
+                  <th>Action</th>
                 </tr>
-              ) : filteredCustomers.length > 0 ? (
-                filteredCustomers?.map((customer, index) => {
-                  const joinDate = new Date(customer.createdAt);
-                  const formattedDate = joinDate.toLocaleString("en-GB", {
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    hour12: false,
-                  });
+              </thead>
+              <tbody>
+                {isPaginationLoading ? (
+                  <tr>
+                    <td colSpan="10" style={{ padding: 0 }}>
+                      <TableSkeleton
+                        rows={Math.max(itemsPerPage, 15)}
+                        columns={10}
+                      />
+                    </td>
+                  </tr>
+                ) : filteredCustomers.length > 0 ? (
+                  filteredCustomers?.map((customer, index) => {
+                    const joinDate = new Date(customer.createdAt);
+                    const formattedDate = joinDate.toLocaleString("en-GB", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      hour12: false,
+                    });
 
-                  return (
-                    <tr key={customer._id || index}>
-                      <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                      <td>
-                        {customer?.firstName && customer?.lastName
-                          ? `${customer.firstName} ${customer.lastName}`
-                          : customer?.firstName ||
-                            customer?.lastName ||
-                            "N/A"}{" "}
-                      </td>
-                      <td>
-                        {customer.gender
-                          ? customer.gender.charAt(0).toUpperCase() +
-                            customer.gender.slice(1)
-                          : "N/A"}
-                      </td>
-                      <td>{customer.email || "N/A"}</td>
-                      <td>{customer.phone || "N/A"}</td>
-                      <td>{customer.referredBy || "N/A"}</td>
-                      <td>{customer.referralCode || "N/A"}</td>
-                      <td>{formattedDate}</td>
-                      <td>
-                        <span
-                          className={`${styles.status} ${customer.isActive ? styles.active : styles.inactive}`}
-                        >
-                          {customer.isActive ? "Active" : "Inactive"}
-                        </span>
-                      </td>
-                      <td>
-                        <Dropdown
-                          actions={getUserActions(customer.isActive)}
-                          onSelect={(action) => handleAction(action, customer)}
-                        />
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : (
-                <NoDataFound />
-              )}
-            </tbody>
-          </table>
+                    return (
+                      <tr key={customer._id || index}>
+                        <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
+                        <td>
+                          {customer?.firstName && customer?.lastName
+                            ? `${customer.firstName} ${customer.lastName}`
+                            : customer?.firstName ||
+                              customer?.lastName ||
+                              "N/A"}{" "}
+                        </td>
+                        <td>
+                          {customer.gender
+                            ? customer.gender.charAt(0).toUpperCase() +
+                              customer.gender.slice(1)
+                            : "N/A"}
+                        </td>
+                        <td>{customer.email || "N/A"}</td>
+                        <td>{customer.phone || "N/A"}</td>
+                        <td>{customer.referredBy || "N/A"}</td>
+                        <td>{customer.referralCode || "N/A"}</td>
+                        <td>{formattedDate}</td>
+                        <td>
+                          <span
+                            className={`${styles.status} ${customer.isActive ? styles.active : styles.inactive}`}
+                          >
+                            {customer.isActive ? "Active" : "Inactive"}
+                          </span>
+                        </td>
+                        <td>
+                          <Dropdown
+                            actions={getUserActions(customer.isActive)}
+                            onSelect={(action) =>
+                              handleAction(action, customer)
+                            }
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })
+                ) : (
+                  <NoDataFound />
+                )}
+              </tbody>
+            </table>
+          </div>
+          {isViewModalOpen && (
+            <UserDetailsModal
+              customer={viewingCustomer}
+              onClose={() => {
+                setIsViewModalOpen(false);
+              }}
+            />
+          )}
+          {deleteDialogOpen && (
+            <DeleteUser
+              customer={selectedCustomer}
+              onClose={() => setDeleteDialogOpen(false)}
+              onDelete={confirmDelete}
+            />
+          )}
+          {isEditMode && (
+            <EditUserDetails
+              customer={editingCustomer}
+              onClose={() => setIsEditMode(false)}
+              isEditMode={isEditMode}
+              onSubmit={onSubmit}
+            />
+          )}
+          {statusDialogOpen && (
+            <StatusModal
+              customer={selectedCustomer}
+              onClose={() => setStatusDialogOpen(false)}
+              onStatusChange={confirmStatusToggle}
+              statusLoading={statusLoading}
+            />
+          )}
+          <PagePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            itemsPerPage={itemsPerPage}
+            totalItems={totalItems}
+            onPageChange={handlePageChange}
+          />
         </div>
-        {isViewModalOpen && (
-          <UserDetailsModal
-            customer={viewingCustomer}
-            onClose={() => {
-              setIsViewModalOpen(false);
-            }}
-          />
-        )}
-        {deleteDialogOpen && (
-          <DeleteUser
-            customer={selectedCustomer}
-            onClose={() => setDeleteDialogOpen(false)}
-            onDelete={confirmDelete}
-          />
-        )}
-        {isEditMode && (
-          <EditUserDetails
-            customer={editingCustomer}
-            onClose={() => setIsEditMode(false)}
-            isEditMode={isEditMode}
-            onSubmit={onSubmit}
-          />
-        )}
-        {statusDialogOpen && (
-          <StatusModal
-            customer={selectedCustomer}
-            onClose={() => setStatusDialogOpen(false)}
-            onStatusChange={confirmStatusToggle}
-            statusLoading={statusLoading}
-          />
-        )}
-        <PagePagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          itemsPerPage={itemsPerPage}
-          totalItems={totalItems}
-          onPageChange={handlePageChange}
-        />
-      </div>
+      )}
     </>
   );
 }

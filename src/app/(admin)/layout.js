@@ -26,7 +26,6 @@ export default function layout({ children }) {
 
       setUnreadCount(() => unread);
 
-      console.log("Updated unread: ", unread, data);
     };
 
     socket.on("connect", handleConnect);

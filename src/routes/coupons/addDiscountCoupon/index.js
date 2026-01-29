@@ -96,16 +96,7 @@ export default function AddDiscountCoupon({
                 error={form.formState.errors.expiryDate?.message}
                 className={styles.dateInput}
               />
-              {/* <span
-                className={styles.calendarIcon}
-                onClick={() => {
-                  const dateInput =
-                    document.querySelector('input[type="date"]');
-                  dateInput?.showPicker?.();
-                }}
-              >
-                📅
-              </span> */}
+          
             </div>
             <Input
               label="Usage Limit"

@@ -15,6 +15,7 @@ import SettingsModal from "../settingsModal";
 import StatusModal from "../statusModal";
 import { getSocket } from "@/utils/webSocket";
 import NoDataFound from "@/components/noDataFound";
+import CommonLoader from "@/components/commonLoader";
 import EditIcon from "../../../../public/assets/icons/Edit.svg";
 import Image from "next/image";
 const settingIcon = "/assets/icons/settings.svg";
@@ -143,8 +144,6 @@ export default function WithdrawRequestsTable() {
         status: statusFilter !== "all" ? statusFilter : undefined,
       });
 
-      console.log("Withdrawals API Response:", res); // Debug log
-
       const allWithdrawals = res.payload?.data || [];
       setWithdrawals(allWithdrawals);
 
@@ -155,12 +154,6 @@ export default function WithdrawRequestsTable() {
       setTotalPages(calculatedTotalPages);
       setTotalItems(totalCount);
       setCurrentPage(page);
-
-      console.log("Pagination data:", {
-        totalCount,
-        calculatedTotalPages,
-        currentPage: page,
-      }); // Debug log
     } catch (err) {
       console.error("fetchWithdrawals error", err);
       toast.error("Failed to load withdrawals");
@@ -347,76 +340,85 @@ export default function WithdrawRequestsTable() {
         onClick={() => setCommissionDialogOpen(true)}
       />
       <div className={styles.withdrawRequestspage}>
-        <div className={styles.withdrawRequestsTable}>
-          <div className={styles.tableUi}>
-            <table>
-              <thead>
-                <tr>
-                  <th>Sr no.</th>
-                  <th>Requested Date</th>
-                  <th>Name</th>
-                  <th>Email</th>
-                  <th>Amount</th>
-                  <th>Transaction ID</th>
-                  <th>Payment Method</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {withdrawals?.length > 0 ? (
-                  withdrawals.map((withdrawal, index) => {
-                    return (
-                      <tr
-                        key={withdrawal._id}
-                        className={getRowClassName(withdrawal)}
-                      >
-                        <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                        <td>
-                          {format(withdrawal.createdAt, "dd/MM/yyyy HH:mm:ss")}
-                        </td>
-                        <td>{withdrawal.name || "N/A"}</td>
-                        <td>{withdrawal.email || "N/A"}</td>
-                        <td>{withdrawal.amount || "N/A"}</td>
-                        <td>{withdrawal.transactionId || "N/A"}</td>
-                        <td>{withdrawal.withdrawalType || "N/A"}</td>
-                        <td>
-                          <span
-                            className={`${styles[withdrawal.status] || styles.green}`}
-                          >
-                            {withdrawal.status || "N/A"}
-                          </span>
-                        </td>
-                        <td>
-                          <Image
-                            alt="Edit withdrawal"
-                            src={EditIcon}
-                            width={20}
-                            height={20}
-                            className={styles.editIcon}
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleEditClick(withdrawal);
-                            }}
-                          />
-                        </td>
-                      </tr>
-                    );
-                  })
-                ) : (
-                  <NoDataFound />
-                )}
-              </tbody>
-            </table>
+        {isFetching ? (
+          <CommonLoader />
+        ) : (
+          <div className={styles.withdrawRequestsTable}>
+            <div className={styles.tableUi}>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Sr no.</th>
+                    <th>Requested Date</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Amount</th>
+                    <th>Transaction ID</th>
+                    <th>Payment Method</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {withdrawals?.length > 0 ? (
+                    withdrawals.map((withdrawal, index) => {
+                      return (
+                        <tr
+                          key={withdrawal._id}
+                          className={getRowClassName(withdrawal)}
+                        >
+                          <td>
+                            {(currentPage - 1) * itemsPerPage + index + 1}
+                          </td>
+                          <td>
+                            {format(
+                              withdrawal.createdAt,
+                              "dd/MM/yyyy HH:mm:ss",
+                            )}
+                          </td>
+                          <td>{withdrawal.name || "N/A"}</td>
+                          <td>{withdrawal.email || "N/A"}</td>
+                          <td>{withdrawal.amount || "N/A"}</td>
+                          <td>{withdrawal.transactionId || "N/A"}</td>
+                          <td>{withdrawal.withdrawalType || "N/A"}</td>
+                          <td>
+                            <span
+                              className={`${styles[withdrawal.status] || styles.green}`}
+                            >
+                              {withdrawal.status || "N/A"}
+                            </span>
+                          </td>
+                          <td>
+                            <Image
+                              alt="Edit withdrawal"
+                              src={EditIcon}
+                              width={20}
+                              height={20}
+                              className={styles.editIcon}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEditClick(withdrawal);
+                              }}
+                            />
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <NoDataFound />
+                  )}
+                </tbody>
+              </table>
+            </div>
+            <PagePagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              itemsPerPage={itemsPerPage}
+              totalItems={totalItems}
+              onPageChange={fetchWithdrawals}
+            />
           </div>
-          <PagePagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            itemsPerPage={itemsPerPage}
-            totalItems={totalItems}
-            onPageChange={fetchWithdrawals}
-          />
-        </div>
+        )}
       </div>
       {commissionDialogOpen && (
         <SettingsModal

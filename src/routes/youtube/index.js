@@ -16,6 +16,7 @@ import EditIcon from "../../../public/assets/icons/Edit.svg";
 import DeleteIcon from "../../../public/assets/icons/Delete.svg";
 import PagePagination from "@/components/pagePagination";
 import NoDataFound from "@/components/noDataFound";
+import CommonLoader from "@/components/commonLoader";
 const PlusIcon = "/assets/icons/plus.svg";
 
 const ytUrlRegex =
@@ -111,10 +112,6 @@ export default function Youtube() {
       // expecting response.payload.data like in previous examples
       const data = res?.payload?.data ?? res?.data ?? [];
       const pagination = res?.payload?.count ?? {};
-
-      console.log("API Response:", res);
-      console.log("Pagination data:", pagination);
-      console.log("Data length:", data.length);
 
       setItems(data);
 
@@ -244,8 +241,6 @@ export default function Youtube() {
   };
 
   const onSubmit = async (data) => {
-    console.log("data", data);
-
     setIsLoading(true);
 
     try {
@@ -395,53 +390,57 @@ export default function Youtube() {
         DescriptionText="Add, remove or update YouTube videos"
       />
       <div className={styles.youtubePageAlignment}>
-        <div className={styles.grid}>
-          {displayItems?.length > 0 ? (
-            displayItems?.map((item, index) => {
-              return (
-                <div className={styles.gridItems} key={index}>
-                  <div className={styles.image}>
-                    <Image
-                      width={1000}
-                      height={1000}
-                      src={item?.thumbnail}
-                      alt={item?.description}
-                    />
-                    {/* <div className={styles.playButtonOverlay}>
-                    <Image
-                      width={60}
-                      height={60}
-                      src={youtube}
-                      alt="Play on YouTube"
-                      className={styles.playButton}
-                    />
-                  </div> */}
-                  </div>
-                  <div className={styles.title}>
-                    <span className={styles.titleText}>
-                      {item?.description || "N/A"}
-                    </span>
-                    <div className={styles.dropdownContainer}>
-                      <Dropdown
-                        actions={getActions(item)}
-                        onSelect={(action) => handleAction(action, item)}
+        {isFetching ? (
+          <CommonLoader />
+        ) : (
+          <div className={styles.grid}>
+            {displayItems?.length > 0 ? (
+              displayItems?.map((item, index) => {
+                return (
+                  <div className={styles.gridItems} key={index}>
+                    <div className={styles.image}>
+                      <Image
+                        width={1000}
+                        height={1000}
+                        src={item?.thumbnail}
+                        alt={item?.description}
                       />
+                      {/* <div className={styles.playButtonOverlay}>
+                      <Image
+                        width={60}
+                        height={60}
+                        src={youtube}
+                        alt="Play on YouTube"
+                        className={styles.playButton}
+                      />
+                    </div> */}
                     </div>
+                    <div className={styles.title}>
+                      <span className={styles.titleText}>
+                        {item?.description || "N/A"}
+                      </span>
+                      <div className={styles.dropdownContainer}>
+                        <Dropdown
+                          actions={getActions(item)}
+                          onSelect={(action) => handleAction(action, item)}
+                        />
+                      </div>
+                    </div>
+                    <a
+                      href={item.videoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.videoLink}
+                      onClick={(e) => e.stopPropagation()}
+                    ></a>
                   </div>
-                  <a
-                    href={item.videoUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.videoLink}
-                    onClick={(e) => e.stopPropagation()}
-                  ></a>
-                </div>
-              );
-            })
-          ) : (
-            <NoDataFound />
-          )}
-        </div>
+                );
+              })
+            ) : (
+              <NoDataFound />
+            )}
+          </div>
+        )}
       </div>
       {isOpen && (
         <AddyoutubeVideo

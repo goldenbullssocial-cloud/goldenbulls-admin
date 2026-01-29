@@ -21,7 +21,10 @@ import DetailCourseView from "./detailCourseView";
 import { getAllCenters } from "@/api/banner";
 import { format } from "date-fns";
 import DeleteCourse from "./deleteCourse";
+import NoDataFound from "@/components/noDataFound";
+import CommonLoader from "@/components/commonLoader";
 const CardImage = "/assets/images/course-user.png";
+const PlusIcon = "/assets/icons/plus.svg";
 
 export default function Courses() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -681,20 +684,10 @@ export default function Courses() {
   };
 
   const renderCourseList = (courses, emptyMessage) => {
-    if (isTabSwitching) {
-      return (
-        <div className="flex justify-center items-center min-h-[70vh]">
-          <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-primary"></div>
-        </div>
-      );
+    if (isTabSwitching || loading) {
+      return <CommonLoader />;
     }
-    if (loading) {
-      return (
-        <div className="flex justify-center items-center min-h-[70vh]">
-          <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-primary"></div>
-        </div>
-      );
-    } else if (error) {
+    if (error) {
       return <div className="text-red-500">{error}</div>;
     } else {
       return (
@@ -885,6 +878,7 @@ export default function Courses() {
     <>
       <UserHeader
         buttonText="Create Course"
+        icon={PlusIcon}
         HeaderText="Courses"
         DescriptionText="Create, organize, and manage all courses"
         onClick={() => {

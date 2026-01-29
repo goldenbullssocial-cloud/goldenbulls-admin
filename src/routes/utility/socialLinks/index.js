@@ -5,6 +5,7 @@ import EditIcon from "@/icons/editIcon";
 import { getUtility, updateUtility } from "@/api/utility";
 import UserHeader from "@/components/userHeader";
 import EmailModal from "../emailModal";
+import CommonLoader from "@/components/commonLoader";
 export default function SocialLinks() {
   const [utilitySettings, setUtilitySettings] = useState({
     email: "",
@@ -22,17 +23,20 @@ export default function SocialLinks() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [currentField, setCurrentField] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isFetching, setIsFetching] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(8);
 
   const fetchUtilitySettings = async () => {
     try {
-      // Replace with actual API call
+      setIsFetching(true);
       const res = await getUtility();
       setUtilitySettings(res?.payload || {});
     } catch (err) {
       console.error("Failed to fetch utility settings:", err);
+    } finally {
+      setIsFetching(false);
     }
   };
 
@@ -152,33 +156,37 @@ export default function SocialLinks() {
           <div className={styles.title}>
             <h2>Social Links</h2>
           </div>
-          <div className={styles.grid}>
-            {paginatedData.map((item) => {
-              return (
-                <>
-                  <div className={styles.gridItems} key={item.id}>
-                    <div className={styles.cardHeaderAlignment}>
-                      <h3>{item.label}</h3>
-                      <button onClick={() => handleEditClick(item.field)}>
-                        <EditIcon />
-                      </button>
+          {isFetching || paginatedData?.length > 0 ? (
+            <div className={styles.grid}>
+              {paginatedData?.map((item) => {
+                return (
+                  <>
+                    <div className={styles.gridItems} key={item.id}>
+                      <div className={styles.cardHeaderAlignment}>
+                        <h3>{item.label}</h3>
+                        <button onClick={() => handleEditClick(item.field)}>
+                          <EditIcon />
+                        </button>
+                      </div>
+                      <p>{item.value}</p>
                     </div>
-                    <p>{item.value}</p>
-                  </div>
-                  {isEditDialogOpen && (
-                    <EmailModal
-                      onClose={() => setIsEditDialogOpen(false)}
-                      onSave={updateUtilitySetting}
-                      label={item.label}
-                      currentField={item.field}
-                      utilitySettings={utilitySettings}
-                      fieldLabels={fieldLabels}
-                    />
-                  )}
-                </>
-              );
-            })}
-          </div>
+                    {isEditDialogOpen && (
+                      <EmailModal
+                        onClose={() => setIsEditDialogOpen(false)}
+                        onSave={updateUtilitySetting}
+                        label={item.label}
+                        currentField={item.field}
+                        utilitySettings={utilitySettings}
+                        fieldLabels={fieldLabels}
+                      />
+                    )}
+                  </>
+                );
+              })}
+            </div>
+          ) : (
+            <CommonLoader />
+          )}
           <div className={styles.line}></div>
         </div>
       </div>

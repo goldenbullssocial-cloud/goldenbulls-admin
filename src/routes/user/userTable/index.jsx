@@ -16,6 +16,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import ViewIcon from "../../../../public/assets/icons/Eye.svg";
 import EditIcon from "../../../../public/assets/icons/Edit.svg";
 import InactiveIcon from "../../../../public/assets/icons/InactiveUser.svg";
+import ActiveIcon from "../../../../public/assets/icons/activeUser.svg";
 import DeleteIcon from "../../../../public/assets/icons/Delete.svg";
 import Dropdown from "@/components/dropdown";
 import UserDetailsModal from "../userDetailsModal";
@@ -25,6 +26,7 @@ import StatusModal from "../statusModal";
 import UserHeader from "@/components/userHeader";
 import NoDataFound from "@/components/noDataFound";
 import TableSkeleton from "@/components/tableSkeleton";
+import CommonLoader from "@/components/commonLoader";
 
 // Define the form schema
 const customerFormSchema = z.object({
@@ -286,11 +288,7 @@ export default function UserTable() {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center min-h-[70vh]">
-        <div className="animate-spin rounded-full h-6 w-6 border-t-2 border-b-2 border-primary"></div>
-      </div>
-    );
+    return <CommonLoader />;
   }
 
   if (error) {
@@ -310,7 +308,7 @@ export default function UserTable() {
     {
       key: "toggleStatus",
       label: isActive ? "Inactive" : "Active",
-      icon: InactiveIcon,
+      icon: isActive ? InactiveIcon : ActiveIcon,
     },
     {
       key: "delete",
@@ -363,7 +361,7 @@ export default function UserTable() {
                 <tr>
                   <td colSpan="10" style={{ padding: 0 }}>
                     <TableSkeleton
-                      rows={Math.min(itemsPerPage, 10)}
+                      rows={Math.max(itemsPerPage, 15)}
                       columns={10}
                     />
                   </td>

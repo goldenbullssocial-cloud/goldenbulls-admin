@@ -7,6 +7,7 @@ import { getPaymentHistory, downloadInvoice } from "@/api/payment";
 import { toast } from "sonner";
 import { Search } from "lucide-react";
 import PagePagination from "@/components/pagePagination";
+import CommonLoader from "@/components/commonLoader";
 export default function Revenue() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState("all");
@@ -292,17 +293,21 @@ export default function Revenue() {
             </button>
           </div>
         </div>
-        <CourseSales
-          activeTab={activeTab}
-          filteredPayments={filteredPayments}
-          downloadPaymentInvoice={downloadPaymentInvoice}
-          loadingInvoices={loadingInvoices}
-          currentPage={currentPage}
-          totalPages={totalPages}
-          itemsPerPage={itemsPerPage}
-          totalItems={totalItems}
-          onPageChange={handlePageChange}
-        />
+        {isLoading ? (
+          <CommonLoader />
+        ) : (
+          <CourseSales
+            activeTab={activeTab}
+            filteredPayments={filteredPayments}
+            downloadPaymentInvoice={downloadPaymentInvoice}
+            loadingInvoices={loadingInvoices}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            itemsPerPage={itemsPerPage}
+            totalItems={totalItems}
+            onPageChange={handlePageChange}
+          />
+        )}
       </div>
     </>
   );

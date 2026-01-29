@@ -27,8 +27,7 @@ export default function AddBlog({
         setIsLoading(true);
         const response = await getAllBlogCategory();
         setCategories(response?.payload?.data || []);
-        console.log("Categories loaded:", response?.payload?.data);
-        console.log("Current categoryId value:", form.watch("categoryId"));
+
       } catch (error) {
         console.error("Error fetching categories:", error);
         toast.error("Failed to load categories");

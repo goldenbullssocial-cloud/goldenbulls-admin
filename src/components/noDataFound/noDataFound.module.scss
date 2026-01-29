@@ -12,7 +12,7 @@
   min-height: 200px;
   position: fixed;
   top: 50%;
-  left: 50%;
+  left: 59%;
   transform: translate(-50%, -50%);
 
   &.small {
@@ -60,6 +60,10 @@
       @media (max-width: 768px) {
         font-size: 13px;
       }
+    }
+
+    .actionButton {
+      margin-top: 20px;
     }
   }
 

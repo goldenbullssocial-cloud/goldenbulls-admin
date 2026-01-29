@@ -24,7 +24,9 @@
     &:has(button):has(input) {
       width: 100% !important;
     }
-    &:has(input):not(:has(button)),
+    &:has(input):not(:has(button)) {
+      width: 100% !important;
+    }
     &:has(button):not(:has(input)) {
       grid-template-columns: 1fr auto;
     }
@@ -57,6 +59,40 @@
 
       &:focus {
         outline: none;
+      }
+
+      &::-webkit-search-cancel-button {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 24px;
+        height: 24px;
+        background-image: url("/assets/icons/close.svg");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+        cursor: pointer;
+        opacity: 0.8;
+        transition: opacity 0.2s;
+
+        &:hover {
+          opacity: 1;
+        }
+      }
+
+      &::-moz-search-cancel-button {
+        // width: 16px;
+        // height: 16px;
+        // background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23f9f490'%3e%3cpath d='m.235.867 8.832 8.832-8.832 8.832a.5.5 0 0 0 .707.707L9.802 10.4l8.832 8.832a.5.5 0 0 0 .707-.707L10.509 9.698l8.832-8.832a.5.5 0 0 0-.707-.707L9.802 9.491.97.16a.5.5 0 0 0-.707.707z'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+        cursor: pointer;
+        opacity: 0.8;
+        transition: opacity 0.2s;
+
+        &:hover {
+          opacity: 1;
+        }
       }
     }
 

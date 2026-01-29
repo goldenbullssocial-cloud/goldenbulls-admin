@@ -22,7 +22,7 @@ import { toast } from "sonner";
 import CenterDetailsModal from "../centerDetailsModal";
 import DeleteCenter from "../deleteCenter";
 import NoDataFound from "@/components/noDataFound";
-import TableSkeleton from "@/components/tableSkeleton";
+import CommonLoader from "@/components/commonLoader";
 const PlusIcon = "/assets/icons/plus.svg";
 
 const formatDate = (dateString) => {
@@ -274,71 +274,70 @@ export default function CentersTable() {
         icon={PlusIcon}
       />
       <div className={styles.centersTableAlignment}>
-        <div className={styles.tableUi}>
-          <table>
-            <thead>
-              <tr>
-                <th>Sr no.</th>
-                <th>Name</th>
-                <th>Location</th>
-                <th>City</th>
-                <th>State</th>
-                <th>Country</th>
-                <th>Date Created</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {isLoading ? (
-                <tr>
-                  <td colSpan="9" style={{ padding: 0 }}>
-                    <TableSkeleton
-                      rows={Math.min(itemsPerPage, 10)}
-                      columns={9}
-                    />
-                  </td>
-                </tr>
-              ) : centers.length > 0 ? (
-                centers?.map((center, i) => {
-                  return (
-                    <tr key={i}>
-                      <td>{i + 1}</td>
-                      <td>{center.centerName}</td>
-                      <td>{center.location}</td>
-                      <td>{center.city}</td>
-                      <td>{center.state}</td>
-                      <td>{center.country}</td>
-                      <td>{formatDate(center.createdAt)}</td>
-                      <td>
-                        <span
-                          className={`${styles.status} ${center.isActive ? styles.active : styles.inactive}`}
-                        >
-                          {center.isActive ? "Active" : "Inactive"}
-                        </span>
-                      </td>
-                      <td>
-                        <Dropdown
-                          actions={getUserActions(center.isActive)}
-                          onSelect={(action) => handleAction(action, center)}
-                        />
-                      </td>
-                    </tr>
-                  );
-                })
-              ) : (
-                <NoDataFound />
-              )}
-            </tbody>
-          </table>
-        </div>
-        <PagePagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-          itemsPerPage={itemsPerPage}
-          totalItems={totalItems}
-        />
+        {isLoading ? (
+          <CommonLoader />
+        ) : (
+          <>
+            <div className={styles.tableUi}>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Sr no.</th>
+                    <th>Name</th>
+                    <th>Location</th>
+                    <th>City</th>
+                    <th>State</th>
+                    <th>Country</th>
+                    <th>Date Created</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {centers.length > 0 ? (
+                    centers?.map((center, i) => {
+                      return (
+                        <tr key={i}>
+                          <td>{i + 1}</td>
+                          <td>{center.centerName}</td>
+                          <td>{center.location}</td>
+                          <td>{center.city}</td>
+                          <td>{center.state}</td>
+                          <td>{center.country}</td>
+                          <td>{formatDate(center.createdAt)}</td>
+                          <td>
+                            <span
+                              className={`${styles.status} ${center.isActive ? styles.active : styles.inactive}`}
+                            >
+                              {center.isActive ? "Active" : "Inactive"}
+                            </span>
+                          </td>
+                          <td>
+                            <Dropdown
+                              actions={getUserActions(center.isActive)}
+                              onSelect={(action) =>
+                                handleAction(action, center)
+                              }
+                            />
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <NoDataFound />
+                  )}
+                </tbody>
+              </table>
+            </div>
+            <PagePagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+              itemsPerPage={itemsPerPage}
+              totalItems={totalItems}
+            />
+          </>
+        )}
       </div>
       {isViewModalOpen && (
         <CenterDetailsModal

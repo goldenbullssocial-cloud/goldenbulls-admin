@@ -21,6 +21,7 @@ import AddBlogCategory from "../addBlogCategory";
 import { toast } from "sonner";
 import DeleteBlogCategory from "../deleteBlogCategory";
 import NoDataFound from "@/components/noDataFound";
+import CommonLoader from "@/components/commonLoader";
 const PlusIcon = "/assets/icons/plus.svg";
 
 const blogCategoryFormSchema = z.object({
@@ -203,50 +204,56 @@ export default function BlogCategoriesTable() {
         icon={PlusIcon}
       />
       <div className={styles.couponsPageAlignment}>
-        <div className={styles.couponsTableAlignment}>
-          <div className={styles.tableUi}>
-            <table>
-              <thead>
-                <tr>
-                  <th>Sr no.</th>
-                  <th>Category Name</th>
-                  <th>Created Date</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredCategories?.length > 0 ? (
-                  filteredCategories.map((category, index) => (
-                    <tr key={category._id}>
-                      <td>{index + 1}</td>
-                      <td>{category.name}</td>
-                      <td>
-                        {format(
-                          new Date(category.createdAt),
-                          "dd/MM/yyyy, HH:mm:ss",
-                        )}
-                      </td>
-                      <td>
-                        <Dropdown
-                          actions={getUserActions(category)}
-                          onSelect={(action) => handleAction(action, category)}
-                        />
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <NoDataFound />
-                )}
-              </tbody>
-            </table>
+        {isLoading ? (
+          <CommonLoader />
+        ) : (
+          <div className={styles.couponsTableAlignment}>
+            <div className={styles.tableUi}>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Sr no.</th>
+                    <th>Category Name</th>
+                    <th>Created Date</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredCategories?.length > 0 ? (
+                    filteredCategories.map((category, index) => (
+                      <tr key={category._id}>
+                        <td>{index + 1}</td>
+                        <td>{category.name}</td>
+                        <td>
+                          {format(
+                            new Date(category.createdAt),
+                            "dd/MM/yyyy, HH:mm:ss",
+                          )}
+                        </td>
+                        <td>
+                          <Dropdown
+                            actions={getUserActions(category)}
+                            onSelect={(action) =>
+                              handleAction(action, category)
+                            }
+                          />
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <NoDataFound />
+                  )}
+                </tbody>
+              </table>
+            </div>
+            <PagePagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              itemsPerPage={itemsPerPage}
+              totalItems={totalItems}
+            />
           </div>
-          <PagePagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            itemsPerPage={itemsPerPage}
-            totalItems={totalItems}
-          />
-        </div>
+        )}
       </div>
       {isAddCategoryOpen && (
         <AddBlogCategory

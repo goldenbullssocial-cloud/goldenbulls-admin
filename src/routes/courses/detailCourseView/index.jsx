@@ -78,7 +78,6 @@ const DetailCourseView = ({ course, onClose, onEdit, onDelete }) => {
     // Handle chapter video playback
     if (chapter.videoUrl || chapter.videoFile) {
       // Open video player or navigate to chapter
-      console.log("Playing chapter:", chapter.title);
     }
   };
 

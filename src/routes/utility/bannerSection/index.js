@@ -21,6 +21,8 @@ import Dropdown from "@/components/dropdown";
 import DeleteBanner from "./deleteBanner";
 import PagePagination from "@/components/pagePagination";
 import NoDataFound from "@/components/noDataFound";
+import CommonLoader from "@/components/commonLoader";
+import BannerSkeleton from "@/components/bannerSkeleton";
 // import { useForm } from "react-hook-form";
 const PlusIcon = "/assets/icons/plus.svg";
 const BannerImage = "/assets/images/banner1.png";
@@ -76,25 +78,18 @@ export default function BannerSection() {
     try {
       setIsFetching(true);
       const response = await getAllBanners(page, itemsPerPage);
-      console.log("API Response:", response); // Debug log
       // Filter out banners where isOnboarding is true or not present
       const filteredBanners = (response?.payload?.data || []).filter(
         (banner) => banner.isOnboarding == false && banner.isBanner == true,
       );
       setBanners(filteredBanners);
 
-      // Calculate pagination based on the API response
       const totalCount = response?.payload?.count || 0;
       const calculatedTotalPages = Math.ceil(totalCount / itemsPerPage);
 
       setTotalPages(calculatedTotalPages);
       setTotalItems(totalCount);
       setCurrentPage(page);
-      console.log("Pagination data:", {
-        totalCount,
-        calculatedTotalPages,
-        currentPage: page,
-      }); // Debug log
     } catch (error) {
       toast.error("Failed to fetch banners");
     } finally {
@@ -234,9 +229,11 @@ export default function BannerSection() {
         <h3>Banner Images of Mobile app</h3>
         <Button text="Add Banner" icon={PlusIcon} onClick={handleCreateNew} />
       </div>
-      <div className={styles.imageGrid}>
-        {banners.length > 0 ? (
-          banners.map((banner) => {
+      {isFetching ? (
+        <BannerSkeleton count={4} />
+      ) : banners?.length > 0 ? (
+        <div className={styles.imageGrid}>
+          {banners.map((banner) => {
             return (
               <div className={styles.items} key={banner._id}>
                 <div className={styles.imageContainer}>
@@ -254,11 +251,11 @@ export default function BannerSection() {
                 </div>
               </div>
             );
-          })
-        ) : (
-          <NoDataFound />
-        )}
-      </div>
+          })}
+        </div>
+      ) : (
+        <NoDataFound />
+      )}
       {isOpen && (
         <AddBanner
           onClose={() => setIsOpen(false)}

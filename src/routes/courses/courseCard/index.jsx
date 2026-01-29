@@ -9,6 +9,7 @@ import InactiveIcon from "../../../../public/assets/icons/InactiveUser.svg";
 import DeleteIcon from "../../../../public/assets/icons/Delete.svg";
 import Dropdown from "@/components/dropdown";
 import NoDataFound from "@/components/noDataFound";
+import CommonLoader from "@/components/commonLoader";
 export default function CourseCard({
   courses,
   activeTab,
@@ -40,11 +41,10 @@ export default function CourseCard({
     if (action === "edit") onEdit(course);
     if (action === "delete") onDelete(course);
   };
+  if (loading) return <CommonLoader />;
   return (
     <div className={styles.grid}>
-      {loading ? (
-        <>Loading..</>
-      ) : courses?.length > 0 ? (
+      {courses?.length > 0 ? (
         courses?.map((course, i) => {
           return (
             <div className={styles.griditems} key={i}>
@@ -58,6 +58,9 @@ export default function CourseCard({
                   alt={course.CourseName || "Course thumbnail"}
                   width={400}
                   height={225}
+                  onError={(e) => {
+                    e.target.src = "/assets/images/course-placeholder.svg";
+                  }}
                 />
               </div>
               <div className={styles.details}>

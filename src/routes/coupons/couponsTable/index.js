@@ -19,6 +19,7 @@ import AddDiscountCoupon from "../addDiscountCoupon";
 import { toast } from "sonner";
 import DeleteCoupon from "../deleteCoupon";
 import NoDataFound from "@/components/noDataFound";
+import CommonLoader from "@/components/commonLoader";
 const PlusIcon = "/assets/icons/plus.svg";
 
 const couponFormSchema = z.object({
@@ -227,68 +228,71 @@ export default function CouponsTable() {
         onClick={() => setIsAddCouponOpen(true)}
       />
       <div className={styles.couponsPageAlignment}>
-        <div className={styles.couponsTableAlignment}>
-          <div className={styles.tableUi}>
-            <table>
-              <thead>
-                <tr>
-                  <th>Sr no.</th>
-                  <th>Coupon Code</th>
-                  <th>Discount</th>
-                  <th>Usage Limit</th>
-                  <th>Usage Count</th>
-                  <th>Created Date</th>
-                  <th>Expiry Date</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>ṭ
-                {filteredCoupons?.length > 0 ? (
-                  filteredCoupons.map((coupon, index) => (
-                    <tr>
-                      <td>{index + 1}</td>
-                      <td>{coupon.couponCode}</td>
-                      <td>{coupon.discount}%</td>
-                      <td>{coupon.usageLimit}</td>
-                      <td>{coupon.usageCount}</td>
-                      <td>
-                        {format(
-                          new Date(coupon.createdAt),
-                          "dd/MM/yyyy, HH:mm:ss",
-                        )}
-                      </td>
-                      <td>
-                        {format(
-                          new Date(coupon.expiryDate),
-                          "dd/MM/yyyy, HH:mm:ss",
-                        )}
-                      </td>
-                      <td>
-                        <span className={styles.green}>Active</span>
-                      </td>
-                      <td>
-                        <Dropdown
-                          actions={getUserActions(coupon.isActive)}
-                          onSelect={(action) => handleAction(action, coupon)}
-                        />
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <NoDataFound />
-                )
-                }
-              </tbody>
-            </table>
+        {isLoading ? (
+          <CommonLoader />
+        ) : (
+          <div className={styles.couponsTableAlignment}>
+            <div className={styles.tableUi}>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Sr no.</th>
+                    <th>Coupon Code</th>
+                    <th>Discount</th>
+                    <th>Usage Limit</th>
+                    <th>Usage Count</th>
+                    <th>Created Date</th>
+                    <th>Expiry Date</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredCoupons?.length > 0 ? (
+                    filteredCoupons.map((coupon, index) => (
+                      <tr>
+                        <td>{index + 1}</td>
+                        <td>{coupon.couponCode}</td>
+                        <td>{coupon.discount}%</td>
+                        <td>{coupon.usageLimit}</td>
+                        <td>{coupon.usageCount}</td>
+                        <td>
+                          {format(
+                            new Date(coupon.createdAt),
+                            "dd/MM/yyyy, HH:mm:ss",
+                          )}
+                        </td>
+                        <td>
+                          {format(
+                            new Date(coupon.expiryDate),
+                            "dd/MM/yyyy, HH:mm:ss",
+                          )}
+                        </td>
+                        <td>
+                          <span className={styles.green}>Active</span>
+                        </td>
+                        <td>
+                          <Dropdown
+                            actions={getUserActions(coupon.isActive)}
+                            onSelect={(action) => handleAction(action, coupon)}
+                          />
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <NoDataFound />
+                  )}
+                </tbody>
+              </table>
+            </div>
+            <PagePagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              itemsPerPage={itemsPerPage}
+              totalItems={totalItems}
+            />
           </div>
-          <PagePagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            itemsPerPage={itemsPerPage}
-            totalItems={totalItems}
-          />
-        </div>
+        )}
       </div>
       {isAddCouponOpen && (
         <AddDiscountCoupon

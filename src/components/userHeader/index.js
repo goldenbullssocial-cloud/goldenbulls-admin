@@ -15,7 +15,7 @@ export default function UserHeader({
   NoButton,
   icon,
   DescriptionText,
-  HeaderText
+  HeaderText,
 }) {
   const [user, setUser] = useState({});
   const [isClient, setIsClient] = useState(false);

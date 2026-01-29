@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import DeleteBlog from "../deleteBlog";
 import { uploadImage } from "@/api/course";
 import NoDataFound from "@/components/noDataFound";
+import CommonLoader from "@/components/commonLoader";
 const PlusIcon = "/assets/icons/plus.svg";
 
 const blogFormSchema = z.object({
@@ -328,7 +329,7 @@ export default function BlogsTable() {
     if (action === "delete") handleDeleteClick(blog);
   };
   if (isLoading) {
-    return <div className={styles.loading}>Loading blogs...</div>;
+    return <CommonLoader />;
   }
 
   return (

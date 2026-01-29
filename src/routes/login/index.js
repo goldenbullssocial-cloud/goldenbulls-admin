@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./login.module.scss";
 import Input from "@/components/input";
@@ -26,6 +26,23 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
+
+  // Load saved credentials on component mount
+  useEffect(() => {
+    const rememberMe = localStorage.getItem("rememberMe") === "true";
+    if (rememberMe) {
+      const savedEmail = localStorage.getItem("savedEmail");
+      const savedPassword = localStorage.getItem("savedPassword");
+
+      if (savedEmail && savedPassword) {
+        setFormData({
+          email: savedEmail,
+          password: savedPassword,
+          rememberMe: true,
+        });
+      }
+    }
+  }, []);
 
   const validateForm = () => {
     const newErrors = {};
@@ -83,15 +100,19 @@ export default function Login() {
         email: formData.email,
         password: formData.password,
       });
-      
+
       if (response.data) {
         const { token, user } = response.data.payload;
         localStorage.setItem("token", token);
 
         if (formData.rememberMe) {
           localStorage.setItem("rememberMe", "true");
+          localStorage.setItem("savedEmail", formData.email);
+          localStorage.setItem("savedPassword", formData.password);
         } else {
           localStorage.removeItem("rememberMe");
+          localStorage.removeItem("savedEmail");
+          localStorage.removeItem("savedPassword");
         }
         router.push("/dashboard");
       }
@@ -101,6 +122,17 @@ export default function Login() {
       toast.error(errorMessage);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (
+      e.key === "Enter" &&
+      (e.target.type === "email" ||
+        e.target.type === "password" ||
+        e.target.type === "text")
+    ) {
+      handleSubmit(e);
     }
   };
   return (
@@ -113,7 +145,11 @@ export default function Login() {
             </div>
           </div>
           <div>
-            <form onSubmit={handleSubmit} className={styles.box}>
+            <form
+              onSubmit={handleSubmit}
+              onKeyDown={handleKeyDown}
+              className={styles.box}
+            >
               <div className={styles.contnet}>
                 <h1>Administrator Login</h1>
               </div>

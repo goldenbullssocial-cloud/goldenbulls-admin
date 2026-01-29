@@ -22,7 +22,7 @@ import YoutubeIcon from "@/icons/youtubeIcon";
 import LogoutIcon from "@/icons/logoutIcon";
 const Logo = "/assets/logo/logo.svg";
 
-export default function Sidebar() {
+export default function Sidebar({ unreadCount }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [user, setUser] = useState({});
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
@@ -207,7 +207,14 @@ export default function Sidebar() {
             })}
             onClick={() => router.push("/withdraw-requests")}
           >
-            <RequestsIcon />
+            <div className="relative">
+              <RequestsIcon />
+              {unreadCount > 0 && (
+                <span className={styles.notificationBadge}>
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              )}
+            </div>
             <span>Requests</span>
           </div>
           <div
@@ -228,15 +235,15 @@ export default function Sidebar() {
             <BlogCategoriesIcon />
             <span>Blog Categories</span>
           </div>
-            <div
-              className={classNames(styles.menu, {
-                [styles.active]: isActive("/blogs"),
-              })}
-              onClick={() => router.push("/blogs")}
-            >
-              <BlogsIcon />
-              <span>Blogs</span>
-            </div>
+          <div
+            className={classNames(styles.menu, {
+              [styles.active]: isActive("/blogs"),
+            })}
+            onClick={() => router.push("/blogs")}
+          >
+            <BlogsIcon />
+            <span>Blogs</span>
+          </div>
           <div
             className={classNames(styles.menu, {
               [styles.active]: isActive("/youtube"),

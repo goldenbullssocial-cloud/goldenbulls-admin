@@ -9,11 +9,14 @@ import { updateUtility } from "@/api/utility";
 import { toast } from "sonner";
 import { usePathname } from "next/navigation";
 import { updateWithdrawalNotification } from "@/api/withdrawalNotification";
-import { getWithdrawals } from "@/api/withdrawal";
+import { getWithdrawals, updateWithdrawalStatus } from "@/api/withdrawal";
 import { format } from "date-fns";
 import SettingsModal from "../settingsModal";
+import StatusModal from "../statusModal";
 import { getSocket } from "@/utils/webSocket";
 import NoDataFound from "@/components/noDataFound";
+import EditIcon from "../../../../public/assets/icons/Edit.svg";
+import Image from "next/image";
 const settingIcon = "/assets/icons/settings.svg";
 export default function WithdrawRequestsTable() {
   const [utilitySettings, setUtilitySettings] = useState(null);
@@ -78,7 +81,7 @@ export default function WithdrawRequestsTable() {
 
   const getRowClassName = (withdrawal) => {
     const isUnread = !withdrawal.isRead;
-    return isUnread ? "bg-green-100 hover:bg-green-100" : "";
+    return isUnread ? styles.unreadRow : "";
   };
 
   useEffect(() => {
@@ -332,11 +335,6 @@ export default function WithdrawRequestsTable() {
     }
   };
 
-  useEffect(() => {
-    if (commissionDialogOpen && utilitySettings) {
-      setCommissionPercent(utilitySettings.referralPercentage || 0);
-    }
-  }, [commissionDialogOpen, utilitySettings]);
   return (
     <>
       <UserHeader
@@ -390,7 +388,17 @@ export default function WithdrawRequestsTable() {
                           </span>
                         </td>
                         <td>
-                          <ThreeMenuIcon />
+                          <Image
+                            alt="Edit withdrawal"
+                            src={EditIcon}
+                            width={20}
+                            height={20}
+                            className={styles.editIcon}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEditClick(withdrawal);
+                            }}
+                          />
                         </td>
                       </tr>
                     );
@@ -418,6 +426,18 @@ export default function WithdrawRequestsTable() {
           setCommissionPercent={setCommissionPercent}
         />
       )}
+      <StatusModal
+        editDialogOpen={editDialogOpen}
+        setEditDialogOpen={setEditDialogOpen}
+        editStatus={editStatus}
+        setEditStatus={setEditStatus}
+        transactionId={transactionId}
+        setTransactionId={setTransactionId}
+        formErrors={formErrors}
+        setFormErrors={setFormErrors}
+        isLoadingAction={isLoadingAction}
+        handleUpdateWithdrawal={handleUpdateWithdrawal}
+      />
     </>
   );
 }

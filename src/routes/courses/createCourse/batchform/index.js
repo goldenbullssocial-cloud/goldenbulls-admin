@@ -237,6 +237,22 @@ export default function BatchForm({
       errors.batchTime = "Please enter a valid time in 24-hour format (HH:MM)";
     }
 
+    // Zoom link validation for live batches
+    if (activeTab === "live") {
+      if (!batch.zoomLink) {
+        errors.zoomLink = "Zoom link is required";
+      } else if (!isValidUrl(batch.zoomLink)) {
+        errors.zoomLink = "Please enter a valid URL";
+      }
+    }
+
+    // Center validation for physical batches
+    if (activeTab === "physical") {
+      if (!batch.centerId) {
+        errors.centerId = "Education center is required";
+      }
+    }
+
     // Date logic validation
     if (batch.startDate && batch.endDate) {
       const start = new Date(batch.startDate);
@@ -508,7 +524,6 @@ export default function BatchForm({
                       }}
                       placeholder="Select Center"
                       isDisabled={isLoadingCenters}
-                      error={batchErrors[index]?.centerId}
                       isClearable
                       isSearchable
                       paddingLeft="44px"
@@ -516,6 +531,11 @@ export default function BatchForm({
                       classNamePrefix="select"
                     />
                   </div>
+                  {batchErrors[index]?.centerId && (
+                    <span className={styles.errorMessage}>
+                      {batchErrors[index]?.centerId}
+                    </span>
+                  )}
                 </div>
               )}
               {activeTab === "live" && (

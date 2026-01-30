@@ -146,7 +146,7 @@ const DetailCourseView = ({ course, onClose, onEdit, onDelete }) => {
           </span>
           <span>•</span>
           <span>{course.language || "English"}</span>
-          <span>•</span>
+          <span className={styles.separator}></span>
           <span>Created: {formatDate(course.createdAt)}</span>
           <span>•</span>
           <span>Last Updated: {formatDate(course.updatedAt)}</span>

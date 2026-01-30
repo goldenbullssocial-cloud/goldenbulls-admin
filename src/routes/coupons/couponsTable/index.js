@@ -225,7 +225,17 @@ export default function CouponsTable() {
         HeaderText="Coupons"
         DescriptionText="Create and control discount codes and promotional offers"
         buttonText="Add Coupons"
-        onClick={() => setIsAddCouponOpen(true)}
+        onClick={() => {
+          form.reset({
+            couponCode: "",
+            discount: "",
+            expiryDate: undefined,
+            usageLimit: "",
+          });
+          setIsEditMode(false);
+          setEditingCoupon(null);
+          setIsAddCouponOpen(true);
+        }}
       />
       <div className={styles.couponsPageAlignment}>
         {isLoading ? (
@@ -269,7 +279,11 @@ export default function CouponsTable() {
                           )}
                         </td>
                         <td>
-                          <span className={styles.green}>Active</span>
+                          {new Date(coupon.expiryDate) < new Date() ? (
+                            <span className={styles.red}>Inactive</span>
+                          ) : (
+                            <span className={styles.green}>Active</span>
+                          )}
                         </td>
                         <td>
                           <Dropdown

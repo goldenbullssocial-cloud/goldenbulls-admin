@@ -385,7 +385,10 @@ export default function WithdrawRequestsTable() {
                             <span
                               className={`${styles[withdrawal.status] || styles.green}`}
                             >
-                              {withdrawal.status || "N/A"}
+                              {withdrawal.status
+                                ? withdrawal.status.charAt(0).toUpperCase() +
+                                  withdrawal.status.slice(1)
+                                : "N/A"}
                             </span>
                           </td>
                           <td>

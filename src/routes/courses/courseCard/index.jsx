@@ -66,23 +66,25 @@ export default function CourseCard({
               <div className={styles.details}>
                 <h3>{course?.CourseName}</h3>
                 <div className={styles.listAlignment}>
-                  <div className={styles.time}>
-                    <ClockInIcon />
-                    <span>{course?.hours}</span>
-                  </div>
+                  <div className={styles.leftItems}>
+                    <div className={styles.time}>
+                      <ClockInIcon />
+                      <span>{course?.hours}</span>
+                    </div>
 
-                  <div className={styles.dotButton}>
-                    <div className={styles.dot}></div>
-                    <button>
-                      <span>{course?.courseLevel}</span>
-                    </button>
-                  </div>
+                    <div className={styles.dotButton}>
+                      <div className={styles.dot}></div>
+                      <button>
+                        <span>{course?.courseLevel}</span>
+                      </button>
+                    </div>
 
-                  <div className={styles.ratingAlignment}>
-                    <div className={styles.dot}></div>
-                    <div className={styles.rating}>
-                      <StarIcon />
-                      <span>{course?.instructor?.rating || "4.5"}</span>
+                    <div className={styles.ratingAlignment}>
+                      <div className={styles.dot}></div>
+                      <div className={styles.rating}>
+                        <StarIcon />
+                        <span>{course?.instructor?.rating || "4.5"}</span>
+                      </div>
                     </div>
                   </div>
                   <Dropdown

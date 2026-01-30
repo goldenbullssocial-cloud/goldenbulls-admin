@@ -140,3 +140,24 @@ input[type="number"] {
 .stdropdown-tools svg path {
     fill: #fff;
 }
+
+.css-1f17qn4-indicatorSeparator {
+  width: 0;
+  display: none;
+}
+
+/* Hide all indicator separators in react-select */
+.css-1f17qn4-indicatorSeparator,
+.css-t3excq-indicatorSeparator,
+.css-1u2dj3z-indicatorSeparator,
+.css-1s2u09g-indicatorSeparator,
+.css-1hb7zxy-indicatorSeparator,
+[class*="-indicatorSeparator"] {
+  width: 0 !important;
+  display: none !important;
+}
+
+/* Make all StyledSelect components have the same background as inputs */
+.styled-select-field .css-13cymwt-control, .css-b86wbs-control {
+  background: #ffffff0d !important;
+}

@@ -1,6 +1,5 @@
 "use client";
 import Sidebar from "@/components/sidebar";
-import UserHeader from "@/components/userHeader";
 import { getSocket } from "@/utils/webSocket";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -22,10 +21,13 @@ export default function layout({ children }) {
     };
 
     const handleCheckWithdrawalResponse = (data) => {
+      console.log(data, "datatat");
+
       const unread = data?.data || data?.unreadNotification || 0;
+      console.log(unread, "Layouf");
 
       setUnreadCount(() => unread);
-
+      console.log(unreadCount, "unread set");
     };
 
     socket.on("connect", handleConnect);

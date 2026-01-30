@@ -354,11 +354,8 @@
     pointer-events: none;
   }
 }
-
-/* Syllabus */
 .syllabus {
   margin-top: 24px;
-
   h4 {
     font-size: 18px;
     font-weight: 600;
@@ -367,6 +364,16 @@
     text-transform: uppercase;
     letter-spacing: 1px;
   }
+}
+
+.separator {
+  height: 32px;
+  width: 1px;
+  background-color: #ffffff;
+  margin: 0 8px;
+
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .chapter {

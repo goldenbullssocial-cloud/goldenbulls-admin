@@ -53,6 +53,31 @@
       @include respond-to("md") {
         grid-template-columns: 1fr;
       }
+
+      .formGroup {
+        // grid-column: span 2;
+
+        .inputWithIcon {
+          position: relative;
+          // display: flex;
+          // align-items: center;
+
+          .inputIcon {
+            position: absolute;
+            left: 15px;
+            top: 13px;
+
+            z-index: 1;
+            pointer-events: none;
+          }
+
+          :global(.center-select) {
+            .select__control {
+              padding-left: 44px !important;
+            }
+          }
+        }
+      }
     }
   }
 
@@ -108,7 +133,22 @@
   }
 
   input {
-    padding-left: 16px !important;
+    padding-left: 50px !important;
+
+    // Hide default date picker icon
+    &::-webkit-calendar-picker-indicator {
+      display: none;
+    }
+
+    // Hide default time picker icon
+    &::-webkit-time-picker-indicator {
+      display: none;
+    }
+
+    // For Firefox
+    &::-moz-calendar-picker-indicator {
+      display: none;
+    }
   }
 
   .bottomAlignment {

@@ -32,7 +32,6 @@ export default function SyllabusCourses({
         duration: chapter.duration || "",
         videoFile: null,
         videoUrl: chapter.videoUrl || "",
-        chapterNo: chapter.chapterNo || "",
         chapterImage: chapter.chapterImage || null,
         chapterImageUrl: chapter.chapterImageUrl || "",
       }));
@@ -45,7 +44,6 @@ export default function SyllabusCourses({
         duration: "",
         videoFile: null,
         videoUrl: "",
-        chapterNo: "",
         chapterImage: null,
         chapterImageUrl: "",
       },
@@ -76,7 +74,6 @@ export default function SyllabusCourses({
           duration: chapter.duration || "",
           videoFile: null,
           videoUrl: chapter.videoUrl || "",
-          chapterNo: chapter.chapterNo || "",
           chapterImage: chapter.chapterImage || null,
           chapterImageUrl: chapter.chapterImageUrl || "",
         }));
@@ -97,7 +94,6 @@ export default function SyllabusCourses({
             duration: "",
             videoFile: null,
             videoUrl: "",
-            chapterNo: "",
             chapterImage: null,
             chapterImageUrl: "",
           },
@@ -236,7 +232,6 @@ export default function SyllabusCourses({
         duration: "",
         videoFile: null,
         videoUrl: "",
-        chapterNo: "",
         chapterImage: null,
         chapterImageUrl: "",
       },
@@ -275,17 +270,6 @@ export default function SyllabusCourses({
 
       if (!chapter.description.trim()) {
         chapterErrors.description = "Description is required";
-        isValid = false;
-      }
-
-      if (!chapter.chapterNo) {
-        chapterErrors.chapterNo = "Chapter number is required";
-        isValid = false;
-      } else if (
-        isNaN(Number(chapter.chapterNo)) ||
-        Number(chapter.chapterNo) <= 0
-      ) {
-        chapterErrors.chapterNo = "Chapter number must be a positive number";
         isValid = false;
       }
 
@@ -351,7 +335,6 @@ export default function SyllabusCourses({
         data.append("chapterName", chapter.chapterName);
         data.append("description", chapter.description);
         data.append("duration", chapter.duration);
-        data.append("chapterNo", chapter.chapterNo);
         data.append("courseId", courseId);
         if (chapter.videoFile) data.append("image", chapter.videoFile);
 
@@ -374,7 +357,6 @@ export default function SyllabusCourses({
           duration: "",
           videoFile: null,
           videoUrl: "",
-          chapterNo: "",
           chapterImage: null,
           chapterImageUrl: "",
         },
@@ -439,22 +421,7 @@ export default function SyllabusCourses({
                 )}
               </div>
             </div>
-            <div className={styles.bottomAlignment}>
-              <Input
-                label="Chapter Day"
-                placeholder="Chapter Day"
-                name="chapterNo"
-                value={chapter.chapterNo}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  // Only allow numbers
-                  if (value === "" || /^\d+$/.test(value)) {
-                    handleInputChange(index, e);
-                  }
-                }}
-                error={errors[index]?.chapterNo}
-              />
-            </div>
+
             <div className={styles.bottomAlignment}>
               <Textarea
                 label="Chapter Description"

@@ -31,6 +31,7 @@ export default function Sidebar({ unreadCount }) {
   const router = useRouter();
   const pathname = usePathname();
   const modalRef = useRef(null);
+  console.log(unreadCount, "unreadCount");
 
   // Handle body scroll and overlay when modal is open
   useEffect(() => {
@@ -134,7 +135,10 @@ export default function Sidebar({ unreadCount }) {
   return (
     <>
       <aside className={styles.sidebar}>
-        <div className={styles.sidebarlogo}>
+        <div
+          className={styles.sidebarlogo}
+          onClick={() => window.location.reload()}
+        >
           <img src={Logo} alt="Logo" />
         </div>
         <div className={styles.asideBody}>

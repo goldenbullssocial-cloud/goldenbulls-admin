@@ -126,7 +126,6 @@ export default function AddCenter({
                   onCountryChange?.(val);
                 }}
                 placeholder="Select Country"
-                error={form.formState.errors.country?.message}
               />
               {form.formState.errors.country?.message && (
                 <p className={styles.error}>
@@ -159,7 +158,6 @@ export default function AddCenter({
                 onFocus={onStateFocus}
                 placeholder="Select State"
                 isDisabled={!country}
-                error={form.formState.errors.state?.message}
               />
               {form.formState.errors.state?.message && (
                 <p className={styles.error}>
@@ -190,7 +188,6 @@ export default function AddCenter({
                 }}
                 placeholder="Select City"
                 isDisabled={!state}
-                error={form.formState.errors.city?.message}
               />
               {form.formState.errors.city?.message && (
                 <p className={styles.error}>

@@ -17,6 +17,10 @@
       height: calc(100dvh - 257px);
       margin: 0 0 24px 0;
       overflow: auto;
+      border-radius: 24px 0 0 0;
+      border-top: 1px solid #66666693;
+      border-left: 1px solid #66666693;
+      background: #0f0f0f;
 
       @include respond-to("xl") {
         height: calc(100dvh - 204px);
@@ -53,7 +57,15 @@
               color: #b6b6b6;
 
               .green {
-                color: #71ff7a;
+                color: #33ff60;
+              }
+
+              .pending {
+                color: #e4ab40;
+              }
+
+              .rejected {
+                color: #eb4335;
               }
 
               .editIcon {

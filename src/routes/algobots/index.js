@@ -30,7 +30,7 @@ import DeleteIcon from "../../../public/assets/icons/Delete.svg";
 import DeleteAlgobot from "./deleteAlgobot";
 import NoDataFound from "@/components/noDataFound";
 import CommonLoader from "@/components/commonLoader";
-
+const PlusIcon = "/assets/icons/plus.svg";
 const formSchema = z.object({
   title: z
     .string()
@@ -1021,6 +1021,7 @@ export default function Algobots() {
           setIsEditMode(false);
           setStep(1);
         }}
+        icon={PlusIcon}
       />
       <div className={styles.algobotsPageAlignment}>
         {isFetching ? (

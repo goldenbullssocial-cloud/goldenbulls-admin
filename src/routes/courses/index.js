@@ -176,6 +176,47 @@ export default function Courses() {
     return [];
   };
 
+  const resetFormFields = () => {
+    setEditCourse(null);
+    setFormErrors({});
+    setImageFile(null);
+    setVideoFile(null);
+    setSyllabusList([]);
+    setChaptersList([]);
+    setLiveBatches([
+      {
+        id: "",
+        batchName: "",
+        description: "",
+        startDate: null,
+        endDate: null,
+        time: null,
+        meetingLink: null,
+        courseId: "",
+      },
+    ]);
+    setPhysicalBatches([
+      {
+        id: "",
+        batchName: "",
+        description: "",
+        centerId: "",
+        startDate: null,
+        endDate: null,
+        time: null,
+        courseId: "",
+      },
+    ]);
+    setBatchErrors({});
+    setRecordedStartDate(null);
+    setRecordedEndDate(null);
+    setLiveStartDate(null);
+    setLiveEndDate(null);
+    setPhysicalStartDate(null);
+    setPhysicalEndDate(null);
+    setSelectedCenter(null);
+  };
+
   useEffect(() => {
     if (latestCourse) fetchCenters();
   }, [latestCourse]);
@@ -324,28 +365,6 @@ export default function Courses() {
     if (!editCourse && !videoFile) {
       errors.videoFile = "Please upload an video";
     }
-
-    // if (courseType === "physical") {
-    //   // if (!formData.get("email")?.toString().trim()) {
-    //   //   errors.email = "Email is required";
-    //   // } else if (
-    //   //   !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
-    //   //     formData.get("email")?.toString().trim().toLowerCase() || "",
-    //   //   )
-    //   // ) {
-    //   //   errors.email = "Please enter a valid email address";
-    //   // }
-
-    //   // // For required phone
-    //   // if (!formData.get("phone")?.toString().trim()) {
-    //   //   errors.phone = "Phone number is required";
-    //   // }
-    //   // else if (
-    //   //   !/^[+\d\s-]{10,}$/.test(formData.get("phone")?.toString().trim() || "")
-    //   // ) {
-    //   //   errors.phone = "Please enter a valid phone number (min 10 digits)";
-    //   // }
-    // }
     return errors;
   };
 
@@ -494,31 +513,26 @@ export default function Courses() {
       const errors = validateForm(formData, courseType?.toString() || "");
       setFormErrors(errors);
 
-      // If there are errors, stop submission
-      if (Object.keys(errors).length > 0) {
-        setIsSubmitting(false);
-        return false;
-      }
+      // Create a JSON object for the API request instead of FormData
+      const apiData = {
+        courseType: formData.get("courseType") || "",
+        CourseName: formData.get("name") || "",
+        description: formData.get("description") || "",
+        price: formData.get("price") || "0",
+        hours: formData.get("hours") || "0",
+        instructor: formData.get("instructor") || "",
+        language: formData.get("language") || "english",
+        courseLevel: formData.get("courseLevel") || "",
+        courseStart: startDate,
+        courseEnd: endDate,
+      };
 
-      // Create a new FormData for the API request
-      const apiFormData = new FormData();
-
-      // Add all form fields to the FormData
-      apiFormData.append("courseType", formData.get("courseType") || "");
-      apiFormData.append("CourseName", formData.get("name") || "");
-      apiFormData.append("description", formData.get("description") || "");
-      apiFormData.append("price", formData.get("price") || "0");
-      apiFormData.append("hours", formData.get("hours") || "0");
-
-      apiFormData.append("instructor", formData.get("instructor") || "");
-      apiFormData.append("language", formData.get("language") || "english");
-      apiFormData.append("courseLevel", formData.get("courseLevel") || "");
-
+      // Handle video upload
       if (videoFile) {
         try {
           const videoResponse = await uploadImage(videoFile);
           if (videoResponse?.success && videoResponse?.payload) {
-            apiFormData.append("courseIntroVideo", videoResponse.payload);
+            apiData.courseIntroVideo = videoResponse.payload;
           } else {
             throw new Error("Failed to upload video: Invalid response");
           }
@@ -530,42 +544,62 @@ export default function Courses() {
         }
       } else if (!editCourse?._id && editCourse?.courseIntroVideo) {
         if (editCourse.courseIntroVideo !== "undefined") {
-          apiFormData.append("courseIntroVideo", editCourse.courseIntroVideo);
+          apiData.courseIntroVideo = editCourse.courseIntroVideo;
         }
       }
 
+      // Handle define course
       const defineCourse = formData.get("defineCourse");
       if (defineCourse) {
-        apiFormData.append("isDefineCourse", defineCourse.toString());
+        apiData.isDefineCourse = defineCourse.toString();
       }
 
-      // Add course type specific fields
-      if (courseType === "recorded") {
-        apiFormData.append("courseStart", startDate);
-        apiFormData.append("courseEnd", endDate);
-      } else if (courseType === "physical") {
-        apiFormData.append("email", formData.get("email") || "");
-        apiFormData.append("phone", formData.get("phone") || "");
-        // apiFormData.append('address', formData.get('address') || '');
-      }
-
+      // Handle image upload
       if (imageFile) {
-        apiFormData.append("image", imageFile);
+        try {
+          const imageResponse = await uploadImage(imageFile);
+
+          if (imageResponse?.success && imageResponse?.payload) {
+            apiData.courseVideo = imageResponse.payload;
+          } else {
+            console.error("Error uploading image:", imageResponse);
+            toast.error("Failed to upload image");
+            setIsSubmitting(false);
+            return;
+          }
+        } catch (error) {
+          console.error("Error uploading image:", error);
+          toast.error("Failed to upload image");
+          setIsSubmitting(false);
+          return;
+        }
+      } else if (!editCourse?._id && editCourse?.courseVideo) {
+        if (editCourse.courseVideo !== "undefined") {
+          apiData.courseVideo = editCourse.courseVideo;
+        }
       }
 
+      // Handle category
       const categoryId = formData.get("courseCategory");
       if (categoryId) {
-        apiFormData.append("courseCategory", categoryId.toString());
+        apiData.courseCategory = categoryId.toString();
       }
 
+      console.log(errors, "erros");
+      // If there are errors, stop submission
+      if (Object.keys(errors).length > 0) {
+        setIsSubmitting(false);
+        return false;
+      }
       try {
         let data;
         if (editCourse && editCourse._id) {
           // Update existing course
-          data = await updateCourse(editCourse._id, apiFormData);
+          data = await updateCourse(editCourse._id, apiData);
         } else {
           // Create new course
-          data = await createCourse(apiFormData);
+          console.log(apiData, "apiData");
+          data = await createCourse(apiData);
         }
 
         if (data.success) {
@@ -882,6 +916,7 @@ export default function Courses() {
         HeaderText="Courses"
         DescriptionText="Create, organize, and manage all courses"
         onClick={() => {
+          resetFormFields();
           setOpen(true);
           setCreateCourseOpen(true);
           setFormActiveTab(activeTab);
@@ -922,6 +957,7 @@ export default function Courses() {
           <CreateCourse
             editCourse={editCourse}
             formErrors={formErrors}
+            setFormErrors={setFormErrors}
             handleTrimInput={handleTrimInput}
             createCourseOpen={createCourseOpen}
             handleIntroVideoChange={handleIntroVideoChange}
@@ -965,6 +1001,7 @@ export default function Courses() {
             setOpen={setOpen}
             setBatches={setPhysicalBatches || setLiveBatches}
             chaptersList={chaptersList}
+            handleImageChange={handleImageChange}
           />
         )}
         {viewCourseModalOpen && (

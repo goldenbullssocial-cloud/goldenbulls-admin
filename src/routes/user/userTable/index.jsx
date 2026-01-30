@@ -356,7 +356,7 @@ export default function UserTable() {
                 </tr>
               </thead>
               <tbody>
-                {isPaginationLoading ? (
+                {isLoading ? (
                   <tr>
                     <td colSpan="10" style={{ padding: 0 }}>
                       <TableSkeleton

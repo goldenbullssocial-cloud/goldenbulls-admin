@@ -4,6 +4,7 @@ import Input from "@/components/input";
 import DragIcon from "@/icons/dragIcon";
 import Button from "@/components/button";
 import { ImageUpload } from "@/components/image-upload";
+import StyledSelect from "@/components/styledSelect";
 
 export default function CourseForm({
   editCourse,
@@ -94,8 +95,46 @@ export default function CourseForm({
     };
   }, [selectedLanguage]);
 
+  // Add hidden input for courseLevel on component mount and cleanup on unmount
+  React.useEffect(() => {
+    const form = document.querySelector("form");
+    if (form) {
+      // Create hidden input for courseLevel if it doesn't exist
+      const existingInput = form.querySelector('input[name="courseLevel"]');
+      if (existingInput) existingInput.remove();
+
+      const newInput = document.createElement("input");
+      newInput.type = "hidden";
+      newInput.name = "courseLevel";
+      newInput.value = selectedLevel;
+      form.appendChild(newInput);
+    }
+
+    return () => {
+      if (form) {
+        const input = form.querySelector('input[name="courseLevel"]');
+        if (input) input.remove();
+      }
+    };
+  }, [selectedLevel]);
+
   const handleLevelAction = (level) => {
     setSelectedLevel(level);
+    // Update the hidden input value when level changes
+    const form = document.querySelector("form");
+    if (form) {
+      const hiddenInput = form.querySelector('input[name="courseLevel"]');
+      if (hiddenInput) {
+        hiddenInput.value = level;
+      } else {
+        // If hidden input doesn't exist, create it
+        const newInput = document.createElement("input");
+        newInput.type = "hidden";
+        newInput.name = "courseLevel";
+        newInput.value = level;
+        form.appendChild(newInput);
+      }
+    }
   };
 
   const handleVideoDragOver = (e) => {
@@ -145,7 +184,6 @@ export default function CourseForm({
         handleImageChange(file);
       } else {
         // Show error for invalid file type
-        console.error("Please upload an image file");
       }
     }
   };
@@ -159,14 +197,13 @@ export default function CourseForm({
           <div className={styles.chaapterVideo}>
             <span>Course Thumbnail Image</span>
             <div
-              //   className={`${styles.uploadBox} ${isImageDragOver ? styles.dragOver : ""}`}
               onDragOver={handleImageDragOver}
               onDragLeave={handleImageDragLeave}
               onDrop={handleImageDrop}
             >
               <ImageUpload
                 name="courseVideo"
-                id="course-thumbnail"
+                id="courseVideo"
                 error={formErrors.image}
                 onChange={handleImageChange}
                 initialImage={editCourse?.courseVideo || null}
@@ -241,37 +278,33 @@ export default function CourseForm({
           </div>
           <div className={styles.languageField}>
             <label className={styles.label}>Language</label>
-            <select
-              name="language"
-              className={styles.select}
-              value={selectedLanguage}
-              onChange={(e) => {
-                handleLanguageAction(e.target.value);
+            <StyledSelect
+              options={getLanguageActions()}
+              value={getLanguageActions().find(
+                (lang) => lang.key === selectedLanguage,
+              )}
+              onChange={(selectedOption) => {
+                handleLanguageAction(selectedOption.key);
                 // Ensure the form's hidden input is updated
-                const form = e.target.closest("form");
+                const form = document.querySelector("form");
                 if (form) {
                   const hiddenInput = form.querySelector(
                     'input[name="language"]',
                   );
                   if (hiddenInput) {
-                    hiddenInput.value = e.target.value;
+                    hiddenInput.value = selectedOption.key;
                   } else {
                     // If hidden input doesn't exist, create it
                     const newInput = document.createElement("input");
                     newInput.type = "hidden";
                     newInput.name = "language";
-                    newInput.value = e.target.value;
+                    newInput.value = selectedOption.key;
                     form.appendChild(newInput);
                   }
                 }
               }}
-            >
-              {getLanguageActions().map((lang) => (
-                <option key={lang.key} value={lang.key}>
-                  {lang.label}
-                </option>
-              ))}
-            </select>
+              placeholder="Select language"
+            />
           </div>
           {/* <Input label='Language' placeholder='English' /> */}
         </div>
@@ -317,18 +350,16 @@ export default function CourseForm({
           />
           <div className={styles.levelField}>
             <label className={styles.label}>Course Level</label>
-            <select
-              name="courseLevel"
-              className={styles.select}
-              value={selectedLevel}
-              onChange={(e) => handleLevelAction(e.target.value)}
-            >
-              {getLevelActions().map((level) => (
-                <option key={level.key} value={level.key}>
-                  {level.label}
-                </option>
-              ))}
-            </select>
+            <StyledSelect
+              options={getLevelActions()}
+              value={getLevelActions().find(
+                (level) => level.key === selectedLevel,
+              )}
+              onChange={(selectedOption) =>
+                handleLevelAction(selectedOption.key)
+              }
+              placeholder="Select course level"
+            />
           </div>
         </div>
         <div className={styles.chaapterVideo}>

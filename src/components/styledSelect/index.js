@@ -9,6 +9,7 @@ const StyledSelect = ({
   isDisabled = false,
   onBlur,
   error,
+  paddingLeft = "16px",
   ...props
 }) => {
   const selectStyles = {
@@ -20,7 +21,7 @@ const StyledSelect = ({
       border: "1px solid #66666693",
       fontSize: "16px",
       color: "#fff",
-      paddingLeft: "16px",
+      paddingLeft: paddingLeft,
       paddingRight: "16px",
       outline: "none",
       transition: ".3s ease-in-out",

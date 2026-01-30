@@ -90,6 +90,7 @@
       }
 
       svg {
+        position: relative;
         path {
           transition: 0.3s ease-in-out;
         }
@@ -97,8 +98,8 @@
 
       .notificationBadge {
         position: absolute;
-        top: -8px;
-        right: -8px;
+        top: -6px;
+        right: -6px;
         background: linear-gradient(
           90deg,
           #f9f490 0%,
@@ -109,8 +110,8 @@
         color: #000000 !important;
         font-size: 10px;
         border-radius: 50%;
-        width: 20px;
-        height: 20px;
+        width: 18px;
+        height: 18px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -119,8 +120,7 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
         z-index: 1;
         transition: all 0.3s ease-in-out;
-          -webkit-text-fill-color: #000000 !important;
-
+        -webkit-text-fill-color: #000000 !important;
 
         span {
           color: #000000 !important;

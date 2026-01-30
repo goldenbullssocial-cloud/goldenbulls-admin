@@ -3,7 +3,7 @@ import axios from "axios";
 const BaseUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 // Helper function to get token safely
-export const getAuthToken = ()=> {
+export const getAuthToken = () => {
   if (typeof window !== "undefined") {
     return localStorage.getItem("token");
   }
@@ -13,7 +13,9 @@ export const getAuthToken = ()=> {
 export const createCourse = async (payload) => {
   try {
     const token = getAuthToken();
-    const headers = {};
+    const headers = {
+      "Content-Type": "application/json",
+    };
 
     if (token) {
       headers["x-auth-token"] = token;
@@ -21,12 +23,6 @@ export const createCourse = async (payload) => {
 
     const res = await axios.post(`${BaseUrl}/course/createCourse`, payload, {
       headers,
-      transformRequest: [
-        (data, headers) => {
-          delete headers["Content-Type"];
-          return data;
-        },
-      ],
     });
     return res.data;
   } catch (error) {
@@ -40,7 +36,7 @@ export const getAllCourseCategory = async ({
   limit = 10,
   search = "",
   courseType = "",
-}= {}) => {
+} = {}) => {
   try {
     const token = getAuthToken();
     const headers = {};
@@ -59,7 +55,7 @@ export const getAllCourseCategory = async ({
 
     const res = await axios.get(
       `${BaseUrl}/courseCategory/getAllCourseCategory`,
-      { headers }
+      { headers },
     );
     return res.data;
   } catch (error) {
@@ -92,7 +88,7 @@ export const getCourses = async ({
 
     const res = await axios.get(
       `${BaseUrl}/course/getAllCourse?${params.toString()}`,
-      { headers }
+      { headers },
     );
     return res.data;
   } catch (error) {
@@ -104,7 +100,9 @@ export const getCourses = async ({
 export const updateCourse = async (id, payload) => {
   try {
     const token = getAuthToken();
-    const headers = {};
+    const headers = {
+      "Content-Type": "application/json",
+    };
 
     if (token) {
       headers["x-auth-token"] = token;
@@ -115,15 +113,7 @@ export const updateCourse = async (id, payload) => {
       payload,
       {
         headers,
-        // Remove the default JSON content type
-        transformRequest: [
-          (data, headers) => {
-            // Let the browser set the correct Content-Type with boundary
-            delete headers["Content-Type"];
-            return data;
-          },
-        ],
-      }
+      },
     );
     return res.data;
   } catch (error) {
@@ -162,7 +152,7 @@ export const getChapters = async (id) => {
 
     const res = await axios.get(
       `${BaseUrl}/chapter/getAllChapter?courseId=${id}`,
-      { headers }
+      { headers },
     );
     return res.data;
   } catch (error) {
@@ -206,7 +196,7 @@ export const updateChapter = async (id, payload) => {
     const res = await axios.put(
       `${BaseUrl}/chapter/updateChapter?id=${id}`,
       payload,
-      { headers }
+      { headers },
     );
     return res.data;
   } catch (error) {
@@ -226,7 +216,7 @@ export const deleteChapter = async (id) => {
 
     const res = await axios.delete(
       `${BaseUrl}/chapter/deleteChapter?id=${id}`,
-      { headers }
+      { headers },
     );
     return res.data;
   } catch (error) {
@@ -247,7 +237,7 @@ export const getSession = async (id) => {
 
     const res = await axios.get(
       `${BaseUrl}/sesstion/getAllSession?courseId=${id}`,
-      { headers }
+      { headers },
     );
     return res.data;
   } catch (error) {
@@ -291,7 +281,7 @@ export const updateSession = async (id, payload) => {
     const res = await axios.put(
       `${BaseUrl}/sesstion/updateSession?id=${id}`,
       payload,
-      { headers }
+      { headers },
     );
     return res.data;
   } catch (error) {
@@ -311,7 +301,7 @@ export const deleteSession = async (id) => {
 
     const res = await axios.delete(
       `${BaseUrl}/sesstion/deleteSession?id=${id}`,
-      { headers }
+      { headers },
     );
     return res.data;
   } catch (error) {
@@ -349,7 +339,7 @@ export const getAllBatch = async (courseId) => {
       `${BaseUrl}/batch/getAllBatch?courseId=${courseId}`,
       {
         headers: getHeaders(),
-      }
+      },
     );
     return res.data;
   } catch (error) {
@@ -366,7 +356,7 @@ export const updateBatch = async (id, payload) => {
       payload,
       {
         headers: getHeaders(),
-      }
+      },
     );
     return res.data;
   } catch (error) {

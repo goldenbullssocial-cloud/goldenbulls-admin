@@ -10,6 +10,7 @@ import BatchForm from "./batchform";
 export default function CreateCourse({
   editCourse,
   formErrors,
+  setFormErrors,
   handleTrimInput,
   handleIntroVideoChange,
   handleContinue,
@@ -20,6 +21,7 @@ export default function CreateCourse({
   onClose,
   createCourseOpen,
   courseId,
+  handleImageChange,
   onSuccess,
   setFormActiveTab,
   isLiveBatchVisible,
@@ -37,14 +39,37 @@ export default function CreateCourse({
       return;
     }
     setFormActiveTab(tab);
+    setFormErrors({});
   };
 
   const getStepState = (stepNumber) => {
     if (stepNumber === 1) {
-      return isSyllabusVisible ? "completed" : "active";
+      // Step 1 (Course Details) is completed when syllabus is visible or when batch is visible
+      return isSyllabusVisible || isLiveBatchVisible || isPhysicalBatchVisible
+        ? "completed"
+        : "active";
     }
     if (stepNumber === 2) {
-      return isSyllabusVisible ? "active" : "inactive";
+      // Step 2 (Syllabus) is completed when batch is visible for live/physical, or always active for recorded
+      if (formActiveTab === "recorded") {
+        return isSyllabusVisible ? "active" : "inactive";
+      } else {
+        return isLiveBatchVisible || isPhysicalBatchVisible
+          ? "completed"
+          : isSyllabusVisible
+            ? "active"
+            : "inactive";
+      }
+    }
+    if (stepNumber === 3) {
+      // Step 3 (Batch) only applies to live and physical courses
+      if (formActiveTab === "recorded") {
+        return "inactive";
+      } else {
+        return isLiveBatchVisible || isPhysicalBatchVisible
+          ? "active"
+          : "inactive";
+      }
     }
     return "inactive";
   };
@@ -83,7 +108,9 @@ export default function CreateCourse({
             <div className={styles.items}>
               <div className={`${styles.counterGrid} ${getStepState(1)}`}>
                 <div>
-                  <div className={`${styles.counter} ${getStepState(1)}`}>
+                  <div
+                    className={` ${getStepState(1) === "completed" ? styles.counterComplete : styles.counter} ${styles.counter} ${getStepState(1)}`}
+                  >
                     {getStepState(1) === "completed" ? "✓" : "1"}
                   </div>
                   <div className={styles.line}></div>
@@ -92,7 +119,9 @@ export default function CreateCourse({
               </div>
               <div className={`${styles.counterGrid} ${getStepState(2)}`}>
                 <div>
-                  <div className={`${styles.counter} ${getStepState(2)}`}>
+                  <div
+                    className={`${getStepState(2) === "completed" ? styles.counterComplete : styles.counter} ${getStepState(2)}`}
+                  >
                     {getStepState(2) === "completed" ? "✓" : "2"}
                   </div>
                   {formActiveTab === "recorded" ? null : (
@@ -104,7 +133,9 @@ export default function CreateCourse({
               {formActiveTab !== "recorded" && (
                 <div className={`${styles.counterGrid} ${getStepState(3)}`}>
                   <div>
-                    <div className={`${styles.counter} ${getStepState(3)}`}>
+                    <div
+                      className={`${getStepState(3) === "completed" ? styles.counterComplete : styles.counter} ${getStepState(3)}`}
+                    >
                       {getStepState(3) === "completed" ? "✓" : "3"}
                     </div>
                   </div>
@@ -122,6 +153,7 @@ export default function CreateCourse({
                   handleContinue={handleContinue}
                   videoFile={videoFile}
                   formActiveTab={formActiveTab}
+                  handleImageChange={handleImageChange}
                 />
               )}
               {isSyllabusVisible && (

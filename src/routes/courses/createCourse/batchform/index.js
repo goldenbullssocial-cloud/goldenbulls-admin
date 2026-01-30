@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styles from "./batchForm.module.scss";
 import Input from "@/components/input";
 import RemoveIcon from "@/icons/removeIcon";
@@ -15,6 +15,10 @@ import StyledSelect from "@/components/styledSelect";
 import { getAllCenters } from "@/api/banner";
 
 const SaveIcon = "/assets/icons/save.svg";
+const CalendarIcon = "/assets/icons/calender.svg";
+const CenterIcon = "/assets/icons/center.svg";
+const VideoIcon = "/assets/icons/video.svg";
+const TimeIcon = "/assets/icons/time.svg";
 
 // Constants
 const INITIAL_BATCH = {
@@ -56,6 +60,11 @@ export default function BatchForm({
   const [centers, setCenters] = useState([]);
   const [isLoadingCenters, setIsLoadingCenters] = useState(false);
 
+  // Create refs for date and time inputs
+  const startDateRefs = useRef([]);
+  const endDateRefs = useRef([]);
+  const timeRefs = useRef([]);
+
   useEffect(() => {
     const fetchCenters = async () => {
       try {
@@ -67,7 +76,7 @@ export default function BatchForm({
       } catch (error) {
         console.error("Error fetching centers:", error);
         toast.error("Failed to load centers");
-      } finally { 
+      } finally {
         setIsLoadingCenters(false);
       }
     };
@@ -150,6 +159,36 @@ export default function BatchForm({
   const handleInputChange = (index, e) => {
     const { name, value } = e.target;
     updateBatchAtIndex(index, { [name]: value });
+  };
+
+  // Click handlers for icons
+  const handleCalendarClick = (index, type) => {
+    if (type === "start" && startDateRefs.current[index]) {
+      startDateRefs.current[index].focus();
+      setTimeout(() => {
+        startDateRefs.current[index].click();
+        startDateRefs.current[index].showPicker?.();
+      }, 100);
+    } else if (type === "end" && endDateRefs.current[index]) {
+      endDateRefs.current[index].focus();
+      setTimeout(() => {
+        endDateRefs.current[index].click();
+        endDateRefs.current[index].showPicker?.();
+      }, 100);
+    }
+  };
+
+  const handleTimeClick = (index) => {
+    console.log("Time clicked", { index });
+
+    if (timeRefs.current[index]) {
+      console.log("Time ref found:", timeRefs.current[index]);
+      timeRefs.current[index].focus();
+      setTimeout(() => {
+        timeRefs.current[index].click();
+        timeRefs.current[index].showPicker?.();
+      }, 100);
+    }
   };
 
   const handleAddBatch = () => {
@@ -391,6 +430,9 @@ export default function BatchForm({
                   handleInputChange(index, e);
                 }}
                 error={batchErrors[index]?.startDate}
+                icon={CalendarIcon}
+                onIconClick={() => handleCalendarClick(index, "start")}
+                inputRef={(el) => (startDateRefs.current[index] = el)}
               />
 
               <Input
@@ -402,6 +444,9 @@ export default function BatchForm({
                   handleInputChange(index, e);
                 }}
                 error={batchErrors[index]?.endDate}
+                icon={CalendarIcon}
+                onIconClick={() => handleCalendarClick(index, "end")}
+                inputRef={(el) => (endDateRefs.current[index] = el)}
               />
 
               <Input
@@ -413,52 +458,64 @@ export default function BatchForm({
                   handleInputChange(index, e);
                 }}
                 error={batchErrors[index]?.batchTime}
+                icon={TimeIcon}
+                onIconClick={() => handleTimeClick(index)}
+                inputRef={(el) => (timeRefs.current[index] = el)}
               />
 
               {activeTab === "physical" && (
                 <div className={styles.formGroup}>
                   <label>Select Education Center</label>
-                  <StyledSelect
-                    options={centers.map((center) => ({
-                      value: center._id,
-                      label: center.centerName,
-                    }))}
-                    value={
-                      batch.centerId
-                        ? {
-                            value: batch.centerId,
-                            label: centers.find((c) => c._id === batch.centerId)
-                              ?.centerName,
-                          }
-                        : null
-                    }
-                    onChange={(val) => {
-                      if (val) {
-                        const selectedCenter = centers.find(
-                          (c) => c._id === val.value,
-                        );
-                        updateBatchAtIndex(index, {
-                          centerId: val.value,
-                          location: selectedCenter?.centerName || "",
-                        });
-                        setSelectedCenter(selectedCenter);
-                      } else {
-                        // Handle clear action
-                        updateBatchAtIndex(index, {
-                          centerId: "",
-                          location: "",
-                        });
-                        setSelectedCenter(null);
+                  <div className={styles.inputWithIcon}>
+                    <img
+                      src={CenterIcon}
+                      alt="Center"
+                      className={styles.inputIcon}
+                    />
+                    <StyledSelect
+                      options={centers.map((center) => ({
+                        value: center._id,
+                        label: center.centerName,
+                      }))}
+                      value={
+                        batch.centerId
+                          ? {
+                              value: batch.centerId,
+                              label: centers.find(
+                                (c) => c._id === batch.centerId,
+                              )?.centerName,
+                            }
+                          : null
                       }
-                    }}
-                    placeholder="Select Center"
-                    isDisabled={isLoadingCenters}
-                    error={batchErrors[index]?.centerId}
-                    isClearable
-                    isSearchable
-                    className="center-select"
-                    classNamePrefix="select"
-                  />
+                      onChange={(val) => {
+                        if (val) {
+                          const selectedCenter = centers.find(
+                            (c) => c._id === val.value,
+                          );
+                          updateBatchAtIndex(index, {
+                            centerId: val.value,
+                            location: selectedCenter?.centerName || "",
+                          });
+                          setSelectedCenter(selectedCenter);
+                        } else {
+                          // Handle clear action
+                          updateBatchAtIndex(index, {
+                            centerId: "",
+                            location: "",
+                          });
+                          setSelectedCenter(null);
+                        }
+                      }}
+                      placeholder="Select Center"
+                      isDisabled={isLoadingCenters}
+                      error={batchErrors[index]?.centerId}
+                      isClearable
+                      isSearchable
+                      paddingLeft="44px"
+                      className="center-select"
+                      classNamePrefix="select"
+                    />
+                  </div>
                 </div>
               )}
               {activeTab === "live" && (
@@ -471,6 +528,7 @@ export default function BatchForm({
                     handleInputChange(index, e);
                   }}
                   error={batchErrors[index]?.zoomLink}
+                  icon={VideoIcon}
                 />
               )}
             </div>

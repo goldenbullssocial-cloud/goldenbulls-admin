@@ -109,8 +109,6 @@
         background-size: 12px 8px;
         padding-right: 36px;
 
-   
-
         &.error {
           border-color: #ff4d4f;
         }
@@ -130,12 +128,10 @@
         padding: 12px 16px;
         border-radius: 8px;
         border: 1px solid #333;
-        background: #ffffff0d  ;
+        background: #ffffff0d;
         color: #fff;
         font-size: 14px;
         transition: all 0.2s;
-
-
 
         &::placeholder {
           color: #666;
@@ -152,6 +148,103 @@
         min-height: 150px;
         resize: vertical;
         line-height: 1.5;
+      }
+
+      // Table of Contents Styles
+      .tocContainer {
+        .tocInputWrapper {
+          display: flex;
+          gap: 8px;
+          margin-bottom: 12px;
+
+          .tocInput {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            background: #ffffff0d;
+            color: #fff;
+            font-size: 14px;
+            transition: all 0.2s;
+
+            &::placeholder {
+              color: #666;
+            }
+
+            &:focus {
+              outline: none;
+              border-color: #4d90fe;
+              box-shadow: 0 0 0 2px rgba(77, 144, 254, 0.2);
+            }
+          }
+
+          .addTocButton {
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 1px solid #4d90fe;
+            background: #4d90fe;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+
+            &:hover {
+              background: #357ae8;
+              border-color: #357ae8;
+            }
+
+            &:active {
+              transform: translateY(1px);
+            }
+          }
+        }
+
+        .tocItems {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+
+          .tocItem {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: #ffffff0d;
+            border: 1px solid #333;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #e0e0e0;
+
+            span {
+              max-width: 200px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+
+            .removeTocItem {
+              background: none;
+              border: none;
+              color: #ff4d4f;
+              cursor: pointer;
+              font-size: 16px;
+              font-weight: bold;
+              padding: 0;
+              width: 20px;
+              height: 20px;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              transition: all 0.2s;
+
+              &:hover {
+                background: rgba(255, 77, 79, 0.1);
+              }
+            }
+          }
+        }
       }
       .fileUpload {
         position: relative;
@@ -181,8 +274,6 @@
             font-size: 14px;
           }
         }
-
-
 
         &:hover {
           .filePlaceholder {

@@ -19,6 +19,7 @@ import UtilityIcon from "@/icons/utilityIcon";
 import BlogsIcon from "@/icons/blogsIcon";
 import BlogCategoriesIcon from "@/icons/blogCategoriesIcon";
 import YoutubeIcon from "@/icons/youtubeIcon";
+import NewsletterIcon from "@/icons/newsletterIcon";
 import LogoutIcon from "@/icons/logoutIcon";
 const Logo = "/assets/logo/logo.svg";
 
@@ -31,7 +32,6 @@ export default function Sidebar({ unreadCount }) {
   const router = useRouter();
   const pathname = usePathname();
   const modalRef = useRef(null);
-  console.log(unreadCount, "unreadCount");
 
   // Handle body scroll and overlay when modal is open
   useEffect(() => {
@@ -256,6 +256,15 @@ export default function Sidebar({ unreadCount }) {
           >
             <YoutubeIcon />
             <span>YouTube</span>
+          </div>
+          <div
+            className={classNames(styles.menu, {
+              [styles.active]: isActive("/newsletter"),
+            })}
+            onClick={() => router.push("/newsletter")}
+          >
+            <NewsletterIcon />
+            <span>Newsletter</span>
           </div>
         </div>
         <div className={styles.asideFooter}>

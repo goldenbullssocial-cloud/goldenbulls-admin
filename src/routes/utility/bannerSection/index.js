@@ -101,13 +101,9 @@ export default function BannerSection() {
     fetchBanners();
   }, []);
 
-  const onSubmit = async () => {
-    const data = form.getValues();
-
+  const onSubmit = async (data) => {
     try {
       setIsLoading(true);
-
-      if (!data.image) throw new Error("Image file is required");
 
       let response;
 
@@ -259,7 +255,7 @@ export default function BannerSection() {
       {isOpen && (
         <AddBanner
           onClose={() => setIsOpen(false)}
-          onSubmit={onSubmit}
+          onSubmit={handleSubmit(onSubmit)}
           fileInputRef={fileInputRef}
           handleFileChange={handleFileChange}
           handleDragOver={handleDragOver}
@@ -269,6 +265,8 @@ export default function BannerSection() {
           imageFile={imageFile}
           removeImage={removeImage}
           isDragging={isDragging}
+          errors={errors}
+          isLoading={isLoading}
         />
       )}
       {deleteDialogOpen && (

@@ -16,9 +16,26 @@ export default function AddBlog({
   isEditMode,
   form,
   onSubmit,
+  initialTocItems = [],
 }) {
   const [categories, setCategories] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [tocInput, setTocInput] = React.useState("");
+  const [tocItems, setTocItems] = React.useState(initialTocItems);
+
+  // Initialize table of content items from form data
+  React.useEffect(() => {
+    const currentToc = form.watch("tableOfContent") || [];
+    setTocItems(currentToc);
+  }, [form.watch("tableOfContent")]);
+
+  // Also initialize on mount for edit mode
+  React.useEffect(() => {
+    if (isEditMode) {
+      const currentToc = form.getValues("tableOfContent") || [];
+      setTocItems(currentToc);
+    }
+  }, [isEditMode]);
 
   // Fetch categories on component mount
   useEffect(() => {
@@ -27,7 +44,6 @@ export default function AddBlog({
         setIsLoading(true);
         const response = await getAllBlogCategory();
         setCategories(response?.payload?.data || []);
-
       } catch (error) {
         console.error("Error fetching categories:", error);
         toast.error("Failed to load categories");
@@ -38,6 +54,31 @@ export default function AddBlog({
 
     fetchCategories();
   }, []);
+
+  // Table of Contents handlers
+  const handleAddTocItem = () => {
+    if (tocInput.trim()) {
+      const newTocItems = [...tocItems, tocInput.trim()];
+      setTocItems(newTocItems);
+      form.setValue("tableOfContent", newTocItems);
+      form.trigger("tableOfContent"); // Trigger validation
+      setTocInput("");
+    }
+  };
+
+  const handleRemoveTocItem = (index) => {
+    const newTocItems = tocItems.filter((_, i) => i !== index);
+    setTocItems(newTocItems);
+    form.setValue("tableOfContent", newTocItems);
+    form.trigger("tableOfContent"); // Trigger validation
+  };
+
+  const handleTocKeyPress = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddTocItem();
+    }
+  };
 
   // Auto-generate slug from title
   const handleTitleChange = (e) => {
@@ -80,7 +121,6 @@ export default function AddBlog({
               error={form.formState.errors.title?.message}
               bglight
               leftSpaceRemove
-              required
             />
 
             <Input
@@ -93,34 +133,77 @@ export default function AddBlog({
               error={form.formState.errors.name?.message}
               bglight
               leftSpaceRemove
-              required
             />
-            <div className={styles.formGroup}>
+            <div className={`${styles.formGroup} ${styles.fullWidth}`}>
+              <label>Table of Contents *</label>
+              <div className={styles.tocContainer}>
+                <div className={styles.tocInputWrapper}>
+                  <input
+                    type="text"
+                    placeholder="Enter table of content item and press Enter or click Add"
+                    value={tocInput}
+                    onChange={(e) => setTocInput(e.target.value)}
+                    onKeyPress={handleTocKeyPress}
+                    className={styles.tocInput}
+                  />
+                  <Button text="Add" type="button" onClick={handleAddTocItem} />
+                </div>
+                {tocItems.length > 0 && (
+                  <div className={styles.tocItems}>
+                    {tocItems.map((item, index) => (
+                      <div key={index} className={styles.tocItem}>
+                        <span>{item}</span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveTocItem(index)}
+                          className={styles.removeTocItem}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {form.formState.errors.tableOfContent && (
+                  <span className={styles.errorText}>
+                    {form.formState.errors.tableOfContent.message}
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className={`${styles.formGroup} ${styles.fullWidth}`}>
               <label>Category</label>
-              <select
-                className={`${styles.selectInput} ${form.formState.errors.categoryId ? styles.error : ""}`}
-                value={form.watch("categoryId") || ""}
-                onChange={(e) =>
-                  form.setValue("categoryId", e.target.value, {
-                    shouldValidate: true,
-                  })
+              <StyledSelect
+                placeholder="Select a category"
+                options={categories?.map((category) => ({
+                  value: category?._id,
+                  label: category?.name,
+                }))}
+                value={
+                  form.watch("categoryId")
+                    ? {
+                        value: form.watch("categoryId"),
+                        label:
+                          categories?.find(
+                            (cat) => cat._id === form.watch("categoryId"),
+                          )?.name || "Select category",
+                      }
+                    : null
                 }
-                required
-              >
-                <option value="">Select a category</option>
-                {categories?.map((category) => (
-                  <option key={category?._id} value={category?._id}>
-                    {category?.name}
-                  </option>
-                ))}
-              </select>
-              {form.formState.errors.categoryId && (
+                onChange={(selectedOption) => {
+                  form.setValue("categoryId", selectedOption?.value || "", {
+                    shouldValidate: true,
+                  });
+                }}
+                onBlur={() => form.trigger("categoryId")}
+                error={form.formState.errors.categoryId?.message}
+              />
+              {form.formState.errors.categoryId?.message && (
                 <span className={styles.errorText}>
-                  {form.formState.errors.categoryId.message}
+                  {form.formState.errors.categoryId?.message}
                 </span>
               )}
             </div>
-
             <div className={`${styles.formGroup} ${styles.fullWidth}`}>
               <label>Content</label>
               <textarea
@@ -129,7 +212,6 @@ export default function AddBlog({
                 value={form.watch("description") || ""}
                 onChange={(e) => form.setValue("description", e.target.value)}
                 rows={8}
-                required
               />
               {form.formState.errors.description && (
                 <span className={styles.errorText}>
@@ -143,10 +225,14 @@ export default function AddBlog({
               <ImageUpload
                 name="coverImage"
                 id="coverImage"
-                error={form?.formState?.errors?.coverImage?.message}
                 onChange={handleImageChange}
                 initialImage={form.watch("coverImage")}
               />
+              {form?.formState?.errors?.coverImage?.message && (
+                <span className={styles.errorText}>
+                  {form?.formState?.errors?.coverImage?.message}
+                </span>
+              )}
             </div>
           </div>
 

@@ -179,10 +179,8 @@ export default function BatchForm({
   };
 
   const handleTimeClick = (index) => {
-    console.log("Time clicked", { index });
 
     if (timeRefs.current[index]) {
-      console.log("Time ref found:", timeRefs.current[index]);
       timeRefs.current[index].focus();
       setTimeout(() => {
         timeRefs.current[index].click();

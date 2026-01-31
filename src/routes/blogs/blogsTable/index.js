@@ -27,7 +27,10 @@ const blogFormSchema = z.object({
   categoryId: z.string().min(1, "Category is required"),
   name: z.string().min(2, "Author name is required"),
   description: z.string().min(100, "Content must be at least 100 characters"),
-  coverImage: z.any().optional(),
+  coverImage: z.any().refine((file) => file, "Cover image is required"),
+  tableOfContent: z
+    .array(z.string())
+    .min(1, "At least one table of content item is required"),
 });
 
 export default function BlogsTable() {
@@ -57,6 +60,7 @@ export default function BlogsTable() {
       name: "",
       description: "",
       coverImage: null,
+      tableOfContent: [],
     },
   });
 
@@ -75,7 +79,19 @@ export default function BlogsTable() {
 
       const response = await getAllBlog(params);
 
-      setBlogs(response?.payload?.data || []);
+      // Flatten all blogs from all categories
+      const allBlogs =
+        response?.payload?.data?.flatMap(
+          (category) =>
+            category?.blogs?.map((blog) => ({
+              ...blog,
+              categoryName: category?.name || "Uncategorized",
+            })) || [],
+        ) || [];
+
+      setBlogs(allBlogs);
+      console.log(response, allBlogs, "bbbbbbbbbb");
+
       setTotalItems(response?.payload?.count);
       setTotalPages(Math.ceil((response?.payload?.count || 1) / itemsPerPage));
     } catch (error) {
@@ -106,10 +122,11 @@ export default function BlogsTable() {
     setEditingBlog(blog);
     form.reset({
       title: blog?.title || "",
-      categoryId: blog?.categoryId?._id || "",
+      categoryId: blog?.categoryId || blog?.categoryId?._id || "",
       name: blog?.name || "",
       description: blog?.description || "",
       coverImage: blog?.coverImage || null,
+      tableOfContent: blog?.tableOfContent || [],
     });
     setIsAddBlogOpen(true);
   };
@@ -121,6 +138,8 @@ export default function BlogsTable() {
   const handleImageChange = (file) => {
     if (!file) {
       setImageFile(null);
+      form.setValue("coverImage", null);
+      form.trigger("coverImage"); // Trigger validation
       return;
     }
 
@@ -128,17 +147,17 @@ export default function BlogsTable() {
 
     if (!file.type.startsWith("image/")) {
       toast.error("Please upload a valid image");
-      input.value = "";
       return;
     }
 
     if (file.size > maxSize) {
       toast.error("Image must be under 1MB");
-      input.value = "";
       return;
     }
 
     setImageFile(file);
+    form.setValue("coverImage", file);
+    form.trigger("coverImage"); // Trigger validation
   };
 
   const confirmDelete = async () => {
@@ -194,6 +213,14 @@ export default function BlogsTable() {
           hasChanges = true;
         }
 
+        // Compare table of content arrays
+        const originalToc = originalBlog?.tableOfContent || [];
+        const currentToc = data?.tableOfContent || [];
+        if (JSON.stringify(originalToc) !== JSON.stringify(currentToc)) {
+          requestData.tableOfContent = currentToc;
+          hasChanges = true;
+        }
+
         // Handle image upload if new image is provided
         if (imageFile) {
           try {
@@ -229,7 +256,12 @@ export default function BlogsTable() {
         // Append all fields to formData
         Object.entries(data).forEach(([key, value]) => {
           if (value !== null && value !== undefined) {
-            formData.append(key, value);
+            // Handle array fields like tableOfContent
+            if (key === "tableOfContent" && Array.isArray(value)) {
+              formData.append(key, JSON.stringify(value));
+            } else {
+              formData.append(key, value);
+            }
           }
         });
 
@@ -353,7 +385,6 @@ export default function BlogsTable() {
                     <th className={styles.titleCol}>Title</th>
                     <th className={styles.authorCol}>Author</th>
                     <th className={styles.categoryCol}>Category</th>
-                    <th className={styles.statusCol}>Status</th>
                     <th className={styles.dateCol}>Created Date</th>
                     <th className={styles.actionsCol}>Actions</th>
                   </tr>
@@ -378,22 +409,11 @@ export default function BlogsTable() {
                         </td>
                         <td
                           className={styles.cellContent}
-                          title={blog?.categoryId?.name || "Uncategorized"}
+                          title={blog?.categoryName || "Uncategorized"}
                         >
                           <div className={styles.truncate}>
-                            {blog?.categoryId?.name || "Uncategorized"}
+                            {blog?.categoryName || "Uncategorized"}
                           </div>
-                        </td>
-                        <td className={styles.statusCol}>
-                          <span
-                            className={
-                              blog?.isActive
-                                ? styles.activeStatus
-                                : styles.inactiveStatus
-                            }
-                          >
-                            {blog?.isActive ? "Active" : "Inactive"}
-                          </span>
                         </td>
                         <td className={styles.dateCol}>
                           {format(new Date(blog?.createdAt), "MMM d, yyyy")}
@@ -429,6 +449,7 @@ export default function BlogsTable() {
           form={form}
           onSubmit={onSubmit}
           handleImageChange={handleImageChange}
+          initialTocItems={editingBlog?.tableOfContent || []}
         />
       )}
       {isDeleteDialogOpen && (

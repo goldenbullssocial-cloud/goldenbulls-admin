@@ -95,18 +95,20 @@ const DetailCourseView = ({ course, onClose, onEdit, onDelete }) => {
         {/* Video Section */}
         <div className={styles.videoSection}>
           <div className={styles.videoContainer}>
-            <div className={styles.thumbnail} onClick={handlePlayVideo}>
-              <img
-                src={getThumbnailUrl()}
-                alt={course.CourseName || "Course Thumbnail"}
-              />
-              <div className={styles.playButton}>
+            <div>
+              <div className={styles.thumbnail} onClick={handlePlayVideo}>
                 <img
-                  src="/assets/icons/PlayIcon.svg"
-                  alt="Play"
-                  width={24}
-                  height={24}
+                  src={getThumbnailUrl()}
+                  alt={course.CourseName || "Course Thumbnail"}
                 />
+                <div className={styles.playButton}>
+                  <img
+                    src="/assets/icons/PlayIcon.svg"
+                    alt="Play"
+                    width={24}
+                    height={24}
+                  />
+                </div>
               </div>
               <div className={styles.courseInfo}>
                 <div className={styles.actions}>

@@ -18,6 +18,8 @@ export default function AddBanner({
   imageFile,
   removeImage,
   isDragging,
+  errors,
+  isLoading,
 }) {
   return (
     <div className={styles.addBannerAlignment}>
@@ -28,13 +30,7 @@ export default function AddBanner({
             <CloseIcon />
           </div>
         </div>
-        <form
-          className={styles.modalBody}
-          onSubmit={(e) => {
-            e.preventDefault();
-            onSubmit();
-          }}
-        >
+        <form className={styles.modalBody} onSubmit={onSubmit}>
           <input
             type="file"
             ref={fileInputRef}
@@ -87,10 +83,13 @@ export default function AddBanner({
               </div>
             </div>
           </div>
-            <div className={styles.buttonRightAlignment}>
-              <OutlineButton text="Cancel" icon={Close} />
-              <Button type="submit" text="Save Banner" icon={SaveIcon} />
-            </div>
+          {errors?.image && (
+            <div className={styles.errorMessage}>{errors.image.message}</div>
+          )}
+          <div className={styles.buttonRightAlignment}>
+            <OutlineButton text="Cancel" icon={Close} />
+            <Button type="submit" text="Save Banner" icon={SaveIcon} disabled={isLoading} />
+          </div>
         </form>
       </div>
     </div>

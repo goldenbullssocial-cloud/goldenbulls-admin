@@ -114,6 +114,7 @@ export default function Login() {
           localStorage.removeItem("savedEmail");
           localStorage.removeItem("savedPassword");
         }
+        toast.success("Login Successfully");
         router.push("/dashboard");
       }
     } catch (error) {

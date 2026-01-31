@@ -7,7 +7,7 @@ import youtube from "../../../public/assets/images/youtube.png";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
-import { createYoutube, getAllYoutube } from "@/api/youtube";
+import { createYoutube, getAllYoutube, updateYoutube } from "@/api/youtube";
 import { uploadImage } from "@/api/course";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -247,13 +247,11 @@ export default function Youtube() {
       let requestData = {};
 
       if (isEditMode && currentId) {
-        // In edit mode, only include changed fields
         const originalItem = items.find((item) => item._id === currentId);
         if (!originalItem) {
           throw new Error("Original item not found");
         }
 
-        // Compare each field and only include if changed
         if (data.description !== originalItem.description) {
           requestData.description = data.description;
         }
@@ -266,7 +264,6 @@ export default function Youtube() {
           requestData.thumbnail = data.thumbnail;
         }
 
-        // Only proceed with update if there are changes
         if (Object.keys(requestData).length > 0) {
           await updateYoutube(currentId, requestData);
           toast.success("YouTube item updated successfully");
@@ -461,6 +458,7 @@ export default function Youtube() {
           errors={errors}
           setValue={setValue}
           removeThumbnail={removeThumbnail}
+          isLoading={isLoading}
         />
       )}
       <PagePagination

@@ -126,31 +126,16 @@ export default function CourseSales({
                   <tr key={payment._id || index}>
                     <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                     <td>{payment?.createdAt}</td>
-                    <td>{payment?.uid?.name || "N/A"}</td>
-                    <td>{payment?.courseId?.CourseName || "N/A"}</td>
-                    <td>{payment?.courseId?.courseType || "N/A"}</td>
+                    <td>
+                      {payment?.uid?.firstName + " " + payment?.uid?.lastName ||
+                        payment?.uid?.name ||
+                        "N/A"}
+                    </td>
+                    <td>{payment?.botId?.strategyId?.title || "N/A"}</td>
+                    <td>{payment?.planType || "N/A"}</td>
                     <td>{payment?.price || "N/A"}</td>
                     <td>{payment?.orderId || "N/A"}</td>
-                    <td>
-                      <div
-                        className={styles.accountNumberCell}
-                        onClick={() => handlePaymentClick(payment)}
-                      >
-                        {Array.isArray(payment?.metaAccountNo) &&
-                        payment.metaAccountNo.length > 0 ? (
-                          <span className={styles.accountBadge}>
-                            View {payment.metaAccountNo.length} Account
-                            {payment.metaAccountNo.length !== 1 ? "s" : ""}
-                          </span>
-                        ) : (
-                          <span
-                            className={`${styles.accountBadge} ${styles.empty}`}
-                          >
-                            No Accounts
-                          </span>
-                        )}
-                      </div>
-                    </td>
+                    <td>{/* {payment?.} */}</td>
                     <td>
                       <button
                         onClick={() => downloadPaymentInvoice(payment)}
@@ -202,8 +187,20 @@ export default function CourseSales({
                   <tr key={payment._id || index}>
                     <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                     <td>{payment?.createdAt}</td>
-                    <td>{payment?.uid?.name || "N/A"}</td>
-                    <td>{payment?.courseId?.courseType || "N/A"}</td>
+                    <td>
+                      {payment?.uid?.firstName + " " + payment?.uid?.lastName ||
+                        payment?.uid?.name ||
+                        "N/A"}
+                    </td>
+                    <td>
+                      {payment?.telegramId?.telegramId?.channelName || "N/A"}
+                    </td>
+                    <td>
+                      {payment?.planType?.replace(
+                        /(\d+)([a-zA-Z]+)/,
+                        "$1 $2",
+                      ) || "N/A"}
+                    </td>
                     <td>{payment?.price || "N/A"}</td>
                     <td>{payment?.orderId || "N/A"}</td>
                     <td>

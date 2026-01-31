@@ -25,12 +25,13 @@ export default function AddyoutubeVideo({
   imagePreview,
   onSubmit,
   handleSubmit,
-}) {  
+  isEditMode,
+}) {
   return (
     <div className={styles.addyoutubeVideoWrapper}>
       <div className={styles.modal}>
         <div className={styles.modalHeader}>
-          <h2>Add youtube video</h2>
+          <h2>{isEditMode ? "Edit youtube video" : "Add youtube video"}</h2>
           <div className={styles.closeIcon} onClick={onClose}>
             <CloseIcon />
           </div>
@@ -75,7 +76,7 @@ export default function AddyoutubeVideo({
             ref={fileInputRef}
             onChange={handleFileChange}
             accept="image/*"
-            style={{ display: "none"}}
+            style={{ display: "none" }}
           />
 
           <div
@@ -125,7 +126,11 @@ export default function AddyoutubeVideo({
 
           <div className={styles.buttonRightAlignment}>
             <OutlineButton text="Cancel" icon={Close} onClick={onClose} />
-            <Button type="submit" text="Save Banner" icon={SaveIcon} />
+            <Button
+              type="submit"
+              text={isEditMode ? "Update Video" : "Save Video"}
+              icon={SaveIcon}
+            />
           </div>
         </form>
       </div>

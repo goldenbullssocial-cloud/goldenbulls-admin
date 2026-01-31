@@ -585,7 +585,6 @@ export default function Courses() {
         apiData.courseCategory = categoryId.toString();
       }
 
-      console.log(errors, "erros");
       // If there are errors, stop submission
       if (Object.keys(errors).length > 0) {
         setIsSubmitting(false);
@@ -598,7 +597,6 @@ export default function Courses() {
           data = await updateCourse(editCourse._id, apiData);
         } else {
           // Create new course
-          console.log(apiData, "apiData");
           data = await createCourse(apiData);
         }
 

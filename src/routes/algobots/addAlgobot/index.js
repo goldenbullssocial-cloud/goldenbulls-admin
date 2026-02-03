@@ -121,13 +121,22 @@ export default function AddAlgobot({
                 bglight
                 name="returns"
                 id="returns"
+                type="number"
                 {...register("returns")}
                 onBlur={(e) => {
                   const value = e.target.value.trim();
                   setValue("returns", value, { shouldValidate: true });
                 }}
                 onKeyDown={(e) => {
-                  if (e.key === " " && !e.currentTarget.value.trim()) {
+                  // Allow only numbers, backspace, delete, tab, escape, enter
+                  if (
+                    !/[0-9]/.test(e.key) &&
+                    !["Backspace", "Delete", "Tab", "Escape", "Enter"].includes(
+                      e.key,
+                    ) &&
+                    !e.ctrlKey &&
+                    !e.metaKey
+                  ) {
                     e.preventDefault();
                   }
                 }}

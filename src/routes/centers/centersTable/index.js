@@ -89,6 +89,7 @@ export default function CentersTable() {
   const [centerToDelete, setCenterToDelete] = useState(null);
   const [currentCenterId, setCurrentCenterId] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [viewingCenter, setViewingCenter] = useState(null);
@@ -176,8 +177,10 @@ export default function CentersTable() {
   };
 
   const onSubmit = async (data) => {
+    if (isSubmitting) return; // Prevent multiple submissions
+
     try {
-      setIsLoading(true);
+      setIsSubmitting(true);
       const centerData = {
         centerName: data.centerName,
         location: data.location,
@@ -204,7 +207,7 @@ export default function CentersTable() {
       console.error("Error saving center:", error);
       toast.error(error.response?.data?.message || "Failed to save center");
     } finally {
-      setIsLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -350,7 +353,7 @@ export default function CentersTable() {
           isEditMode={isEditMode}
           form={form}
           isOpen={isAddCenterOpen}
-          isLoading={isLoading}
+          isLoading={isSubmitting}
           onClose={() => {
             setIsAddCenterOpen(false);
             form.reset();

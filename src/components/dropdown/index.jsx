@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 import styles from "./dropdown.module.scss";
 import Image from "next/image";
 
-export default function Dropdown({ actions = [], onSelect }) {
+export default function Dropdown({ actions = [], onSelect,dark }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -28,7 +28,7 @@ export default function Dropdown({ actions = [], onSelect }) {
     <div className={styles.dropdown} ref={dropdownRef}>
       <button
         type="button"
-        className={styles.dropdownToggle}
+        className={dark ? styles.darkdropdownToggle : styles.dropdownToggle}
         onClick={() => setIsOpen((prev) => !prev)}
       >
         <span className={styles.dots}></span>

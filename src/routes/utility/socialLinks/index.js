@@ -6,6 +6,8 @@ import { getUtility, updateUtility } from "@/api/utility";
 import UserHeader from "@/components/userHeader";
 import EmailModal from "../emailModal";
 import CommonLoader from "@/components/commonLoader";
+import BannerSection from "../bannerSection";
+import { toast } from "sonner";
 export default function SocialLinks() {
   const [utilitySettings, setUtilitySettings] = useState({
     email: "",
@@ -16,6 +18,8 @@ export default function SocialLinks() {
     location: "",
     twitter: "",
     chatNumber: "",
+
+    youtubeLink: "",
     days: 0,
     telegramLink: "",
     whatsAppLink: "",
@@ -71,15 +75,6 @@ export default function SocialLinks() {
     setIsEditDialogOpen(true);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!currentField) return;
-
-    const formData = new FormData(e.target);
-    const value = formData.get(currentField);
-    updateUtilitySetting(currentField, value);
-  };
-
   const fieldLabels = {
     email: "Email",
     phoneNo: "Phone Number",
@@ -89,6 +84,8 @@ export default function SocialLinks() {
     location: "Location",
     twitter: "Twitter Link",
     chatNumber: "Chat Number",
+
+    youtubeLink: "YouTube Link",
     days: "Newsletter Email Sent Days",
     telegramLink: "Telegram Link",
     whatsAppLink: "WhatsApp Link",
@@ -102,6 +99,11 @@ export default function SocialLinks() {
           "_id",
           "deletedAt",
           "updatedAt",
+          "chatNumber",
+          "location",
+          "twitter",
+          "days",
+          "telegramLink",
           "lastEmailSentDate",
           "referralPercentage",
         ].includes(key),
@@ -160,27 +162,15 @@ export default function SocialLinks() {
             <div className={styles.grid}>
               {paginatedData?.map((item) => {
                 return (
-                  <>
-                    <div className={styles.gridItems} key={item.id}>
-                      <div className={styles.cardHeaderAlignment}>
-                        <h3>{item.label}</h3>
-                        <button onClick={() => handleEditClick(item.field)}>
-                          <EditIcon />
-                        </button>
-                      </div>
-                      <p>{item.value}</p>
+                  <div className={styles.gridItems} key={item.id}>
+                    <div className={styles.cardHeaderAlignment}>
+                      <h3>{item.label}</h3>
+                      <button onClick={() => handleEditClick(item.field)}>
+                        <EditIcon />
+                      </button>
                     </div>
-                    {isEditDialogOpen && (
-                      <EmailModal
-                        onClose={() => setIsEditDialogOpen(false)}
-                        onSave={updateUtilitySetting}
-                        label={item.label}
-                        currentField={item.field}
-                        utilitySettings={utilitySettings}
-                        fieldLabels={fieldLabels}
-                      />
-                    )}
-                  </>
+                    <p>{item.value}</p>
+                  </div>
                 );
               })}
             </div>
@@ -189,7 +179,18 @@ export default function SocialLinks() {
           )}
           <div className={styles.line}></div>
         </div>
+        <BannerSection />
       </div>
+      {isEditDialogOpen && (
+        <EmailModal
+          onClose={() => setIsEditDialogOpen(false)}
+          onSave={updateUtilitySetting}
+          label={fieldLabels[currentField]}
+          currentField={currentField}
+          utilitySettings={utilitySettings}
+          fieldLabels={fieldLabels}
+        />
+      )}
     </>
   );
 }

@@ -499,7 +499,12 @@ export default function SyllabusCourses({
               <span>Add Chapter</span>
             </button>
           </div>
-          <Button type="submit" text="Save Course" icon={SaveIcon} />
+          <Button
+            type="submit"
+            text="Save Course"
+            icon={SaveIcon}
+            disabled={isSubmitting}
+          />
         </div>
       </form>
     </>

@@ -27,7 +27,6 @@ export default function Newsletter() {
     try {
       setLoading(true);
       const response = await getNewsLetter();
-      console.log(response, "rere");
 
       setNewsletters(response?.payload?.data || []);
       setTotalItems(response?.payload?.count || 0);
@@ -92,7 +91,6 @@ export default function Newsletter() {
                 <tr>
                   <th>Sr no.</th>
                   <th>Email</th>
-                  <th>Description</th>
                   <th>Status</th>
                   <th>Subscribed Date</th>
                 </tr>
@@ -103,7 +101,6 @@ export default function Newsletter() {
                     <tr key={newsletter._id}>
                       <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                       <td>{newsletter.email || "N/A"}</td>
-                      <td>{newsletter.description || "N/A"}</td>
                       <td>
                         <span
                           className={`${styles.status} ${

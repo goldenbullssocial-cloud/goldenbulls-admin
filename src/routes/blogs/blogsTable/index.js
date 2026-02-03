@@ -90,7 +90,6 @@ export default function BlogsTable() {
         ) || [];
 
       setBlogs(allBlogs);
-      console.log(response, allBlogs, "bbbbbbbbbb");
 
       setTotalItems(response?.payload?.count);
       setTotalPages(Math.ceil((response?.payload?.count || 1) / itemsPerPage));

@@ -240,6 +240,7 @@ export default function BannerSection() {
                   />
                   <div className={styles.dropdownOverlay}>
                     <Dropdown
+                      dark
                       actions={getBannerActions(banner)}
                       onSelect={(action) => handleAction(action, banner)}
                     />

@@ -152,8 +152,6 @@ export default function AddCenter({
                     shouldValidate: true,
                   });
                   form.setValue("city", "", { shouldValidate: true });
-
-                  onStateChange?.(val);
                 }}
                 onFocus={onStateFocus}
                 placeholder="Select State"

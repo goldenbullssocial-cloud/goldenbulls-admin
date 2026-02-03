@@ -29,7 +29,34 @@
       margin: 1px 0;
     }
   }
+  .darkdropdownToggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    background-color: #1e1e1e7e;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
 
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.623);
+    }
+
+    .dots {
+      display: block;
+      width: 4px;
+      height: 4px;
+      background-color: #b6b6b6;
+      border-radius: 50%;
+      margin: 1px 0;
+    }
+  }
   .dropdownMenu {
     position: absolute;
     top: 100%;

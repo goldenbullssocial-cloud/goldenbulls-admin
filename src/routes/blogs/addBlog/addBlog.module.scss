@@ -1,0 +1,330 @@
+@use "../../../scss/main.scss" as *;
+@use "../../../scss/breakpoints/breakpoints.scss" as *;
+@use "../../../scss/font/font.scss" as *;
+
+// Date input with calendar icon
+.dateInputContainer {
+  position: relative;
+  width: 100%;
+
+  .dateInput {
+    width: 100%;
+    padding-right: 35px; // Space for the calendar icon
+  }
+
+  .calendarIcon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 18px;
+    color: #666;
+    pointer-events: none; // Let clicks pass through to the input
+
+    &:hover {
+      color: #333;
+    }
+  }
+
+  // Hide the default calendar icon in WebKit browsers
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+  }
+}
+
+.addBlogWrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+
+  .modal {
+    max-width: 800px;
+    width: 100%;
+    max-height: 90vh;
+    padding: 32px;
+    border-radius: 16px;
+    background: #000;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow-y: auto;
+    border: 1px solid #333;
+
+    .modalBody {
+      padding: 20px 0 0;
+    }
+
+    .formGrid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-bottom: 24px;
+
+      .fullWidth {
+        grid-column: 1 / -1;
+      }
+    }
+
+    .formGroup {
+      margin-bottom: 16px;
+
+      label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 14px;
+        color: #e0e0e0;
+        @include font-medium;
+      }
+
+      .selectInput {
+        width: 100%;
+        padding: 12px 16px;
+        border-radius: 8px;
+        border: 1px solid #333;
+        background: #ffffff0d;
+        color: #fff;
+        font-size: 14px;
+        transition: all 0.2s;
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23999999' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 12px 8px;
+        padding-right: 36px;
+
+        &.error {
+          border-color: #ff4d4f;
+        }
+      }
+
+      .errorText {
+        color: #ff4d4f;
+        font-size: 12px;
+        margin-top: 4px;
+        display: block;
+      }
+      input[type="text"],
+      input[type="email"],
+      input[type="password"],
+      textarea {
+        width: 100%;
+        padding: 12px 16px;
+        border-radius: 8px;
+        border: 1px solid #333;
+        background: #ffffff0d;
+        color: #fff;
+        font-size: 14px;
+        transition: all 0.2s;
+
+        &::placeholder {
+          color: #666;
+        }
+
+        &:disabled {
+          background: #222;
+          color: #666;
+          cursor: not-allowed;
+        }
+      }
+
+      textarea {
+        min-height: 150px;
+        resize: vertical;
+        line-height: 1.5;
+      }
+
+      // Table of Contents Styles
+      .tocContainer {
+        .tocInputWrapper {
+          display: flex;
+          gap: 8px;
+          margin-bottom: 12px;
+
+          .tocInput {
+            flex: 1;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            background: #ffffff0d;
+            color: #fff;
+            font-size: 14px;
+            transition: all 0.2s;
+
+            &::placeholder {
+              color: #666;
+            }
+
+            &:focus {
+              outline: none;
+              border-color: #4d90fe;
+              box-shadow: 0 0 0 2px rgba(77, 144, 254, 0.2);
+            }
+          }
+
+          .addTocButton {
+            padding: 12px 20px;
+            border-radius: 8px;
+            border: 1px solid #4d90fe;
+            background: #4d90fe;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+
+            &:hover {
+              background: #357ae8;
+              border-color: #357ae8;
+            }
+
+            &:active {
+              transform: translateY(1px);
+            }
+          }
+        }
+
+        .tocItems {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+
+          .tocItem {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: #ffffff0d;
+            border: 1px solid #333;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #e0e0e0;
+
+            span {
+              max-width: 200px;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+            }
+
+            .removeTocItem {
+              background: none;
+              border: none;
+              color: #ff4d4f;
+              cursor: pointer;
+              font-size: 16px;
+              font-weight: bold;
+              padding: 0;
+              width: 20px;
+              height: 20px;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              transition: all 0.2s;
+
+              &:hover {
+                background: rgba(255, 77, 79, 0.1);
+              }
+            }
+          }
+        }
+      }
+      .fileUpload {
+        position: relative;
+        width: 100%;
+
+        input[type="file"] {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          opacity: 0;
+          cursor: pointer;
+          z-index: 2;
+        }
+
+        .filePreview,
+        .filePlaceholder {
+          width: 100%;
+          padding: 16px;
+          border: 1px dashed #444;
+          border-radius: 8px;
+          text-align: center;
+          background: #ffffff0d;
+          transition: all 0.2s;
+
+          span {
+            color: #999;
+            font-size: 14px;
+          }
+        }
+
+        &:hover {
+          .filePlaceholder {
+            border-color: #666;
+            background: #ffffff0d;
+
+            span {
+              color: #ccc;
+            }
+          }
+
+          .filePreview {
+            background: rgba(77, 144, 254, 0.15);
+          }
+        }
+      }
+    }
+
+    .modalHeader {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 0 24px 0;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #333;
+
+      h2 {
+        font-size: 22px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 1.3;
+        text-transform: uppercase;
+        display: inline;
+        margin: 0;
+        @include heading-font;
+        @include gradient-text;
+      }
+
+      .closeIcon {
+        display: flex;
+        align-items: center;
+
+        svg {
+          cursor: pointer;
+          transition: 0.3s ease-in-out;
+
+          &:hover {
+            transform: rotate(180deg);
+          }
+        }
+      }
+    }
+  }
+}

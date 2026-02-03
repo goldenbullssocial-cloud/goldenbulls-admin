@@ -1,48 +1,56 @@
-import React from 'react'
-import styles from './settingsModal.module.scss';
-import CloseIcon from '@/icons/closeIcon';
-import Input from '@/components/input';
-import Button from '@/components/button';
-import OutlineButton from '@/components/outlineButton';
-const SaveIcon = '/assets/icons/save.svg';
-const Close = '/assets/icons/close.svg';
-export default function SettingsModal() {
-    return (
-        <div className={styles.settingsModalWrapper}>
-            <div className={styles.modal}>
-                <div className={styles.modalHeader}>
-                    <h2>
-                        Settings
-                    </h2>
-                    <div className={styles.closeIcon}>
-                        <CloseIcon />
-                    </div>
-                </div>
-                <div className={styles.modalBody}>
-                    <Input label='Commission %' placeholder='20' leftSpaceRemove bglight />
-                    <div className={styles.addChain}>
-                        <Input label='Network Chain' placeholder='Enter chain name' leftSpaceRemove bglight />
-                        <button>
-                            <span>
-                                Add Chain
-                            </span>
-                        </button>
-                    </div>
-                    <div className={styles.spacer}></div>
-                    <div className={styles.availableChains}>
-                        <p>
-                            Available Chains
-                        </p>
-                        <span>
-                            No chains available
-                        </span>
-                    </div>
-                    <div className={styles.twoButtonAlignment}>
-                        <OutlineButton text="Cancel" icon={Close} />
-                        <Button text="Save" icon={SaveIcon} />
-                    </div>
-                </div>
-            </div>
+import React from "react";
+import styles from "./settingsModal.module.scss";
+import CloseIcon from "@/icons/closeIcon";
+import Input from "@/components/input";
+import Button from "@/components/button";
+import OutlineButton from "@/components/outlineButton";
+import { CryptoChainModal } from "../CryptoChainModal";
+const SaveIcon = "/assets/icons/save.svg";
+const Close = "/assets/icons/close.svg";
+export default function SettingsModal({
+  onSave,
+  onClose,
+  commissionPercent,
+  setCommissionPercent,
+}) {
+  return (
+    <div className={styles.settingsModalWrapper}>
+      <div className={styles.modal}>
+        <div className={styles.modalHeader}>
+          <h2>Settings</h2>
+          <div className={styles.closeIcon} onClick={onClose}>
+            <CloseIcon />
+          </div>
         </div>
-    )
+        <div className={styles.modalBody}>
+          <Input
+            label="Commission %"
+            placeholder="20"
+            leftSpaceRemove
+            bglight
+            id="rate"
+            type="number"
+            min="0"
+            step="1"
+            max="100"
+            value={commissionPercent}
+            onKeyDown={(e) => {
+              if (e.key === "." || e.key === "e") {
+                e.preventDefault();
+              }
+            }}
+            onChange={(e) => {
+              setCommissionPercent(e.target.value.replace(/\D/g, ""));
+            }}
+          />
+          <CryptoChainModal />
+
+          <div className={styles.twoButtonAlignment}>
+            <OutlineButton text="Cancel" icon={Close} onClick={onClose} />
+            <Button text="Save" icon={SaveIcon} onClick={onSave} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }

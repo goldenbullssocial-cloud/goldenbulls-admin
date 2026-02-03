@@ -1,76 +1,80 @@
-@use '../../../scss/main.scss' as *;
-@use '../../../scss/breakpoints/breakpoints.scss' as *;
-@use '../../../scss/font/font.scss' as *;
+@use "../../../scss/main.scss" as *;
+@use "../../../scss/breakpoints/breakpoints.scss" as *;
+@use "../../../scss/font/font.scss" as *;
 
 .performanceOverview {
-    border-radius: 24px 0 0 0;
-    border-top: 1px solid #66666693;
-    border-left: 1px solid #66666693;
-    background: #0F0F0F;
-    padding: 32px;
+  border-radius: 24px 0 0 0;
+  border-top: 1px solid #66666693;
+  border-left: 1px solid #66666693;
+  background: #0f0f0f;
+  padding: 32px;
+  z-index: -10;
+  @include respond-to("xl") {
+    padding: 22px;
+  }
 
-    @include respond-to("xl") {
-        padding: 22px;
+  .title {
+    padding: 0 0 24px 0;
+
+    h2 {
+      font-size: 24px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+      text-transform: uppercase;
+      @include gradient-text;
+      @include heading-font;
     }
+  }
 
-    .title {
-        padding: 0 0 24px 0;
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
 
-        h2 {
-            font-size: 24px;
-            font-style: normal;
-            font-weight: 400;
-            line-height: normal;
-            text-transform: uppercase;
-            @include gradient-text;
-            @include heading-font;
+    .griditems {
+      border-radius: 24px;
+      background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(153, 153, 153, 0) 100%
+      );
+      position: relative;
+
+      .icons {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 0;
+
+        img {
+          display: block;
         }
-    }
+      }
 
-    .grid {
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 20px;
+      .textstyle {
+        padding: 24px;
 
-        .griditems {
-            border-radius: 24px;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.10) 0%, rgba(153, 153, 153, 0.00) 100%);
-            position: relative;
-
-            .icons {
-                position: absolute;
-                top: 50%;
-                transform: translateY(-50%);
-                right: 0;
-
-                img {
-                    display: block;
-                }
-            }
-
-            .textstyle {
-                padding: 24px;
-
-                p {
-                    color: #B6B6B6;
-                    font-size: 22px;
-                    font-style: normal;
-                    font-weight: 400;
-                    line-height: normal;
-                    margin: 0 0 12px 0;
-                    @include font-normal;
-                }
-
-                span {
-                    display: block;
-                    font-size: 48px;
-                    font-style: normal;
-                    font-weight: 500;
-                    color: #fff;
-                    line-height: 100%;
-                    @include font-medium;
-                }
-            }
+        p {
+          color: #b6b6b6;
+          font-size: 22px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: normal;
+          margin: 0 0 12px 0;
+          @include font-normal;
         }
+
+        span {
+          display: block;
+          font-size: 48px;
+          font-style: normal;
+          font-weight: 500;
+          color: #fff;
+          line-height: 100%;
+          @include font-medium;
+        }
+      }
     }
+  }
 }

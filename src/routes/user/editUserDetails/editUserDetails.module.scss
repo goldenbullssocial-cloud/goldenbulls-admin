@@ -1,76 +1,198 @@
-@use '../../../scss/main.scss' as *;
-@use '../../../scss/breakpoints/breakpoints.scss' as *;
-@use '../../../scss/font/font.scss' as *;
+@use "../../../scss/main.scss" as *;
+@use "../../../scss/breakpoints/breakpoints.scss" as *;
+@use "../../../scss/font/font.scss" as *;
 
 .editUserDetails {
-    position: fixed;
-    top: 0;
-    left: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(15px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .editUsermodal {
+    border-radius: 24px;
+    background: #000;
+    max-width: 872px;
     width: 100%;
-    height: 100%;
-    z-index: 9999;
-    background: rgba(255, 255, 255, 0.04);
-    backdrop-filter: blur(15px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding: 24px;
 
-    .editUsermodal {
-        border-radius: 24px;
-        background: #000;
-        max-width: 872px;
-        width: 100%;
-        padding: 24px;
+    .modalBody {
+      padding: 24px 0 0 0;
 
-        .modalBody {
-            padding: 24px 0 0 0;
+      .twoCol {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+        padding: 0 0 24px 0;
+      }
 
-            .twoCol {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 24px;
-                padding: 0 0 24px 0;
-            }
-
-            .button {
-                button {
-                    max-width: 200px;
-                    width: 100%;
-                }
-            }
+      .button {
+        button {
+          max-width: 200px;
+          width: 100%;
         }
 
-        .modalHeader {
-            display: flex;
-            align-items: center;
-            border-bottom: 1px solid #666;
-            justify-content: space-between;
-            padding: 0 0 24px 0;
-
-            h2 {
-                font-size: 20px;
-                font-style: normal;
-                font-weight: 400;
-                line-height: normal;
-                text-transform: uppercase;
-                display: inline;
-                @include heading-font;
-                @include gradient-text;
-            }
-
-            .closeIcon {
-                display: flex;
-                align-items: center;
-
-                svg {
-                    cursor: pointer;
-                    transition: .3s ease-in-out;
-
-                    &:hover {
-                        transform: rotate(180deg);
-                    }
-                }
-            }
+        .disabledButton {
+          cursor: not-allowed !important;
+          opacity: 0.6;
+          pointer-events: none !important;
         }
+      }
     }
+
+    .modalHeader {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #666;
+      justify-content: space-between;
+      padding: 0 0 24px 0;
+
+      h2 {
+        font-size: 20px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+        text-transform: uppercase;
+        display: inline;
+        @include heading-font;
+        @include gradient-text;
+      }
+
+      .closeIcon {
+        display: flex;
+        align-items: center;
+
+        svg {
+          cursor: pointer;
+          transition: 0.3s ease-in-out;
+
+          &:hover {
+            transform: rotate(180deg);
+          }
+        }
+      }
+    }
+  }
+
+  .field {
+    label {
+      color: #fff;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+      @include font-normal;
+      padding: 0 0 8px 0;
+      display: block;
+    }
+
+    select,
+    .css-13cymwt-control,
+    .css-t3ipsp-control,
+    .css-1s2u09g-control {
+      width: 100%;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.1);
+      height: 52px;
+      padding: 0 16px;
+      font-size: 16px;
+      outline: none;
+      font-style: normal;
+      border: 1px solid #66666693;
+      font-weight: 400;
+      line-height: normal;
+      @include font-normal;
+      color: #fff;
+      transition: 0.3s ease-in-out;
+
+      &:focus,
+      &:hover {
+        border: 1px solid #f9f490;
+      }
+    }
+
+    .css-13cymwt-control,
+    .css-t3ipsp-control,
+    .css-1s2u09g-control {
+      min-height: 52px;
+      height: auto;
+
+      .css-1d8n9bt {
+        height: 50px;
+        display: flex;
+        align-items: center;
+      }
+
+      .css-1hb7z20-Input {
+        color: #fff;
+        @include font-normal;
+      }
+
+      .css-1dimb5g-singleValue {
+        color: #fff;
+        @include font-normal;
+      }
+
+      .css-1u9des2-indicatorSeparator {
+        background-color: #66666693;
+      }
+
+      .css-1xc3v61-indicatorContainer,
+      .css-15lsz6c-indicatorContainer {
+        color: #fff;
+      }
+
+      .css-1p3m7a8-menu {
+        background: #000;
+        border: 1px solid #66666693;
+        border-radius: 16px;
+        margin-top: 4px;
+
+        .css-1n7v3ny-option {
+          background: transparent;
+          color: #fff;
+          @include font-normal;
+          padding: 12px 16px;
+
+          &:hover,
+          &.css-9gakcf-option {
+            background: rgba(255, 255, 255, 0.1);
+          }
+
+          &.css-1n7v3ny-option:active {
+            background: rgba(255, 255, 255, 0.2);
+          }
+        }
+      }
+    }
+
+    select {
+      cursor: pointer;
+
+      option {
+        background: #000;
+        color: #fff;
+        @include font-normal;
+        padding: 12px 16px;
+      }
+
+      &:focus {
+        border: 1px solid #f9f490;
+      }
+    }
+
+    .error {
+      font-size: 12px;
+      color: #ff4d4f;
+      display: block;
+      @include font-normal;
+      padding: 4px 0 0 0;
+    }
+  }
 }

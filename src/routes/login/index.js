@@ -1,49 +1,241 @@
-import React from 'react'
-import styles from './login.module.scss';
-import Input from '@/components/input';
-const LoginBullImage = '/assets/images/login-bull.png';
-const EmailIcon = '/assets/icons/email.svg';
-const LockIcon = '/assets/icons/lock.svg';
-const GoogleIcon = '/assets/icons/google-icon.svg';
-export default function Login() {
-    return (
-        <div className={styles.loginpageWrapper}>
-            <div className={styles.leftAlignment}>
-                <div className={styles.containerAlignment}>
-                    <div className={styles.mainrelative}>
-                        <div className={styles.image}>
-                            <img src={LoginBullImage} alt='LoginBullImage' />
-                        </div>
-                    </div>
-                    <div>
-                        <div className={styles.box}>
-                            <div className={styles.contnet}>
-                                <h1>
-                                    Administrator Login
-                                </h1>
+"use client";
 
-                            </div>
-                            <div className={styles.bottomSpacing}>
-                                <Input label='Email' placeholder='Enter your email address' icon={EmailIcon} />
-                            </div>
-                            <Input label='Password' placeholder='Enter your password' icon={LockIcon} />
-                            <div className={styles.leftRightAlignment}>
-                                <div className={styles.checkboxText}>
-                                    <input type='checkbox' />
-                                    <span>Rememebr me</span>
-                                </div>
-                            </div>
-                            <div className={styles.loginButton}>
-                                <button>
-                                    Login<svg xmlns="http://www.w3.org/2000/svg" width="20" height="15" viewBox="0 0 20 15" fill="none">
-                                        <path fillRule="evenodd" clipRule="evenodd" d="M18.8889 6.37387C16.18 6.37387 13.7111 3.87387 13.7111 1.12613V0H11.4889V1.12613C11.4889 3.12387 12.3533 4.99775 13.71 6.37387H0V8.62613H13.71C12.3533 10.0023 11.4889 11.8761 11.4889 13.8739V15H13.7111V13.8739C13.7111 11.1273 16.18 8.62613 18.8889 8.62613H20V6.37387H18.8889Z" fill="black" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import styles from "./login.module.scss";
+import Input from "@/components/input";
+import { SignIn } from "@/api/auth";
+import { toast } from "sonner";
+import Image from "next/image";
+
+const LoginBullImage = "/assets/images/login-bull.png";
+const EmailIcon = "/assets/icons/email.svg";
+const LockIcon = "/assets/icons/lock.svg";
+const EyeOpenIcon = "/assets/icons/Eye.svg";
+const EyeCloseIcon = "/assets/icons/Lockeye.svg";
+const GoogleIcon = "/assets/icons/google-icon.svg";
+
+export default function Login() {
+  const router = useRouter();
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    rememberMe: false,
+  });
+  const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Load saved credentials on component mount
+  useEffect(() => {
+    const rememberMe = localStorage.getItem("rememberMe") === "true";
+    if (rememberMe) {
+      const savedEmail = localStorage.getItem("savedEmail");
+      const savedPassword = localStorage.getItem("savedPassword");
+
+      if (savedEmail && savedPassword) {
+        setFormData({
+          email: savedEmail,
+          password: savedPassword,
+          rememberMe: true,
+        });
+      }
+    }
+  }, []);
+
+  const validateForm = () => {
+    const newErrors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = "Please enter a valid email address";
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+
+    let processedValue;
+
+    if (type === "checkbox") {
+      processedValue = checked;
+    } else {
+      processedValue = value.replace(/^\s+/, "");
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: processedValue,
+    }));
+
+    if (errors[name]) {
+      setErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateForm()) return;
+
+    setIsLoading(true);
+
+    try {
+      const response = await SignIn({
+        email: formData.email,
+        password: formData.password,
+      });
+
+      if (response.data) {
+        const { token, user } = response.data.payload;
+        localStorage.setItem("token", token);
+
+        if (formData.rememberMe) {
+          localStorage.setItem("rememberMe", "true");
+          localStorage.setItem("savedEmail", formData.email);
+          localStorage.setItem("savedPassword", formData.password);
+        } else {
+          localStorage.removeItem("rememberMe");
+          localStorage.removeItem("savedEmail");
+          localStorage.removeItem("savedPassword");
+        }
+        toast.success("Login Successfully");
+        router.push("/dashboard");
+      }
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || "Login failed. Please try again.";
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (
+      e.key === "Enter" &&
+      (e.target.type === "email" ||
+        e.target.type === "password" ||
+        e.target.type === "text")
+    ) {
+      handleSubmit(e);
+    }
+  };
+  return (
+    <div className={styles.loginpageWrapper}>
+      <div className={styles.leftAlignment}>
+        <div className={styles.containerAlignment}>
+          <div className={styles.mainrelative}>
+            <div className={styles.image}>
+              <img src={LoginBullImage} alt="LoginBullImage" />
             </div>
+          </div>
+          <div>
+            <form
+              onSubmit={handleSubmit}
+              onKeyDown={handleKeyDown}
+              className={styles.box}
+            >
+              <div className={styles.contnet}>
+                <h1>Administrator Login</h1>
+              </div>
+              <div className={styles.bottomSpacing}>
+                <Input
+                  name="email"
+                  type="email"
+                  label="Email"
+                  placeholder="Enter your email address"
+                  icon={EmailIcon}
+                  value={formData.email}
+                  onChange={handleChange}
+                  error={errors.email}
+                />
+              </div>
+              <div className={styles.bottomSpacing}>
+                <Input
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  label="Password"
+                  placeholder="Enter your password"
+                  icon={LockIcon}
+                  value={formData.password}
+                  onChange={handleChange}
+                  error={errors.password}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className={styles.eyeButton}
+                >
+                  {showPassword ? (
+                    <Image
+                      src={EyeOpenIcon}
+                      alt="Eye Open"
+                      width={20}
+                      height={20}
+                    />
+                  ) : (
+                    <Image
+                      src={EyeCloseIcon}
+                      alt="Eye Close"
+                      width={20}
+                      height={20}
+                    />
+                  )}
+                </button>
+              </div>
+              <div className={styles.leftRightAlignment}>
+                <div className={styles.checkboxText}>
+                  <input
+                    type="checkbox"
+                    name="rememberMe"
+                    checked={formData.rememberMe}
+                    onChange={handleChange}
+                  />
+                  <span>Remember me</span>
+                </div>
+              </div>
+              <div className={styles.loginButton}>
+                <button type="submit" disabled={isLoading}>
+                  {isLoading ? "Logging in..." : "Login"}
+                  {!isLoading && (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="15"
+                      viewBox="0 0 20 15"
+                      fill="none"
+                    >
+                      <path
+                        d="M1.5 7.5H18M18 7.5L12 1.5M18 7.5L12 13.5"
+                        stroke="white"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-    )
+      </div>
+    </div>
+  );
 }

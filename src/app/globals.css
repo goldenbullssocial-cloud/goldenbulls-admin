@@ -40,6 +40,25 @@ a {
   margin: 0 auto;
 }
 
+/* Modal overlay styles */
+body.modal-open {
+  overflow: hidden;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+/* Ensure modal stays on top of all elements */
+.modalOverlay {
+  position: fixed !important;
+  z-index: 9999 !important;
+}
+
+.modalContent {
+  z-index: 10000 !important;
+  position: relative;
+}
+
 .user-panel-layout {
   display: flex;
   background: #000;
@@ -87,4 +106,58 @@ img {
 * {
   scrollbar-width: thin;
   scrollbar-color: #c89b3c #0b0b0b;
+}
+/* Chrome, Edge, Safari */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+.addCenter-module-scss-module__6t7FYW__addCenterModalWrapper .addCenter-module-scss-module__6t7FYW__addCentermodal .addCenter-module-scss-module__6t7FYW__modalBody .addCenter-module-scss-module__6t7FYW__threeCol input {
+    background: transparent;
+    padding-left: 16px;
+    color: #fff;
+}
+
+.stsearch-box input {
+    box-sizing: border-box;
+    border: none !important;
+    border-radius: 5px;
+    width: 100%;
+    padding: 5px;
+}
+
+.stsearch-box input:focus {
+    outline: none;
+    border: none !important;
+}
+
+.stdropdown-tools svg path {
+    fill: #fff;
+}
+
+.css-1f17qn4-indicatorSeparator {
+  width: 0;
+  display: none;
+}
+
+/* Hide all indicator separators in react-select */
+.css-1f17qn4-indicatorSeparator,
+.css-t3excq-indicatorSeparator,
+.css-1u2dj3z-indicatorSeparator,
+.css-1s2u09g-indicatorSeparator,
+.css-1hb7zxy-indicatorSeparator,
+[class*="-indicatorSeparator"] {
+  width: 0 !important;
+  display: none !important;
+}
+
+/* Make all StyledSelect components have the same background as inputs */
+.styled-select-field .css-13cymwt-control, .css-b86wbs-control {
+  background: #ffffff0d !important;
 }

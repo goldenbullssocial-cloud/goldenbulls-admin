@@ -1,0 +1,116 @@
+@use "../../scss/main.scss" as *;
+@use "../../scss/breakpoints/breakpoints.scss" as *;
+@use "../../scss/font/font.scss" as *;
+
+.noDataFound {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  min-height: 200px;
+  position: fixed;
+  top: 50%;
+  left: 59%;
+  transform: translate(-50%, -50%);
+
+  &.small {
+    padding: 40px 20px;
+    min-height: 150px;
+  }
+
+  &.large {
+    padding: 80px 20px;
+    min-height: 300px;
+  }
+
+  .iconContainer {
+    margin-bottom: 20px;
+    opacity: 0.6;
+
+    .icon {
+      width: 64px;
+      height: 64px;
+      object-fit: contain;
+    }
+  }
+
+  .content {
+    .message {
+      color: #666;
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0 0 8px 0;
+      //   @include ;
+
+      @media (max-width: 768px) {
+        font-size: 16px;
+      }
+    }
+
+    .description {
+      color: #999;
+      font-size: 14px;
+      margin: 0;
+      line-height: 1.5;
+      max-width: 400px;
+      //   @include font-regular;
+
+      @media (max-width: 768px) {
+        font-size: 13px;
+      }
+    }
+
+    .actionButton {
+      margin-top: 20px;
+    }
+  }
+
+  // Size variations
+  &.small {
+    .iconContainer .icon {
+      width: 48px;
+      height: 48px;
+    }
+
+    .content .message {
+      font-size: 16px;
+    }
+
+    .content .description {
+      font-size: 13px;
+    }
+  }
+
+  &.large {
+    .iconContainer .icon {
+      width: 80px;
+      height: 80px;
+    }
+
+    .content .message {
+      font-size: 20px;
+    }
+
+    .content .description {
+      font-size: 15px;
+    }
+  }
+
+  // Theme variations
+  &.dark {
+    .content .message {
+      color: #ccc;
+    }
+
+    .content .description {
+      color: #999;
+    }
+  }
+
+  &.light {
+    background: #f9f9f9;
+    border-radius: 8px;
+  }
+}

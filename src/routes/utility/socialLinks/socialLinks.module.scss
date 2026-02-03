@@ -1,92 +1,113 @@
-@use '../../../scss/main.scss' as *;
-@use '../../../scss/breakpoints/breakpoints.scss' as *;
-@use '../../../scss/font/font.scss' as *;
+@use "../../../scss/main.scss" as *;
+@use "../../../scss/breakpoints/breakpoints.scss" as *;
+@use "../../../scss/font/font.scss" as *;
 
-.socialLinks {
+.utility {
+  border-radius: 24px 0 0 0;
+  border-top: 1px solid #66666693;
+  border-left: 1px solid #66666693;
+  background: #0f0f0f;
+  padding: 32px;
+
+  @include respond-to("xl") {
+    padding: 22px;
+  }
+  .socialLinks {
     .title {
-        padding: 0 0 24px 0;
+      padding: 0 0 24px 0;
 
-        h2 {
-            font-size: 24px;
-            font-style: normal;
-            font-weight: 400;
-            line-height: normal;
-            text-transform: uppercase;
-            display: inline;
-            @include heading-font;
-            @include gradient-text;
-        }
+      h2 {
+        font-size: 24px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+        text-transform: uppercase;
+        display: inline;
+        @include heading-font;
+        @include gradient-text;
+      }
     }
 
     .grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 16px;
-        padding: 0 0 24px 0;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      padding: 0 0 24px 0;
 
-        .gridItems {
-            border-radius: 24px;
-            background: #141414;
-            position: relative;
-            padding: 24px 20px;
+      .gridItems {
+        border-radius: 24px;
+        background: #141414;
+        position: relative;
+        padding: 24px 20px;
 
-            p {
-                color: #B6B6B6;
-                font-size: 16px;
-                font-style: normal;
-                font-weight: 400;
-                line-height: normal;
-                @include font-normal;
-            }
-
-            .cardHeaderAlignment {
-                display: flex;
-                padding: 0 0 8px 0;
-                align-items: center;
-                justify-content: space-between;
-
-                svg {
-                    cursor: pointer;
-                }
-
-                h3 {
-                    color: #FFF;
-                    font-size: 20px;
-                    font-style: normal;
-                    font-weight: 500;
-                    line-height: normal;
-                    @include font-medium;
-                }
-            }
-
-            &::before {
-                content: "";
-                border-radius: 24px;
-                border-radius: inherit;
-                -webkit-mask-composite: xor;
-                pointer-events: none;
-                background: linear-gradient(#666 0%, #000 100%);
-                padding: 1px;
-                transition: all .3s ease-in-out;
-                position: absolute;
-                inset: 0;
-                -webkit-mask-image: linear-gradient(#fff 0 0), linear-gradient(#fff 0 0);
-                -webkit-mask-position: 0 0, 0 0;
-                -webkit-mask-size: auto, auto;
-                -webkit-mask-repeat: repeat, repeat;
-                -webkit-mask-clip: content-box, border-box;
-                -webkit-mask-origin: content-box, border-box;
-                -webkit-mask-composite: xor;
-                mask-composite: exclude;
-                -webkit-mask-source-type: auto, auto;
-                mask-mode: match-source, match-source;
-            }
+        p {
+          color: #b6b6b6;
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: normal;
+          @include font-normal;
         }
+
+        .cardHeaderAlignment {
+          display: flex;
+          padding: 0 0 8px 0;
+          align-items: center;
+          justify-content: space-between;
+          button {
+            background: transparent;
+            border: none;
+          }
+          svg {
+            cursor: pointer;
+          }
+
+          h3 {
+            color: #fff;
+            font-size: 20px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: normal;
+            @include font-medium;
+          }
+        }
+
+        &::before {
+          content: "";
+          border-radius: 24px;
+          border-radius: inherit;
+          -webkit-mask-composite: xor;
+          pointer-events: none;
+          background: linear-gradient(#666 0%, #000 100%);
+          padding: 1px;
+          transition: all 0.3s ease-in-out;
+          position: absolute;
+          inset: 0;
+          -webkit-mask-image:
+            linear-gradient(#fff 0 0), linear-gradient(#fff 0 0);
+          -webkit-mask-position:
+            0 0,
+            0 0;
+          -webkit-mask-size: auto, auto;
+          -webkit-mask-repeat: repeat, repeat;
+          -webkit-mask-clip: content-box, border-box;
+          -webkit-mask-origin: content-box, border-box;
+          -webkit-mask-composite: xor;
+          mask-composite: exclude;
+          -webkit-mask-source-type: auto, auto;
+          mask-mode: match-source, match-source;
+        }
+      }
     }
 
     .line {
-        width: 100%;
-        height: 1px;
-        background: linear-gradient(180deg, #666 0%, rgba(102, 102, 102, 0.20) 100%);
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(
+        180deg,
+        #666 0%,
+        rgba(102, 102, 102, 0.2) 100%
+      );
     }
+  }
 }

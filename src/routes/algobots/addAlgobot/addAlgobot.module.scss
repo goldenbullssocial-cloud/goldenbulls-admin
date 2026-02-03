@@ -1,94 +1,277 @@
-@use '../../../scss/main.scss' as *;
-@use '../../../scss/breakpoints/breakpoints.scss' as *;
-@use '../../../scss/font/font.scss' as *;
+@use "../../../scss/main.scss" as *;
+@use "../../../scss/breakpoints/breakpoints.scss" as *;
+@use "../../../scss/font/font.scss" as *;
+
+// Select dropdown styles
+.selectWrapper {
+  margin-bottom: 16px;
+
+  label {
+    color: #fff;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    @include font-normal;
+    padding: 0 0 8px 0;
+    display: block;
+  }
+
+  .select {
+    width: 100%;
+    padding: 17px 16px;
+    border-radius: 16px;
+    border: 1px solid #66666693;
+    background: #ffffff1a;
+    color: #fff;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 6L8 10L12 6' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 40px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+    }
+
+    &:hover {
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    option {
+      background: #1a1a1a;
+      color: #fff;
+      padding: 8px 16px;
+
+      &:disabled {
+        color: rgba(255, 255, 255, 0.3);
+      }
+    }
+  }
+}
 
 .addAlgobotWrapper {
-    position: fixed;
-    top: 0;
-    left: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(15px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .modal {
+    max-width: 790px;
     width: 100%;
-    height: 100%;
-    z-index: 9999;
-    background: rgba(255, 255, 255, 0.04);
-    backdrop-filter: blur(15px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding: 24px;
+    border-radius: 24px;
+    background: #000;
 
-    .modal {
-        max-width: 790px;
+    .modalHeader {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 0 24px 0;
+
+      h2 {
+        font-size: 20px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+        text-transform: uppercase;
+        display: inline;
+        @include heading-font;
+        @include gradient-text;
+      }
+
+      .closeIcon {
+        display: flex;
+        align-items: center;
+
+        svg {
+          cursor: pointer;
+          transition: 0.3s ease-in-out;
+
+          &:hover {
+            transform: rotate(180deg);
+          }
+        }
+      }
+    }
+
+    .modalFooter {
+      padding: 24px 0 0 0;
+
+      button {
         width: 100%;
-        padding: 24px;
-        border-radius: 24px;
-        background: #000;
+      }
+    }
 
-        .modalHeader {
+    .navigationTabs {
+      border-bottom: 1px solid #333;
+      margin-bottom: 24px;
+      //   padding-bottom: 8px;
+
+      .tabsContainer {
+        display: flex;
+        gap: 24px;
+      }
+
+      .tab {
+        padding-bottom: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        transition: all 0.2s ease;
+        color: #666;
+
+        &:hover {
+          color: rgba(255, 255, 255, 0.8);
+        }
+
+        &.active {
+          color: #fff;
+          border-bottom-color: #dbd55f;
+        }
+      }
+    }
+
+    .planButton {
+      width: 200px !important;
+      padding: 12px 16px;
+      background: transparent;
+      border: 1px solid #dbd55f;
+      border-radius: 18px;
+      color: #dbd55f;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &:hover:not(:disabled) {
+        border-color: #f1ea59;
+        color: #f1ea59;
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+
+    .modalBody {
+      max-height: calc(100dvh - 250px);
+      overflow: auto;
+
+      .topAlignment {
+        padding: 24px 0 0 0;
+      }
+
+      .twoCol {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+        border-bottom: 1px solid #666;
+        padding: 24px 0;
+      }
+
+      .spacing {
+        padding: 0 0 24px 0;
+
+        input {
+          background: rgba(255, 255, 255, 0.05) !important;
+          padding-left: 16px !important;
+        }
+      }
+
+      .plansSection {
+        margin-top: 24px;
+
+        .plansList {
+          margin-top: 12px;
+
+          .planItem {
+            border: 1px solid #dbd55f; // Changed to gold color for better visibility
+            border-radius: 8px;
+            padding: 15px;
+            background: #1a1a1a; // Darker background for better contrast
+            margin-bottom: 12px;
+            font-size: 14px;
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            padding: 0 0 24px 0;
+            align-items: center;
+            color: #ffffff; // Ensure text is white
 
-            h2 {
-                font-size: 20px;
-                font-style: normal;
-                font-weight: 400;
-                line-height: normal;
-                text-transform: uppercase;
-                display: inline;
-                @include heading-font;
-                @include gradient-text;
+            // Add hover effect
+            &:hover {
+              border-color: #f1ea59;
+              box-shadow: 0 0 10px rgba(241, 234, 89, 0.2);
             }
 
-            .closeIcon {
+            .planDetails {
+              p {
+                margin: 4px 0;
+
+                strong {
+                  font-weight: 600;
+                }
+              }
+            }
+
+            .planActions {
+              display: flex;
+              gap: 8px;
+              .icon {
+                width: 24px;
+                height: 24px;
+                color: #dbd55f;
+              }
+              button {
+                padding: 0;
+                background: none;
+                border: none;
+                cursor: pointer;
                 display: flex;
                 align-items: center;
+                justify-content: center;
+
+                &:hover {
+                  opacity: 0.8;
+                }
 
                 svg {
-                    cursor: pointer;
-                    transition: .3s ease-in-out;
-
-                    &:hover {
-                        transform: rotate(180deg);
-                    }
+                  width: 16px;
+                  height: 16px;
                 }
+              }
             }
+          }
         }
 
-        .modalFooter {
-            padding: 24px 0 0 0;
-
-            button {
-                width: 100%;
-            }
+        .sectionTitle {
+          font-weight: 600;
+          margin-bottom: 12px;
         }
+      }
 
-        .modalBody {
-            padding: 24px 12px 0 0;
-            max-height: calc(100dvh - 250px);
-            overflow: auto;
-
-            .topAlignment {
-                padding: 24px 0 0 0;
-            }
-
-
-            .twoCol {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 24px;
-                border-bottom: 1px solid #666;
-                padding: 24px 0;
-            }
-
-            .spacing {
-                padding: 0 0 24px 0;
-
-                input {
-                    background: rgba(255, 255, 255, 0.05) !important;
-                    padding-left: 16px !important;
-                }
-
-            }
-        }
+      .error {
+        color: #ff4d4f;
+        font-size: 12px;
+        margin-top: 1px;
+        line-height: 1.5;
+      }
     }
+  }
 }

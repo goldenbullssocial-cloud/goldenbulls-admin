@@ -242,6 +242,9 @@ export default function CouponsTable() {
       <UserHeader
         icon={PlusIcon}
         HeaderText="Coupons"
+        placeholder="Search Coupons"
+        value={searchTerm}
+        onChange={handleSearchInputChange}
         DescriptionText="Create and control discount codes and promotional offers"
         buttonText="Add Coupons"
         onClick={() => {

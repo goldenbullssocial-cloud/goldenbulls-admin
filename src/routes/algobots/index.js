@@ -2,6 +2,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import styles from "./algobots.module.scss";
 import Button from "@/components/button";
+import StyledSelect from "@/components/styledSelect";
 import AddAlgobot from "./addAlgobot";
 import UserHeader from "@/components/userHeader";
 import {
@@ -34,35 +35,28 @@ const PlusIcon = "/assets/icons/plus.svg";
 const formSchema = z.object({
   title: z
     .string()
-    .nonempty("Strategy title is required")
-    .min(2, "Strategy name must be at least 2 characters")
-    .max(50, "Strategy name must be at most 50 characters")
+    .nonempty("Algobot title is required")
+    .min(2, "Algobot name must be at least 2 characters")
+    .max(50, "Algobot name must be at most 50 characters")
     .regex(
       /^[a-zA-Z0-9\s\-()]+$/,
-      "Strategy name can only contain letters, numbers, spaces, hyphens, and parentheses",
+      "Algobot name can only contain letters, numbers, spaces, hyphens, and parentheses",
     ),
 
-  categoryId: z.string().min(1, "Category is required"),
   returns: z.string().min(1, "Returns is required"),
   risk: z.string().min(1, "Risk is required"),
-  link: z.string().min(1, "Link is required"),
+  link: z
+    .string()
+    .min(1, "YouTube URL is required")
+    .regex(
+      /^(https?:\/\/)?(www\.)?(youtube\.com\/(watch\?v=|embed\/|v\/)|youtu\.be\/|youtube\.com\/shorts\/)[\w-]{11}/,
+      "Please enter a valid YouTube URL (youtube.com, youtu.be, or shorts)",
+    ),
   shortDescription: z
     .string()
-    .nonempty("Short Description is required")
-    .min(10, "Short description must be at least 10 characters")
-    .max(200, "Short description must be at most 200 characters"),
-
-  description: z
-    .string()
     .nonempty("Description is required")
-    .refine(
-      (val) => {
-        // Remove HTML tags and check if there's actual content
-        const textContent = val.replace(/<[^>]*>?/gm, "").trim();
-        return textContent.length >= 10;
-      },
-      { message: "Description must be at least 10 characters" },
-    ),
+    .min(10, "Description must be at least 10 characters")
+    .max(200, "Description must be at most 200 characters"),
 
   price: z.string().optional(),
 
@@ -1042,7 +1036,7 @@ export default function Algobots() {
                         <span className={styles.green}>
                           {bot?.return || 110}%
                         </span>{" "}
-                        <small>(28 Days)</small>
+                        {/* <small>(28 Days)</small> */}
                       </h3>
                       <h4>
                         Risk: <span>{bot?.risk || "High"}</span>
@@ -1050,23 +1044,46 @@ export default function Algobots() {
                     </div>
                     <div className={styles.leftRightAlignment}>
                       <p>{bot?.title}</p>
+                      <small>{bot?.shortDescription}</small>
                       <div className={styles.line}></div>
                       <div className={styles.subscriptionPlan}>
-                        <select className={styles.planDropdown}>
-                          {bot?.strategyPlan?.map((plan) => {
+                        <StyledSelect
+                          options={bot?.strategyPlan?.map((plan) => {
                             const months = parseInt(
                               plan?.planType?.match(/\d+/)?.[0] || "1",
                             );
                             const monthlyPrice = (plan.price / months).toFixed(
                               2,
                             );
-                            return (
-                              <option key={plan._id} value={`${months}months`}>
-                                ${monthlyPrice}/month
-                              </option>
-                            );
+                            return {
+                              value: `${months}months`,
+                              label: `$${monthlyPrice}/month`,
+                            };
                           })}
-                        </select>
+                          placeholder="Select plan"
+                          value={
+                            selectedPlans[bot._id] ||
+                            bot?.strategyPlan?.map((plan) => {
+                              const months = parseInt(
+                                plan?.planType?.match(/\d+/)?.[0] || "1",
+                              );
+                              const monthlyPrice = (
+                                plan.price / months
+                              ).toFixed(2);
+                              return {
+                                value: `${months}months`,
+                                label: `$${monthlyPrice}/month`,
+                              };
+                            })[0]
+                          }
+                          onChange={(selectedOption) => {
+                            console.log("Selected plan:", selectedOption);
+                            setSelectedPlans((prev) => ({
+                              ...prev,
+                              [bot._id]: selectedOption,
+                            }));
+                          }}
+                        />
                         <Dropdown
                           actions={getUserActions(bot.isActive)}
                           onSelect={(action) => handleAction(action, bot)}

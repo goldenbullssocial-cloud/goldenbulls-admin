@@ -77,9 +77,11 @@ export default function AddDiscountCoupon({
                 min={new Date().toISOString().split("T")[0]}
                 value={
                   form.watch("expiryDate")
-                    ? new Date(form.watch("expiryDate"))
-                        .toISOString()
-                        .split("T")[0]
+                    ? typeof form.watch("expiryDate") === "string"
+                      ? form.watch("expiryDate")
+                      : new Date(form.watch("expiryDate"))
+                          .toISOString()
+                          .split("T")[0]
                     : ""
                 }
                 onChange={(e) => {
@@ -96,12 +98,12 @@ export default function AddDiscountCoupon({
                 error={form.formState.errors.expiryDate?.message}
                 className={styles.dateInput}
               />
-          
             </div>
             <Input
               label="Usage Limit"
               name="usageLimit"
               type="number"
+              placeholder="1"
               min="1"
               value={form.watch("usageLimit") || ""}
               onChange={(e) => {

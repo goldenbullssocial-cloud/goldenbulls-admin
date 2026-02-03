@@ -91,6 +91,8 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (isLoading) return;
+
     if (!validateForm()) return;
 
     setIsLoading(true);
@@ -131,7 +133,8 @@ export default function Login() {
       e.key === "Enter" &&
       (e.target.type === "email" ||
         e.target.type === "password" ||
-        e.target.type === "text")
+        e.target.type === "text") &&
+      !isLoading
     ) {
       handleSubmit(e);
     }
@@ -157,7 +160,7 @@ export default function Login() {
               <div className={styles.bottomSpacing}>
                 <Input
                   name="email"
-                  type="email"
+                  type="text"
                   label="Email"
                   placeholder="Enter your email address"
                   icon={EmailIcon}
@@ -167,37 +170,39 @@ export default function Login() {
                 />
               </div>
               <div className={styles.bottomSpacing}>
-                <Input
-                  name="password"
-                  type={showPassword ? "text" : "password"}
-                  label="Password"
-                  placeholder="Enter your password"
-                  icon={LockIcon}
-                  value={formData.password}
-                  onChange={handleChange}
-                  error={errors.password}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className={styles.eyeButton}
-                >
-                  {showPassword ? (
-                    <Image
-                      src={EyeOpenIcon}
-                      alt="Eye Open"
-                      width={20}
-                      height={20}
-                    />
-                  ) : (
-                    <Image
-                      src={EyeCloseIcon}
-                      alt="Eye Close"
-                      width={20}
-                      height={20}
-                    />
-                  )}
-                </button>
+                <div className={styles.passwordInputWrapper}>
+                  <Input
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    label="Password"
+                    placeholder="Enter your password"
+                    icon={LockIcon}
+                    value={formData.password}
+                    onChange={handleChange}
+                    error={errors.password}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className={styles.eyeButton}
+                  >
+                    {showPassword ? (
+                      <Image
+                        src={EyeOpenIcon}
+                        alt="Eye Open"
+                        width={20}
+                        height={20}
+                      />
+                    ) : (
+                      <Image
+                        src={EyeCloseIcon}
+                        alt="Eye Close"
+                        width={20}
+                        height={20}
+                      />
+                    )}
+                  </button>
+                </div>
               </div>
               <div className={styles.leftRightAlignment}>
                 <div className={styles.checkboxText}>

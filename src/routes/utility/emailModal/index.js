@@ -49,6 +49,9 @@ export default function EmailModal({
             placeholder={`Enter ${
               currentField ? fieldLabels[currentField].toLowerCase() : "value"
             }`}
+            onChange={(e) => {
+              e.target.value = e.target.value.trimStart();
+            }}
             required
           />
 

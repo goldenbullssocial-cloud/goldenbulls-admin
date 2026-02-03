@@ -45,6 +45,9 @@ export default function AddyoutubeVideo({
               leftSpaceRemove
               id="description"
               {...register("description")}
+              onChange={(e) =>
+                setValue("description", e.target.value.trimStart())
+              }
               onBlur={(e) =>
                 setValue("description", e.target.value.trim(), {
                   shouldValidate: true,
@@ -65,6 +68,7 @@ export default function AddyoutubeVideo({
               leftSpaceRemove
               id="videoUrl"
               {...register("videoUrl")}
+              onChange={(e) => setValue("videoUrl", e.target.value.trimStart())}
               error={errors?.videoUrl?.message}
             />
           </div>

@@ -8,6 +8,7 @@
   border-left: 1px solid #66666693;
   background: #0f0f0f;
   padding: 32px;
+  height: calc(100vh - 204px);
 
   @include respond-to("xl") {
     padding: 22px;
@@ -22,7 +23,7 @@
       background-repeat: no-repeat;
       background-size: cover;
       width: 100%;
-      padding: 39px 0 20px 0;
+      padding: 20px 0 15px 0;
       border-radius: 16px;
 
       @include respond-to("xl") {
@@ -55,17 +56,25 @@
         padding: 0 20px;
 
         p {
-          margin: 55px 0 16px 0;
+          margin: 70px 0 8px 0;
           color: #fff;
-          font-size: 20px;
+          font-size: 18px;
           font-style: normal;
-          font-weight: 400;
-          line-height: normal;
-          @include font-normal;
+          font-weight: 600;
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
+        }
 
-          @include respond-to("xl") {
-            font-size: 20px;
-          }
+        small {
+          color: #e1e1e1;
+          font-size: 14px;
+          line-height: 1.2;
+          overflow: hidden;
+          display: -webkit-box;
+          -webkit-line-clamp: 1;
+          -webkit-box-orient: vertical;
         }
 
         .line {
@@ -221,76 +230,9 @@
   .subscriptionPlan {
     width: 100%;
     margin: 10px 0;
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
     align-items: center;
-    justify-content: space-between;
-
-    .planDropdown {
-      width: 100%;
-      padding: 14px 15px;
-      background-color: #000000;
-      border: 1px solid #d4af37; /* Golden color */
-      border-radius: 18px;
-      color: #ffffff;
-      font-size: 14px;
-      cursor: pointer;
-      outline: none;
-      transition: all 0.3s ease;
-      appearance: none;
-      background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='%23D4AF37'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 10px center;
-      background-size: 16px 16px;
-
-      &:focus {
-        border-color: #ffd700; /* Lighter gold on focus */
-        box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.3);
-      }
-
-      option {
-        background-color: #000000;
-        color: #d4af37;
-        padding: 10px 15px;
-        font-size: 14px;
-        transition: all 0.2s ease;
-
-        &:hover,
-        &:focus {
-          background-color: #d4af37 !important;
-          color: #000000;
-          font-weight: 500;
-        }
-
-        &:checked {
-          background-color: #1a1a1a !important;
-          color: #ffd700;
-        }
-
-        &[value=""] {
-          color: #666;
-        }
-      }
-
-      /* For Firefox */
-      @-moz-document url-prefix() {
-        option {
-          background-color: #000000;
-          color: #d4af37;
-
-          &:hover,
-          &:hover,
-          &:focus {
-            background: linear-gradient(#d4af37, #d4af37) !important;
-            color: #000000 !important;
-            font-weight: 500;
-          }
-
-          &:checked {
-            background: linear-gradient(#1a1a1a, #1a1a1a);
-            color: #ffd700;
-          }
-        }
-      }
-    }
   }
 }

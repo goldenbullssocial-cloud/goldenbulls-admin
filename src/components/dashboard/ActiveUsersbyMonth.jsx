@@ -27,6 +27,7 @@ const MONTHS = [
   "Dec",
   "",
 ];
+const currentYear = new Date().getFullYear();
 
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
@@ -43,8 +44,8 @@ const CustomTooltip = ({ active, payload, label }) => {
         borderRadius: 24,
         padding: "4px",
         color: "#E2E8F0",
-        minWidth: 300,
-        maxWidth: 400,
+        minWidth: 200,
+        maxWidth: 200,
         marginBottom: "10px",
       }}
     >
@@ -89,7 +90,7 @@ const CustomTooltip = ({ active, payload, label }) => {
           textAlign: "center",
         }}
       >
-        {label} 2026
+        {label} {currentYear}
       </div>
       <div style={{ padding: "12px" }}>
         <div
@@ -104,18 +105,6 @@ const CustomTooltip = ({ active, payload, label }) => {
           <span>Active Users</span>
           <span>{d?.users?.toLocaleString() || 0}</span>
         </div>
-        {hasUsers && (
-          <div style={{ fontSize: 12, color: "#A0AEC0" }}>
-            {d?.userDetails?.slice(0, 3).map((user, idx) => (
-              <div key={idx} style={{ marginBottom: 2 }}>
-                {user.name || user.email}
-              </div>
-            ))}
-            {d?.userDetails?.length > 3 && (
-              <div>+{d?.userDetails?.length - 3} more users</div>
-            )}
-          </div>
-        )}
       </div>
     </div>
   );
@@ -152,11 +141,15 @@ const ActiveUsersbyMonth = () => {
                 (index === 11 && item.month === "November") ||
                 (index === 12 && item.month === "December"),
             );
+            const filteredUsers =
+              monthData?.users.filter(
+                (u) => new Date(u.createdAt).getFullYear() === currentYear,
+              ) || [];
 
             return {
               month,
-              users: monthData?.userCount || 0,
-              userDetails: monthData?.users || [],
+              users: filteredUsers.length,
+              userDetails: filteredUsers,
             };
           });
 
@@ -187,7 +180,6 @@ const ActiveUsersbyMonth = () => {
 
     fetchData();
   }, []);
-
 
   if (error) {
     return (

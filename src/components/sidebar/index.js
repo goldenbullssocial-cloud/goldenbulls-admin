@@ -20,6 +20,7 @@ import BlogsIcon from "@/icons/blogsIcon";
 import BlogCategoriesIcon from "@/icons/blogCategoriesIcon";
 import YoutubeIcon from "@/icons/youtubeIcon";
 import NewsletterIcon from "@/icons/newsletterIcon";
+import ContactIcon from "@/icons/contactIcon";
 import LogoutIcon from "@/icons/logoutIcon";
 const Logo = "/assets/logo/logo.svg";
 
@@ -265,6 +266,15 @@ export default function Sidebar({ unreadCount }) {
           >
             <NewsletterIcon />
             <span>Newsletter</span>
+          </div>
+          <div
+            className={classNames(styles.menu, {
+              [styles.active]: isActive("/contact"),
+            })}
+            onClick={() => router.push("/contact")}
+          >
+            <ContactIcon />
+            <span>Contact</span>
           </div>
         </div>
         <div className={styles.asideFooter}>

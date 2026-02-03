@@ -67,7 +67,7 @@ export default function AddAlgobot({
               <Input
                 label="Algobot’s Name"
                 id="title"
-                placeholder="Enter strategy name"
+                placeholder="Enter algobot name"
                 {...register("title")}
                 onBlur={(e) => {
                   const value = e.target.value.trim();
@@ -86,10 +86,10 @@ export default function AddAlgobot({
                 label="Algobot's Description"
                 name="shortDescription"
                 id="shortDescription"
-                placeholder="Enter a brief description (10-50 characters)"
+                placeholder="Enter a brief description"
                 value={watch("shortDescription") || ""}
                 onChange={(e) => {
-                  setValue("shortDescription", e.target.value, {
+                  setValue("shortDescription", e.target.value.trimStart(), {
                     shouldValidate: true,
                   });
                 }}
@@ -163,6 +163,7 @@ export default function AddAlgobot({
                 name="link"
                 id="link"
                 {...register("link")}
+                onChange={(e) => setValue("link", e.target.value.trimStart())}
                 onBlur={(e) => {
                   const value = e.target.value.trim();
                   setValue("link", value, { shouldValidate: true });
@@ -184,7 +185,10 @@ export default function AddAlgobot({
           <form
             className={styles.modalBody}
             onClick={(e) => e.stopPropagation()}
-            onSubmit={handleSubmit(onSubmitSecond)}
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit(onSubmitSecond)(e);
+            }}
           >
             <div className={styles.selectWrapper}>
               <label>Plan Duration</label>

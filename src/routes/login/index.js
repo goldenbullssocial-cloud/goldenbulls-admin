@@ -12,7 +12,7 @@ const LoginBullImage = "/assets/images/login-bull.png";
 const EmailIcon = "/assets/icons/email.svg";
 const LockIcon = "/assets/icons/lock.svg";
 const EyeOpenIcon = "/assets/icons/Eye.svg";
-const EyeCloseIcon = "/assets/icons/Lockeye.svg";
+const EyeCloseIcon = "/assets/icons/lockeye.svg";
 const GoogleIcon = "/assets/icons/google-icon.svg";
 
 export default function Login() {

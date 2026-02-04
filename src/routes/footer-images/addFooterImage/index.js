@@ -45,7 +45,7 @@ export default function AddFooterImage({
     <div className={styles.addFooterImageWrapper}>
       <div className={styles.modal}>
         <div className={styles.modalHeader}>
-          <h2>{isEditMode ? "Edit Footer Image" : "Add New Footer Image"}</h2>
+          <h2>{isEditMode ? "Edit Footer Image" : "Add Footer Image"}</h2>
           <div className={styles.closeIcon} onClick={onClose}>
             <img src={CloseIcon} alt="Close" width="24" height="24" />
           </div>
@@ -61,7 +61,11 @@ export default function AddFooterImage({
                     id="title"
                     type="text"
                     placeholder="Enter footer image title"
-                    {...register("title")}
+                    {...register("title", {
+                      onChange: (e) => {
+                        e.target.value = e.target.value.trimStart();
+                      },
+                    })}
                   />
                   {errors.title && (
                     <span className={styles.errorText}>

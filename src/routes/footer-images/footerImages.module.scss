@@ -4,14 +4,11 @@
 
 .footerImagesContainer {
   border-radius: 24px 0 0 0;
-  border-top: 1px solid #66666693;
-  border-left: 1px solid #66666693;
-  background: #0f0f0f;
-  padding: 32px;
+
   min-height: calc(100vh - 100px);
   z-index: -10;
   @include respond-to("xl") {
-    padding: 22px;
+    // padding: 22px;
   }
 
   .title {

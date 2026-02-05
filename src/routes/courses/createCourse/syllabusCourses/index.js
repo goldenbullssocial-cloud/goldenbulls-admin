@@ -162,7 +162,13 @@ export default function SyllabusCourses({
           ? {
               ...ch,
               [name]:
-                type === "file" ? (files?.length ? files[0] : null) : value,
+                type === "file"
+                  ? files?.length
+                    ? files[0]
+                    : null
+                  : name === "chapterName" || name === "description"
+                    ? value?.trimStart()
+                    : value,
               ...(type === "file"
                 ? { videoUrl: files?.[0] ? files[0].name : ch.videoUrl }
                 : {}),

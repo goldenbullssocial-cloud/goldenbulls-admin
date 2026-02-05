@@ -95,14 +95,20 @@ export default function AddCenter({
               name="centerName"
               label="Center Name"
               placeholder="Enter center name"
-              {...form.register("centerName")}
+              {...form.register("centerName", {
+                setValueAs: (value) => value?.trimStart(),
+                onChange: (e) => (e.target.value = e.target.value.trimStart()),
+              })}
               error={form.formState.errors.centerName?.message}
             />
             <Input
               name="location"
               label="Google Maps Link"
               placeholder="maps.google.com"
-              {...form.register("location")}
+              {...form.register("location", {
+                setValueAs: (value) => value?.trimStart(),
+                onChange: (e) => (e.target.value = e.target.value.trimStart()),
+              })}
               error={form.formState.errors.location?.message}
             />
           </div>

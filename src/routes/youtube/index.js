@@ -25,8 +25,8 @@ const ytUrlRegex =
 const formSchema = z.object({
   description: z
     .string()
-    .min(1, "Description is required")
-    .max(120, "Description must be at most 120 characters"),
+    .min(1, "Title is required")
+    .max(120, "Title must be at most 120 characters"),
   videoUrl: z
     .string()
     .url("Must be a valid URL")

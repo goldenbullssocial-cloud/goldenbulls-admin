@@ -92,7 +92,7 @@ export const CryptoChainModal = () => {
           <input
             placeholder="Enter chain name"
             value={chain}
-            onChange={(e) => setChain(e.target.value)}
+            onChange={(e) => setChain(e.target.value.trimStart())}
             onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
           />
           {editingChain && (

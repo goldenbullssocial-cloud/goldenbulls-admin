@@ -158,7 +158,9 @@ export default function BatchForm({
   // Event handlers
   const handleInputChange = (index, e) => {
     const { name, value } = e.target;
-    updateBatchAtIndex(index, { [name]: value });
+    updateBatchAtIndex(index, {
+      [name]: name === "zoomLink" ? value?.trimStart() : value,
+    });
   };
 
   // Click handlers for icons
@@ -179,7 +181,6 @@ export default function BatchForm({
   };
 
   const handleTimeClick = (index) => {
-
     if (timeRefs.current[index]) {
       timeRefs.current[index].focus();
       setTimeout(() => {

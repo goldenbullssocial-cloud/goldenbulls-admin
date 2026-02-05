@@ -1,0 +1,166 @@
+@use "../../../scss/main.scss" as *;
+@use "../../../scss/breakpoints/breakpoints.scss" as *;
+@use "../../../scss/font/font.scss" as *;
+
+.footerImagesPageAlignment {
+  border-radius: 24px 0 0 0;
+  border-top: 1px solid #66666693;
+  border-left: 1px solid #66666693;
+  background: #0f0f0f;
+  padding: 32px;
+
+  @include respond-to("xl") {
+    padding: 22px;
+  }
+
+  .footerImagesTableAlignment {
+    .tableUi {
+      border: 1px solid var(--Linear, #6666668c);
+      border-radius: 24px;
+      height: calc(100dvh - 257px);
+      margin: 0 0 24px 0;
+      overflow: auto;
+
+      @include respond-to("xl") {
+        height: calc(100dvh - 204px);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+
+        tbody {
+          tr:last-child {
+            border: none;
+          }
+
+          tr {
+            border-bottom: 1px solid var(--Linear, #6666668c);
+
+            td {
+              padding: 14px;
+              font-size: 18px;
+              font-style: normal;
+              text-align: left;
+              font-weight: 500;
+              line-height: normal;
+              @include font-medium;
+              color: #b6b6b6;
+
+              &.indexCol {
+                width: 80px;
+              }
+
+              &.imageCol {
+                width: 120px;
+
+                img {
+                  width: 60px;
+                  height: 40px;
+                  object-fit: cover;
+                  border-radius: 8px;
+                  border: 1px solid rgba(255, 255, 255, 0.1);
+                }
+              }
+
+              &.titleCol {
+                min-width: 200px;
+
+                .truncate {
+                  max-width: 200px;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                }
+              }
+
+              &.urlCol {
+                min-width: 250px;
+
+                .truncate {
+                  max-width: 250px;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                  font-family: monospace;
+                  font-size: 14px;
+                }
+              }
+
+              &.dateCol {
+                width: 150px;
+              }
+
+              &.actionsCol {
+                width: 100px;
+                text-align: center;
+              }
+
+              .green {
+                color: #71ff7a;
+              }
+            }
+          }
+        }
+
+        thead {
+          background-color: #000;
+          position: sticky;
+          top: 0;
+          z-index: 9;
+
+          tr {
+            border-radius: 24px;
+
+            th:first-child {
+              border-top-left-radius: 24px;
+              border-bottom-left-radius: 24px;
+            }
+
+            th:last-child {
+              border-top-right-radius: 24px;
+              border-bottom-right-radius: 24px;
+            }
+
+            th {
+              padding: 20px 14px;
+              font-size: 18px;
+              font-style: normal;
+              white-space: nowrap;
+              text-align: left;
+              font-weight: 500;
+              line-height: normal;
+              @include font-medium;
+              color: #fff;
+
+              &.indexCol {
+                width: 80px;
+              }
+
+              &.imageCol {
+                width: 120px;
+              }
+
+              &.titleCol {
+                min-width: 200px;
+              }
+
+              &.urlCol {
+                min-width: 250px;
+              }
+
+              &.dateCol {
+                width: 150px;
+              }
+
+              &.actionsCol {
+                width: 100px;
+                text-align: center;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

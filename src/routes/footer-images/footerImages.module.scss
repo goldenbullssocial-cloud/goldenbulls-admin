@@ -1,0 +1,51 @@
+@use "../../scss/main.scss" as *;
+@use "../../scss/breakpoints/breakpoints.scss" as *;
+@use "../../scss/font/font.scss" as *;
+
+.footerImagesContainer {
+  border-radius: 24px 0 0 0;
+
+  min-height: calc(100vh - 100px);
+  z-index: -10;
+  @include respond-to("xl") {
+    // padding: 22px;
+  }
+
+  .title {
+    padding: 0 0 24px 0;
+
+    h2 {
+      font-size: 24px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+      text-transform: uppercase;
+      @include gradient-text;
+      @include heading-font;
+    }
+  }
+
+  .addButtonContainer {
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .addButton {
+    background: linear-gradient(90deg, #F9F490 0%, #E4AB40 25.48%, #FEFBA5 75%, #BD894E 100%);
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    color: #1A202C;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+    }
+  }
+}

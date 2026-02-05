@@ -1,18 +1,17 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import styles from "./newsletter.module.scss";
-import { getNewsLetter } from "@/api/newsletter";
+import styles from "./contact.module.scss";
+import { getContact } from "@/api/contact";
 import { toast } from "sonner";
 import UserHeader from "@/components/userHeader";
 import NoDataFound from "@/components/noDataFound";
 import PagePagination from "@/components/pagePagination";
 import { format } from "date-fns";
 import CommonLoader from "@/components/commonLoader";
-import * as XLSX from "xlsx";
 
-export default function Newsletter() {
-  const [newsletters, setNewsletters] = useState([]);
+export default function Contact() {
+  const [contacts, setContacts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -20,55 +19,39 @@ export default function Newsletter() {
   const itemsPerPage = 10;
 
   useEffect(() => {
-    fetchNewsletters();
+    fetchContacts();
   }, []);
 
-  const fetchNewsletters = async () => {
+  const fetchContacts = async () => {
     try {
       setLoading(true);
-      const response = await getNewsLetter();
+      const response = await getContact();
 
-      setNewsletters(response?.payload?.data || []);
+      setContacts(response?.payload?.data || []);
       setTotalItems(response?.payload?.count || 0);
     } catch (error) {
-      console.error("Error fetching newsletters:", error);
-      toast.error("Failed to fetch newsletters");
+      console.error("Error fetching contacts:", error);
+      toast.error("Failed to fetch contacts");
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredNewsletters = newsletters.filter((newsletter) =>
-    newsletter.email?.toLowerCase().includes(searchTerm.toLowerCase()),
+  const filteredContacts = contacts.filter(
+    (contact) =>
+      contact.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      contact.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      contact.lastName?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   // Calculate pagination
-  const totalPages = Math.ceil(filteredNewsletters.length / itemsPerPage);
+  const totalPages = Math.ceil(filteredContacts.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const currentPaginatedData = filteredNewsletters.slice(startIndex, endIndex);
+  const currentPaginatedData = filteredContacts.slice(startIndex, endIndex);
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
-  };
-  const exportToExcel = () => {
-    const dataToExport = filteredNewsletters.map((newsletter, index) => ({
-      "Sr. No": index + 1,
-      Email: newsletter.email || "N/A",
-      "Subscribed On": newsletter.createdAt
-        ? format(new Date(newsletter.createdAt), "dd/MM/yyyy, hh:mm:ss")
-        : "N/A",
-      Status: newsletter.isActive ? "Active" : "Inactive",
-    }));
-
-    const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Newsletter Subscribers");
-
-    XLSX.writeFile(
-      workbook,
-      `newsletter_subscribers_${new Date().toISOString().split("T")[0]}.xlsx`,
-    );
   };
 
   return (
@@ -76,10 +59,9 @@ export default function Newsletter() {
       <UserHeader
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value.trimStart())}
-        HeaderText="Newsletter"
-        DescriptionText="Manage newsletter subscribers and view subscription details"
-        buttonText="Export"
-        onClick={() => exportToExcel()}
+        NoRightContent
+        HeaderText="Contact"
+        DescriptionText="Manage contact submissions and view user inquiries"
       />
       <div className={styles.courseSalesAlignment}>
         <div className={styles.tableUi}>
@@ -90,20 +72,26 @@ export default function Newsletter() {
               <thead>
                 <tr>
                   <th>Sr no.</th>
+                  <th>Name</th>
                   <th>Email</th>
-                  <th>Subscribed Date</th>
+                  <th>Description</th>
+                  <th>Submitted On</th>
                 </tr>
               </thead>
               <tbody>
                 {currentPaginatedData?.length > 0 ? (
-                  currentPaginatedData?.map((newsletter, index) => (
-                    <tr key={newsletter._id}>
+                  currentPaginatedData?.map((contact, index) => (
+                    <tr key={contact._id}>
                       <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
-                      <td>{newsletter.email || "N/A"}</td>
                       <td>
-                        {newsletter.createdAt
+                        {contact.firstName + " " + contact.lastName || "N/A"}
+                      </td>
+                      <td>{contact.email || "N/A"}</td>
+                      <td>{contact.description || "N/A"}</td>
+                      <td>
+                        {contact.createdAt
                           ? format(
-                              new Date(newsletter.createdAt),
+                              new Date(contact.createdAt),
                               "dd/MM/yyyy, hh:mm:ss",
                             )
                           : "N/A"}

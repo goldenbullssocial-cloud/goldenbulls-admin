@@ -223,12 +223,13 @@ export default function EditUserDetails({ customer, onClose, onSubmit }) {
               smallInput
               label="Email"
               name="email"
-              type="email"
+              type="text"
               value={formData.email}
               onChange={handleChange}
               onBlur={handleBlur}
               error={touched.email && errors.email}
               placeholder="Enter your email"
+              disabled
             />
 
             <div className={styles.field}>
@@ -251,8 +252,12 @@ export default function EditUserDetails({ customer, onClose, onSubmit }) {
                 onBlur={() =>
                   setTouched((prev) => ({ ...prev, country: true }))
                 }
-                error={touched.country && errors.country}
               />
+              {errors?.country && (
+                <>
+                  <p className={styles.error}>{errors.country}</p>
+                </>
+              )}
             </div>
 
             <div className={styles.field}>
@@ -278,8 +283,12 @@ export default function EditUserDetails({ customer, onClose, onSubmit }) {
                 placeholder="Select State"
                 isDisabled={!country}
                 onBlur={() => setTouched((prev) => ({ ...prev, state: true }))}
-                error={touched.state && errors.state}
               />
+              {errors?.state && (
+                <>
+                  <p className={styles.error}>{errors.state}</p>
+                </>
+              )}
             </div>
             <div className={styles.field}>
               <label>City</label>
@@ -303,8 +312,12 @@ export default function EditUserDetails({ customer, onClose, onSubmit }) {
                 placeholder="Select City"
                 isDisabled={!state}
                 onBlur={() => setTouched((prev) => ({ ...prev, city: true }))}
-                error={touched.city && errors.city}
               />
+              {errors?.city && (
+                <>
+                  <p className={styles.error}>{errors.city}</p>
+                </>
+              )}
             </div>
 
             <div className={styles.field}>
@@ -333,21 +346,23 @@ export default function EditUserDetails({ customer, onClose, onSubmit }) {
                 }}
                 placeholder="Select gender"
                 onBlur={handleBlur}
-                error={touched.gender && errors.gender}
               />
+              {errors?.gender && (
+                <>
+                  <p className={styles.error}>{errors.gender}</p>
+                </>
+              )}
             </div>
           </div>
-          <div className={styles.button}>
-            <Button
-              type="submit"
-              text={isSubmitting ? "Saving..." : "Save Changes"}
-              disabled={!isFormValid() || isSubmitting}
-              loading={isSubmitting}
-              className={
-                !isFormValid() || isSubmitting ? styles.disabledButton : ""
-              }
-            />
-          </div>
+          <Button
+            type="submit"
+            text={isSubmitting ? "Saving..." : "Save Changes"}
+            disabled={!isFormValid() || isSubmitting}
+            loading={isSubmitting}
+            className={
+              !isFormValid() || isSubmitting ? styles.disabledButton : ""
+            }
+          />
         </div>
       </form>
     </div>

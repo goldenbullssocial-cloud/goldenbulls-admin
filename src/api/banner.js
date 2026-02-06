@@ -30,12 +30,18 @@ export const getAllCenters = async () => {
   }
 };
 
-export const createBanner = async (imageFile, isOnboarding, isBanner) => {
+export const createBanner = async (
+  imageFile,
+  isOnboarding,
+  isBanner,
+  isWhoWeare = false,
+) => {
   try {
     const formData = new FormData();
     formData.append("image", imageFile);
     formData.append("isOnboarding", isOnboarding.toString());
     formData.append("isBanner", isBanner.toString());
+    formData.append("isWhoWeare", isWhoWeare.toString());
 
     const res = await axios.post(
       `${BaseUrl}/banner/createNewBanner`,

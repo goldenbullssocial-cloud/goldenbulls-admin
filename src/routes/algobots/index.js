@@ -1077,7 +1077,6 @@ export default function Algobots() {
                             })[0]
                           }
                           onChange={(selectedOption) => {
-                            console.log("Selected plan:", selectedOption);
                             setSelectedPlans((prev) => ({
                               ...prev,
                               [bot._id]: selectedOption,

@@ -39,29 +39,30 @@ const formSchema = z.object({
     .refine((val) => ytUrlRegex.test(val), {
       message: "Please enter a valid YouTube URL (watch?v=... or youtu.be/...)",
     }),
-  thumbnail: z
-    .any()
-    .refine((file) => file !== null && file !== undefined, {
-      message: "Thumbnail is required",
-    })
-    .refine(
-      (file) =>
-        typeof file === "string" ||
-        (file instanceof File && file.type.startsWith("image/")),
-      {
-        message: "Please upload a valid image file",
-      },
-    )
-    .refine(
-      (file) => {
-        if (typeof file === "string") return true; // existing URL allowed when editing
-        if (file instanceof File) return file.size <= 1 * 1024 * 1024;
-        return true;
-      },
-      {
-        message: "Image size must be less than 1MB",
-      },
-    ),
+//  thumbnail: z
+//     .any()
+//      .refine((file) => file !== null && file !== undefined, {
+//       message: "Thumbnail is required",
+//     })
+//     .refine(
+//       (file) =>
+//         typeof file === "string" ||
+//         (file instanceof File && file.type.startsWith("image/")),
+//       {
+//         message: "Please upload a valid image file",
+//       },
+//     )
+//     .refine(
+//       (file) => {
+//         if (typeof file === "string") return true; // existing URL allowed when editing
+//         if (file instanceof File) return file.size <= 1 * 1024 * 1024;
+//         return true;
+//       },
+//       {
+//         message: "Image size must be less than 1MB",
+//       },
+//     ),
+thumbnail: z.any().optional(),
 });
 export default function Youtube() {
   const [isOpen, setIsOpen] = useState(false);

@@ -356,16 +356,17 @@ export default function Courses() {
       errors.hours = "Please enter valid hours greater than 0";
     }
 
+    //---------------optional image and intro video
     // Image required on create (skip when editing)
-    if (!editCourse && !imageFile) {
-      errors.image = "Please upload an image";
-    } else if (imageFile && imageFile.size >= 1 * 1024 * 1024) {
-      errors.image = "Image size must be less than 1MB";
-    }
+    // if (!editCourse && !imageFile) {
+    //   errors.image = "Please upload an image";
+    // } else if (imageFile && imageFile.size >= 1 * 1024 * 1024) {
+    //   errors.image = "Image size must be less than 1MB";
+    // }
 
-    if (!editCourse && !videoFile) {
-      errors.videoFile = "Please upload an video";
-    }
+    // if (!editCourse && !videoFile) {
+    //   errors.videoFile = "Please upload an video";
+    // }
     return errors;
   };
 

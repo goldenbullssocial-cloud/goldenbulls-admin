@@ -7,7 +7,12 @@ import youtube from "../../../public/assets/images/youtube.png";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
-import { createYoutube, getAllYoutube, updateYoutube } from "@/api/youtube";
+import {
+  createYoutube,
+  getAllYoutube,
+  updateYoutube,
+  deleteYoutube,
+} from "@/api/youtube";
 import { uploadImage } from "@/api/course";
 import Image from "next/image";
 import { toast } from "sonner";
@@ -17,6 +22,7 @@ import DeleteIcon from "../../../public/assets/icons/Delete.svg";
 import PagePagination from "@/components/pagePagination";
 import NoDataFound from "@/components/noDataFound";
 import CommonLoader from "@/components/commonLoader";
+import DeleteBanner from "./delete";
 const PlusIcon = "/assets/icons/plus.svg";
 
 const ytUrlRegex =
@@ -314,8 +320,8 @@ export default function Youtube() {
   };
 
   // Delete
-  const handleDeleteClick = (id) => {
-    setItemToDelete(id);
+  const handleDeleteClick = (item) => {
+    setItemToDelete(item._id);
     setDeleteDialogOpen(true);
   };
 
@@ -374,6 +380,7 @@ export default function Youtube() {
   const handlePageChange = (page) => {
     setCurrentPage(page);
   };
+
   return (
     <>
       <UserHeader
@@ -468,6 +475,12 @@ export default function Youtube() {
         totalItems={totalItems}
         onPageChange={handlePageChange}
       />
+      {deleteDialogOpen && (
+        <DeleteBanner
+          onClose={() => setDeleteDialogOpen(false)}
+          onDelete={confirmDelete}
+        />
+      )}
     </>
   );
 }

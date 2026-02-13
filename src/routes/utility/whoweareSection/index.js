@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
-import styles from "./bannerSection.module.scss";
+import styles from "./whoweareSection.module.scss";
 import Button from "@/components/button";
 import { toast } from "sonner";
 import z from "zod";
@@ -12,21 +12,19 @@ import {
 } from "@/api/banner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import AddBanner from "./addBanner";
+import AddWhoweare from "./addWhoweare";
 import ViewIcon from "../../../../public/assets/icons/Eye.svg";
 import EditIcon from "../../../../public/assets/icons/Edit.svg";
 import InactiveIcon from "../../../../public/assets/icons/InactiveUser.svg";
 import DeleteIcon from "../../../../public/assets/icons/Delete.svg";
 import Dropdown from "@/components/dropdown";
-import DeleteBanner from "./deleteBanner";
+import DeleteWhoweare from "./deleteWhoweare";
 import PagePagination from "@/components/pagePagination";
 import NoDataFound from "@/components/noDataFound";
 import CommonLoader from "@/components/commonLoader";
 import BannerSkeleton from "@/components/bannerSkeleton";
-import WhoweareSection from "../whoweareSection";
-// import { useForm } from "react-hook-form";
 const PlusIcon = "/assets/icons/plus.svg";
-const BannerImage = "/assets/images/banner1.png";
+const WhoweareImage = "/assets/images/whoweare1.png";
 const formSchema = z.object({
   image: z
     .any()
@@ -43,15 +41,15 @@ const formSchema = z.object({
     ),
 });
 
-export default function BannerSection() {
+export default function WhoweareSection() {
   const [isOpen, setIsOpen] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
-  const [currentBannerId, setCurrentBannerId] = useState(null);
-  const [banners, setBanners] = useState([]);
+  const [currentWhoweareId, setCurrentWhoweareId] = useState(null);
+  const [whoweareImages, setWhoweareImages] = useState([]);
   const [isFetching, setIsFetching] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [bannerToDelete, setBannerToDelete] = useState(null);
+  const [whoweareToDelete, setWhoweareToDelete] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -75,15 +73,15 @@ export default function BannerSection() {
   } = form;
   const imageFile = watch("image");
 
-  const fetchBanners = async (page = 1) => {
+  const fetchWhoweareImages = async (page = 1) => {
     try {
       setIsFetching(true);
       const response = await getAllBanners(page, itemsPerPage);
-      // Filter out banners where isOnboarding is true or not present
-      const filteredBanners = (response?.payload?.data || []).filter(
-        (banner) => banner.isOnboarding == false && banner.isBanner == true,
+      // Filter for whoweare images where isWhoWeare is true
+      const filteredWhoweare = (response?.payload?.data || []).filter(
+        (image) => image.isWhoWeare == true,
       );
-      setBanners(filteredBanners);
+      setWhoweareImages(filteredWhoweare);
 
       const totalCount = response?.payload?.count || 0;
       const calculatedTotalPages = Math.ceil(totalCount / itemsPerPage);
@@ -92,14 +90,14 @@ export default function BannerSection() {
       setTotalItems(totalCount);
       setCurrentPage(page);
     } catch (error) {
-      toast.error("Failed to fetch banners");
+      toast.error("Failed to fetch whoweare images");
     } finally {
       setIsFetching(false);
     }
   };
 
   useEffect(() => {
-    fetchBanners();
+    fetchWhoweareImages();
   }, []);
 
   const onSubmit = async (data) => {
@@ -108,20 +106,21 @@ export default function BannerSection() {
 
       let response;
 
-      if (isEditMode && currentBannerId) {
-        // update banner
-        response = await updateBanner(currentBannerId, data.image);
+      if (isEditMode && currentWhoweareId) {
+        // update whoweare image
+        response = await updateBanner(currentWhoweareId, data.image);
       } else {
-        response = await createBanner(data.image, false, true, false);
+        // create whoweare image with isWhoWeare: true, isBanner: false
+        response = await createBanner(data.image, false, false, true);
       }
 
       if (response?.success) {
         toast.success(
           isEditMode
-            ? "Banner updated successfully!"
-            : "Banner created successfully!",
+            ? "Whoweare image updated successfully!"
+            : "Whoweare image created successfully!",
         );
-        fetchBanners();
+        fetchWhoweareImages();
         setIsOpen(false);
         reset();
       } else {
@@ -134,36 +133,36 @@ export default function BannerSection() {
     }
   };
 
-  const handleEdit = (banner) => {
+  const handleEdit = (whoweare) => {
     setIsEditMode(true);
-    setCurrentBannerId(banner._id);
-    setValue("image", banner.image, { shouldValidate: true });
+    setCurrentWhoweareId(whoweare._id);
+    setValue("image", whoweare.image, { shouldValidate: true });
     setIsOpen(true);
   };
 
   const handleDeleteClick = (id) => {
-    setBannerToDelete(id);
+    setWhoweareToDelete(id);
     setDeleteDialogOpen(true);
   };
 
   const confirmDelete = async () => {
-    if (!bannerToDelete) return;
+    if (!whoweareToDelete) return;
 
     try {
       setIsDeleting(true);
-      const response = await deleteBanner(bannerToDelete);
+      const response = await deleteBanner(whoweareToDelete);
       if (response?.success) {
-        toast.success("Banner deleted successfully");
-        fetchBanners();
+        toast.success("Whoweare image deleted successfully");
+        fetchWhoweareImages();
       } else {
-        toast.error("Failed to delete banner");
+        toast.error("Failed to delete whoweare image");
       }
     } catch {
-      toast.error("Error deleting banner");
+      toast.error("Error deleting whoweare image");
     } finally {
       setIsDeleting(false);
       setDeleteDialogOpen(false);
-      setBannerToDelete(null);
+      setWhoweareToDelete(null);
     }
   };
 
@@ -198,7 +197,7 @@ export default function BannerSection() {
     setIsEditMode(false);
     setIsOpen(true);
   };
-  const getBannerActions = () => [
+  const getWhoweareActions = () => [
     {
       key: "edit",
       label: "Edit",
@@ -212,37 +211,37 @@ export default function BannerSection() {
       variant: "danger",
     },
   ];
-  const handleAction = (action, banner) => {
-    if (action === "edit") handleEdit(banner);
+  const handleAction = (action, whoweare) => {
+    if (action === "edit") handleEdit(whoweare);
 
     if (action === "delete") {
-      handleDeleteClick(banner?._id);
+      handleDeleteClick(whoweare?._id);
     }
   };
   return (
-    <div className={styles.bannerSection}>
+    <div className={styles.whoweareSection}>
       <div className={styles.headerAlignment}>
-        <h3>Banner Images of Mobile app</h3>
-        <Button text="Add Banner" icon={PlusIcon} onClick={handleCreateNew} />
+        <h3>Who We Are Images</h3>
+        <Button text="Add Image" icon={PlusIcon} onClick={handleCreateNew} />
       </div>
       {isFetching ? (
         <BannerSkeleton count={4} />
-      ) : banners?.length > 0 ? (
+      ) : whoweareImages?.length > 0 ? (
         <div className={styles.imageGrid}>
-          {banners.map((banner) => {
+          {whoweareImages.map((whoweare) => {
             return (
-              <div className={styles.items} key={banner._id}>
+              <div className={styles.items} key={whoweare._id}>
                 <div className={styles.imageContainer}>
                   <img
                     className={styles.images}
-                    src={banner.image}
-                    alt="BannerImage"
+                    src={whoweare.image}
+                    alt="WhoweareImage"
                   />
                   <div className={styles.dropdownOverlay}>
                     <Dropdown
                       dark
-                      actions={getBannerActions(banner)}
-                      onSelect={(action) => handleAction(action, banner)}
+                      actions={getWhoweareActions(whoweare)}
+                      onSelect={(action) => handleAction(action, whoweare)}
                     />
                   </div>
                 </div>
@@ -251,10 +250,11 @@ export default function BannerSection() {
           })}
         </div>
       ) : (
-        <NoDataFound />
+        // <NoDataFound />
+        <></>
       )}
       {isOpen && (
-        <AddBanner
+        <AddWhoweare
           onClose={() => setIsOpen(false)}
           onSubmit={handleSubmit(onSubmit)}
           fileInputRef={fileInputRef}
@@ -271,7 +271,7 @@ export default function BannerSection() {
         />
       )}
       {deleteDialogOpen && (
-        <DeleteBanner
+        <DeleteWhoweare
           onClose={() => setDeleteDialogOpen(false)}
           onDelete={confirmDelete}
         />
@@ -281,9 +281,8 @@ export default function BannerSection() {
         totalPages={totalPages}
         itemsPerPage={itemsPerPage}
         totalItems={totalItems}
-        onPageChange={fetchBanners}
+        onPageChange={fetchWhoweareImages}
       />
-      <WhoweareSection />
     </div>
   );
 }

@@ -84,7 +84,9 @@ export default function Contact() {
                     <tr key={contact._id}>
                       <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                       <td>
-                        {contact.firstName + " " + contact.lastName || "N/A"}
+                        {contact.firstName && contact.lastName
+                          ? `${contact.firstName} ${contact.lastName}`
+                          : contact.firstName || contact.lastName || "N/A"}
                       </td>
                       <td>{contact.email || "N/A"}</td>
                       <td>{contact.description || "N/A"}</td>

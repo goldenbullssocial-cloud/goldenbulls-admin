@@ -169,7 +169,7 @@ export default function RevenueByMonth() {
 
   return (
     <div className={styles.revenueContainer}>
-      <ResponsiveContainer width="100%">
+      <ResponsiveContainer width="100%" minHeight={350} height="100%">
         <AreaChart
           data={data}
           margin={{ top: 20, right: 30, left: 10, bottom: 30 }}

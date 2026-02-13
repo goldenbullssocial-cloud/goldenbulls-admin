@@ -150,7 +150,6 @@ export default function FooterImagesTable() {
   };
 
   const onSubmit = async (data) => {
-    console.log("data", data);
 
     try {
       setIsLoading(true);
@@ -344,7 +343,11 @@ export default function FooterImagesTable() {
                       </tr>
                     ))
                   ) : (
-                    <NoDataFound />
+                    <tr>
+                      <td colSpan="5" className={styles.noDataCell}>
+                        <NoDataFound />
+                      </td>
+                    </tr>
                   )}
                 </tbody>
               </table>

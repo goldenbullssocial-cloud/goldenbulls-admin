@@ -150,7 +150,6 @@ export default function FooterImagesTable() {
   };
 
   const onSubmit = async (data) => {
-
     try {
       setIsLoading(true);
 
@@ -292,65 +291,48 @@ export default function FooterImagesTable() {
         <CommonLoader />
       ) : (
         <div className={styles.footerImagesPageAlignment}>
-          <div className={styles.footerImagesTableAlignment}>
-            <div className={styles.tableUi}>
-              <table>
-                <thead>
-                  <tr>
-                    <th className={styles.indexCol}>Sr no.</th>
-                    <th className={styles.imageCol}>Image</th>
-                    <th className={styles.titleCol}>Title</th>
-                    <th className={styles.dateCol}>Created Date</th>
-                    <th className={styles.actionsCol}>Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {filteredFooterImages.length > 0 ? (
-                    filteredFooterImages.map((footerImage, index) => (
-                      <tr key={footerImage?._id}>
-                        <td className={styles.indexCol}>{index + 1}</td>
-                        <td className={styles.imageCol}>
-                          <img
-                            src={
-                              footerImage?.imageUrl || "/assets/placeholder.png"
-                            }
-                            alt={footerImage?.title || "Footer Image"}
-                          />
-                        </td>
-                        <td
-                          className={`${styles.footerImageTitle} ${styles.cellContent}`}
-                          title={footerImage?.title}
-                        >
-                          <div className={styles.truncate}>
-                            {footerImage?.title || ""}
-                          </div>
-                        </td>
-
-                        <td className={styles.dateCol}>
-                          {format(
-                            new Date(footerImage?.createdAt),
-                            "MMM d, yyyy",
-                          )}
-                        </td>
-                        <td className={styles.actionsCol}>
-                          <Dropdown
-                            actions={getFooterImageActions()}
-                            onSelect={(action) =>
-                              handleAction(action, footerImage)
-                            }
-                          />
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="5" className={styles.noDataCell}>
-                        <NoDataFound />
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+          <div className={styles.footerImagesGridAlignment}>
+            <div className={styles.imagesGrid}>
+              {filteredFooterImages.length > 0 ? (
+                filteredFooterImages.map((footerImage, index) => (
+                  <div key={footerImage?._id} className={styles.imageCard}>
+                    <div className={styles.imageContainer}>
+                      <img
+                        src={footerImage?.imageUrl || "/assets/placeholder.png"}
+                        alt={footerImage?.title || "Footer Image"}
+                        className={styles.footerImage}
+                      />
+                      <div className={styles.imageOverlay}>
+                        <Dropdown
+                          actions={getFooterImageActions()}
+                          onSelect={(action) =>
+                            handleAction(action, footerImage)
+                          }
+                          className={styles.actionsDropdown}
+                        />
+                      </div>
+                    </div>
+                    <div className={styles.imageInfo}>
+                      <h3
+                        className={styles.imageTitle}
+                        title={footerImage?.title}
+                      >
+                        {footerImage?.title || ""}
+                      </h3>
+                      <p className={styles.imageDate}>
+                        {format(
+                          new Date(footerImage?.createdAt),
+                          "MMM d, yyyy",
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className={styles.noDataContainer}>
+                  <NoDataFound />
+                </div>
+              )}
             </div>
             <PagePagination
               currentPage={currentPage}

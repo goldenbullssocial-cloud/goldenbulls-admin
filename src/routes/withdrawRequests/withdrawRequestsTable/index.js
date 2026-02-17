@@ -253,11 +253,12 @@ export default function WithdrawRequestsTable() {
         status: editStatus,
         transactionId:
           editStatus === "approved" ? transactionId.trim() : undefined,
-        // Ensure uid is passed as a string
-        uid:
-          typeof editingWithdrawal.uid === "object"
-            ? editingWithdrawal.uid._id
-            : editingWithdrawal.uid,
+        ...(editingWithdrawal.uid && {
+          uid:
+            typeof editingWithdrawal.uid === "object"
+              ? editingWithdrawal.uid._id
+              : editingWithdrawal.uid,
+        }),
       };
 
       const response = await updateWithdrawalStatus(

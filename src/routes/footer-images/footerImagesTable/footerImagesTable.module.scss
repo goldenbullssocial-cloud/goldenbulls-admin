@@ -7,159 +7,105 @@
   border-top: 1px solid #66666693;
   border-left: 1px solid #66666693;
   background: #0f0f0f;
+        height: calc(100dvh - 257px);
+
   padding: 32px;
 
   @include respond-to("xl") {
     padding: 22px;
   }
 
-  .footerImagesTableAlignment {
-    .tableUi {
-      border: 1px solid var(--Linear, #6666668c);
-      border-radius: 24px;
-      height: calc(100dvh - 257px);
-      margin: 0 0 24px 0;
-      overflow: auto;
+  .footerImagesGridAlignment {
+    .imagesGrid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 24px;
+      margin-bottom: 24px;
 
-      @include respond-to("xl") {
-        height: calc(100dvh - 204px);
+      @include respond-to("md") {
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 16px;
       }
 
-      table {
-        width: 100%;
-        border-collapse: collapse;
+      .imageCard {
+        background: #1a1a1a;
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid var(--Linear, #6666668c);
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
 
-        tbody {
-          tr:last-child {
-            border: none;
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+
+          .imageOverlay {
+            opacity: 1;
+          }
+        }
+
+        .imageContainer {
+          position: relative;
+          width: 100%;
+          height: 200px;
+          overflow: hidden;
+
+          .footerImage {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
           }
 
-          tr {
-            border-bottom: 1px solid var(--Linear, #6666668c);
+          .imageOverlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
 
-            td {
-              padding: 14px;
-              font-size: 18px;
-              font-style: normal;
-              text-align: left;
-              font-weight: 500;
-              line-height: normal;
-              @include font-medium;
-              color: #b6b6b6;
-
-              &.indexCol {
-                width: 80px;
-              }
-
-              &.imageCol {
-                width: 120px;
-
-                img {
-                  width: 60px;
-                  height: 40px;
-                  object-fit: cover;
-                  border-radius: 8px;
-                  border: 1px solid rgba(255, 255, 255, 0.1);
-                }
-              }
-
-              &.titleCol {
-                min-width: 200px;
-
-                .truncate {
-                  max-width: 200px;
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                  white-space: nowrap;
-                }
-              }
-
-              &.urlCol {
-                min-width: 250px;
-
-                .truncate {
-                  max-width: 250px;
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                  white-space: nowrap;
-                  font-family: monospace;
-                  font-size: 14px;
-                }
-              }
-
-              &.dateCol {
-                width: 150px;
-              }
-
-              &.actionsCol {
-                width: 100px;
-                text-align: center;
-              }
-
-              .green {
-                color: #71ff7a;
-              }
+            .actionsDropdown {
+              background: rgba(255, 255, 255, 0.1);
+              border-radius: 8px;
             }
           }
         }
 
-        thead {
-          background-color: #000;
-          position: sticky;
-          top: 0;
-          z-index: 9;
+        .imageInfo {
+          padding: 16px;
 
-          tr {
-            border-radius: 24px;
+          .imageTitle {
+            font-size: 16px;
+            font-weight: 600;
+            color: #ffffff;
+            margin: 0 0 8px 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            @include font-medium;
+          }
 
-            th:first-child {
-              border-top-left-radius: 24px;
-              border-bottom-left-radius: 24px;
-            }
-
-            th:last-child {
-              border-top-right-radius: 24px;
-              border-bottom-right-radius: 24px;
-            }
-
-            th {
-              padding: 20px 14px;
-              font-size: 18px;
-              font-style: normal;
-              white-space: nowrap;
-              text-align: left;
-              font-weight: 500;
-              line-height: normal;
-              @include font-medium;
-              color: #fff;
-
-              &.indexCol {
-                width: 80px;
-              }
-
-              &.imageCol {
-                width: 120px;
-              }
-
-              &.titleCol {
-                min-width: 200px;
-              }
-
-              &.urlCol {
-                min-width: 250px;
-              }
-
-              &.dateCol {
-                width: 150px;
-              }
-
-              &.actionsCol {
-                width: 100px;
-                text-align: center;
-              }
-            }
+          .imageDate {
+            font-size: 14px;
+            color: #b6b6b6;
+            margin: 0;
           }
         }
+      }
+
+      .noDataContainer {
+        grid-column: 1 / -1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 60px 20px;
       }
     }
   }

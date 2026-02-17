@@ -29,10 +29,11 @@ const validateField = (name, value) => {
         return "Please enter a valid phone number (10-15 digits)";
       return "";
     case "firstName":
-    case "lastName":
-      if (!value.trim())
-        return `${name === "firstName" ? "First name" : "Last name"} is required`;
+      if (!value.trim()) return "First name is required";
       if (value.length < 2) return "Must be at least 2 characters";
+      return "";
+    case "lastName":
+      if (value && value.length < 2) return "Must be at least 2 characters";
       return "";
     case "city":
     case "state":
@@ -128,7 +129,6 @@ export default function EditUserDetails({ customer, onClose, onSubmit }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
 
     // Validate all fields on submit
     const newErrors = {};
@@ -145,7 +145,6 @@ export default function EditUserDetails({ customer, onClose, onSubmit }) {
     setErrors(newErrors);
     setTouched({
       firstName: true,
-      lastName: true,
       email: true,
       phone: true,
       city: true,
@@ -155,15 +154,25 @@ export default function EditUserDetails({ customer, onClose, onSubmit }) {
     });
 
     if (isValid) {
+      setIsSubmitting(true);
       onSubmit(formData);
     }
   };
 
   const isFormValid = () => {
+    const requiredFields = [
+      "firstName",
+      "email",
+      "phone",
+      "city",
+      "state",
+      "country",
+      "gender",
+    ];
     return (
       Object.values(errors).every((error) => !error) &&
       Object.keys(touched).length > 0 &&
-      Object.values(formData).every((value) => Boolean(value))
+      requiredFields.every((field) => Boolean(formData[field]))
     );
   };
   return (

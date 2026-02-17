@@ -1082,6 +1082,7 @@ export default function Algobots() {
                               [bot._id]: selectedOption,
                             }));
                           }}
+                          isSearchable={false}
                         />
                         <Dropdown
                           actions={getUserActions(bot.isActive)}

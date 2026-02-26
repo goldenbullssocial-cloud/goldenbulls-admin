@@ -82,7 +82,7 @@ export default function AddFooterImage({
                     id="imageFile"
                     name="imageFile"
                     onChange={handleImageChange}
-                    initialImage={editingFooterImage?.imageUrl}
+                    initialImage={editingFooterImage?.image}
                     error={errors.imageFile?.message}
                   />
                 </div>

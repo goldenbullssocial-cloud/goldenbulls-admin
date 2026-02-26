@@ -63,9 +63,9 @@ export default function FooterImagesTable() {
     try {
       setIsLoading(true);
       const response = await getAllFooterImages();
-      setFooterImages(response?.payload || []);
-      setTotalItems(response?.payload?.length || 0);
-      setTotalPages(Math.ceil((response?.payload?.length || 0) / itemsPerPage));
+      setFooterImages(response?.payload?.data || []);
+      setTotalItems(response?.payload?.count || 0);
+      setTotalPages(Math.ceil((response?.payload?.count || 0) / itemsPerPage));
     } catch (error) {
       console.error("Error fetching footer images:", error);
       toast.error("Failed to load footer images");
@@ -94,7 +94,7 @@ export default function FooterImagesTable() {
     setEditingFooterImage(footerImage);
     form.reset({
       title: footerImage?.title || "",
-      imageFile: footerImage?.imageUrl || null,
+      imageFile: footerImage?.image || null,
     });
     setIsAddFooterImageOpen(true);
   };
@@ -167,7 +167,7 @@ export default function FooterImagesTable() {
             const imageResponse = await uploadImage(imageFile);
 
             if (imageResponse?.success && imageResponse?.payload) {
-              requestData.imageUrl = imageResponse.payload;
+              requestData.image = imageResponse.payload;
               hasChanges = true;
             } else {
               throw new Error("Failed to upload image: Invalid response");
@@ -202,7 +202,7 @@ export default function FooterImagesTable() {
             const imageResponse = await uploadImage(imageFile);
 
             if (imageResponse?.success && imageResponse?.payload) {
-              formData.append("imageUrl", imageResponse.payload);
+              formData.append("image", imageResponse.payload);
             } else {
               throw new Error("Failed to upload image: Invalid response");
             }
@@ -298,33 +298,30 @@ export default function FooterImagesTable() {
                   <div key={footerImage?._id} className={styles.imageCard}>
                     <div className={styles.imageContainer}>
                       <img
-                        src={footerImage?.imageUrl || "/assets/placeholder.png"}
+                        src={footerImage?.image || "/assets/placeholder.png"}
                         alt={footerImage?.title || "Footer Image"}
                         className={styles.footerImage}
                       />
-                      <div className={styles.imageOverlay}>
-                        <Dropdown
-                          actions={getFooterImageActions()}
-                          onSelect={(action) =>
-                            handleAction(action, footerImage)
-                          }
-                          className={styles.actionsDropdown}
-                        />
-                      </div>
                     </div>
                     <div className={styles.imageInfo}>
-                      <h3
-                        className={styles.imageTitle}
-                        title={footerImage?.title}
-                      >
-                        {footerImage?.title || ""}
-                      </h3>
-                      <p className={styles.imageDate}>
-                        {format(
-                          new Date(footerImage?.createdAt),
-                          "MMM d, yyyy",
-                        )}
-                      </p>
+                      <div className={styles.imageHeader}>
+                        <h3
+                          className={styles.imageTitle}
+                          title={footerImage?.title}
+                        >
+                          {footerImage?.title || ""}
+                        </h3>
+                        <div className={styles.dropdownContainer}>
+                          <Dropdown
+                            actions={getFooterImageActions()}
+                            onSelect={(action) =>
+                              handleAction(action, footerImage)
+                            }
+                            className={styles.actionsDropdown}
+                          />
+                        </div>
+                      </div>
+                   
                     </div>
                   </div>
                 ))

@@ -76,10 +76,10 @@ export default function WhoweareSection() {
   const fetchWhoweareImages = async (page = 1) => {
     try {
       setIsFetching(true);
-      const response = await getAllBanners(page, itemsPerPage);
+      const response = await getAllBanners(page, itemsPerPage);      
       // Filter for whoweare images where isWhoWeare is true
       const filteredWhoweare = (response?.payload?.data || []).filter(
-        (image) => image.isWhoWeare == true,
+        (image) => image.isWhoWeAre == true,
       );
       setWhoweareImages(filteredWhoweare);
 

@@ -193,9 +193,6 @@ export default function CourseSales({
                         "N/A"}
                     </td>
                     <td>
-                      {payment?.telegramId?.telegramId?.channelName || "N/A"}
-                    </td>
-                    <td>
                       {payment?.planType?.replace(
                         /(\d+)([a-zA-Z]+)/,
                         "$1 $2",

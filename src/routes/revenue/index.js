@@ -131,22 +131,68 @@ export default function Revenue() {
       const response = await downloadInvoice(invoicePayload);
 
       if (response?.success && response?.payload) {
-        const pdfRes = await fetch(response.payload);
-        const blob = await pdfRes.blob();
+        // Load the HTML content and convert to PDF
+        const htmlResponse = await fetch(response.payload);
+        const htmlContent = await htmlResponse.text();
 
-        const url = window.URL.createObjectURL(blob);
+        // Create a temporary iframe to render the HTML
+        const iframe = document.createElement("iframe");
+        iframe.style.position = "absolute";
+        iframe.style.left = "-9999px";
+        iframe.style.width = "210mm";
+        iframe.style.height = "297mm";
+        document.body.appendChild(iframe);
 
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = `invoice-${payment.orderId || Date.now()}.pdf`;
+        const iframeDoc =
+          iframe.contentDocument || iframe.contentWindow.document;
+        iframeDoc.open();
+        iframeDoc.write(htmlContent);
+        iframeDoc.close();
 
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        // Wait for content to load, then convert to PDF
+        setTimeout(async () => {
+          try {
+            const { default: html2canvas } = await import("html2canvas");
+            const { jsPDF } = await import("jspdf");
 
-        window.URL.revokeObjectURL(url);
+            const canvas = await html2canvas(iframeDoc.body, {
+              scale: 2,
+              useCORS: true,
+              allowTaint: true,
+              backgroundColor: "#000000",
+            });
 
-        toast.success("Invoice downloaded successfully!");
+            const imgData = canvas.toDataURL("image/png");
+            const pdf = new jsPDF("p", "mm", "a4");
+            pdf.setFillColor(0, 0, 0);
+            pdf.rect(0, 0, 210, 297, "F");
+            const imgWidth = 210;
+            const pageHeight = 297;
+            const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            let heightLeft = imgHeight;
+            let position = 0;
+
+            pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+
+            while (heightLeft >= 0) {
+              position = heightLeft - imgHeight;
+              pdf.addPage();
+              pdf.setFillColor(0, 0, 0);
+              pdf.rect(0, 0, 210, 297, "F");
+              pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+              heightLeft -= pageHeight;
+            }
+
+            pdf.save(`invoice-${payment.orderId || Date.now()}.pdf`);
+            toast.success("Invoice downloaded successfully!");
+          } catch (error) {
+            console.error("Error converting HTML to PDF:", error);
+            toast.error("Failed to convert invoice to PDF");
+          } finally {
+            document.body.removeChild(iframe);
+          }
+        }, 1000);
       } else {
         throw new Error("Failed to generate invoice");
       }

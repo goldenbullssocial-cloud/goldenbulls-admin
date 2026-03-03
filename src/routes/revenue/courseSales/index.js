@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styles from "./courseSales.module.scss";
 import PagePagination from "@/components/pagePagination";
 import DownloadIcon from "@/icons/downloadIcon";
+import CircleLoader from "@/components/circleLoader";
 import { format } from "date-fns";
 import NoDataFound from "@/components/noDataFound";
 export default function CourseSales({
@@ -78,19 +79,9 @@ export default function CourseSales({
                           className="border-none"
                         >
                           {loadingInvoices[payment._id] ? (
-                            <>
-                              <DownloadIcon
-                                className={`h-4 w-4 animate-pulse ${
-                                  loadingInvoices[payment._id]
-                                    ? "cursor-not-allowed"
-                                    : ""
-                                }`}
-                              />
-                            </>
+                            <CircleLoader size="small" />
                           ) : (
-                            <>
-                              <DownloadIcon className="h-4 w-4" />
-                            </>
+                            <DownloadIcon className="h-4 w-4" />
                           )}
                         </button>
                       </td>
@@ -143,19 +134,9 @@ export default function CourseSales({
                         className="border-none"
                       >
                         {loadingInvoices[payment._id] ? (
-                          <>
-                            <DownloadIcon
-                              className={`h-4 w-4 animate-pulse ${
-                                loadingInvoices[payment._id]
-                                  ? "cursor-not-allowed"
-                                  : ""
-                              }`}
-                            />
-                          </>
+                          <CommonLoader size="small" />
                         ) : (
-                          <>
-                            <DownloadIcon className="h-4 w-4" />
-                          </>
+                          <DownloadIcon className="h-4 w-4" />
                         )}
                       </button>
                     </td>
@@ -206,19 +187,9 @@ export default function CourseSales({
                         disabled={loadingInvoices[payment._id]}
                       >
                         {loadingInvoices[payment._id] ? (
-                          <>
-                            <DownloadIcon
-                              className={`h-4 w-4 animate-pulse ${
-                                loadingInvoices[payment._id]
-                                  ? "cursor-not-allowed"
-                                  : ""
-                              }`}
-                            />
-                          </>
+                          <CommonLoader size="small" />
                         ) : (
-                          <>
-                            <DownloadIcon className="h-4 w-4" />
-                          </>
+                          <DownloadIcon className="h-4 w-4" />
                         )}
                       </button>
                     </td>

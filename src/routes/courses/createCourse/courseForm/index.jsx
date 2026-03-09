@@ -24,6 +24,8 @@ export default function CourseForm({
   );
   const [isVideoDragOver, setIsVideoDragOver] = React.useState(false);
   const [isImageDragOver, setIsImageDragOver] = React.useState(false);
+  const [isFree, setIsFree] = React.useState(editCourse?.isFree || false);
+  const [priceValue, setPriceValue] = React.useState(editCourse?.price || "");
 
   const getLanguageActions = () => [
     {
@@ -309,31 +311,47 @@ export default function CourseForm({
           {/* <Input label='Language' placeholder='English' /> */}
         </div>
         <div className={styles.threeCol}>
-          <Input
-            label="Course Price ($)"
-            placeholder="Course Price"
-            type="number"
-            step="0.01"
-            min="0"
-            name="price"
-            defaultValue={editCourse?.price || ""}
-            onWheel={(e) => e.currentTarget.blur()}
-            onKeyDown={(e) => {
-              if (e.key === "ArrowUp" || e.key === "ArrowDown") {
-                e.preventDefault();
-              }
-            }}
-            onInput={(e) => {
-              const value = e.currentTarget.value;
-              if (value.includes(".")) {
-                const [whole, decimal] = value.split(".");
-                if (decimal && decimal.length > 2) {
-                  e.currentTarget.value = `${whole}.${decimal.slice(0, 2)}`;
+          <div className={styles.priceField}>
+            <Input
+              label="Course Price ($)"
+              placeholder="Course Price"
+              type="number"
+              step="0.01"
+              min="0"
+              name="price"
+              value={isFree ? "0" : priceValue}
+              onChange={(e) => setPriceValue(e.target.value)}
+              disabled={isFree}
+              onWheel={(e) => e.currentTarget.blur()}
+              onKeyDown={(e) => {
+                if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+                  e.preventDefault();
                 }
-              }
-            }}
-            error={formErrors.price}
-          />
+              }}
+              onInput={(e) => {
+                const value = e.currentTarget.value;
+                if (value.includes(".")) {
+                  const [whole, decimal] = value.split(".");
+                  if (decimal && decimal.length > 2) {
+                    e.currentTarget.value = `${whole}.${decimal.slice(0, 2)}`;
+                  }
+                }
+              }}
+              error={formErrors.price}
+            />
+            <div className={styles.checkboxAlignment}>
+              <label className={styles.checkboxContainer}>
+                <input
+                  type="checkbox"
+                  name="isFree"
+                  checked={isFree}
+                  onChange={(e) => setIsFree(e.target.checked)}
+                />
+                <span className={styles.checkmark}></span>
+                <span className={styles.label}>Free Course</span>
+              </label>
+            </div>
+          </div>
           <Input
             label="Course Duration"
             placeholder="Course Duration"

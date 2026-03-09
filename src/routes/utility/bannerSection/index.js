@@ -23,6 +23,7 @@ import PagePagination from "@/components/pagePagination";
 import NoDataFound from "@/components/noDataFound";
 import CommonLoader from "@/components/commonLoader";
 import BannerSkeleton from "@/components/bannerSkeleton";
+import WhoweareSection from "../whoweareSection";
 // import { useForm } from "react-hook-form";
 const PlusIcon = "/assets/icons/plus.svg";
 const BannerImage = "/assets/images/banner1.png";
@@ -111,8 +112,7 @@ export default function BannerSection() {
         // update banner
         response = await updateBanner(currentBannerId, data.image);
       } else {
-        // create banner
-        response = await createBanner(data.image, false, true);
+        response = await createBanner(data.image, false, true, false);
       }
 
       if (response?.success) {
@@ -283,6 +283,7 @@ export default function BannerSection() {
         totalItems={totalItems}
         onPageChange={fetchBanners}
       />
+      <WhoweareSection />
     </div>
   );
 }

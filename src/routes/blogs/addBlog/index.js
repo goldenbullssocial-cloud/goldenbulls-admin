@@ -82,7 +82,7 @@ export default function AddBlog({
 
   // Auto-generate slug from title
   const handleTitleChange = (e) => {
-    const title = e.target.value;
+    const title = e.target.value.trimStart();
     const slug = title
       .toLowerCase()
       .replace(/[^\w\s-]/g, "")
@@ -128,7 +128,9 @@ export default function AddBlog({
               placeholder="Author name"
               name="name"
               value={form.watch("name") || ""}
-              onChange={(e) => form.setValue("name", e.target.value)}
+              onChange={(e) =>
+                form.setValue("name", e.target.value.trimStart())
+              }
               onBlur={() => form.trigger("name")}
               error={form.formState.errors.name?.message}
               bglight
@@ -142,7 +144,7 @@ export default function AddBlog({
                     type="text"
                     placeholder="Enter table of content item and press Enter or click Add"
                     value={tocInput}
-                    onChange={(e) => setTocInput(e.target.value)}
+                    onChange={(e) => setTocInput(e.target.value.trimStart())}
                     onKeyPress={handleTocKeyPress}
                     className={styles.tocInput}
                   />
@@ -196,8 +198,7 @@ export default function AddBlog({
                   });
                 }}
                 onBlur={() => form.trigger("categoryId")}
-                error={form.formState.errors.categoryId?.message}
-              />
+                />
               {form.formState.errors.categoryId?.message && (
                 <span className={styles.errorText}>
                   {form.formState.errors.categoryId?.message}
@@ -210,7 +211,9 @@ export default function AddBlog({
                 className={`${styles.textarea} ${form.formState.errors.description ? styles.error : ""}`}
                 placeholder="Write your blog description here..."
                 value={form.watch("description") || ""}
-                onChange={(e) => form.setValue("description", e.target.value)}
+                onChange={(e) =>
+                  form.setValue("description", e.target.value.trimStart())
+                }
                 rows={8}
               />
               {form.formState.errors.description && (

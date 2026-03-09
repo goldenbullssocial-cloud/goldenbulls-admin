@@ -130,10 +130,10 @@ export default function SyllabusCourses({
           prev.map((ch, i) =>
             i === index
               ? {
-                  ...ch,
-                  videoFile: file,
-                  videoUrl: file.name,
-                }
+                ...ch,
+                videoFile: file,
+                videoUrl: file.name,
+              }
               : ch,
           ),
         );
@@ -160,13 +160,19 @@ export default function SyllabusCourses({
       prev.map((ch, i) =>
         i === index
           ? {
-              ...ch,
-              [name]:
-                type === "file" ? (files?.length ? files[0] : null) : value,
-              ...(type === "file"
-                ? { videoUrl: files?.[0] ? files[0].name : ch.videoUrl }
-                : {}),
-            }
+            ...ch,
+            [name]:
+              type === "file"
+                ? files?.length
+                  ? files[0]
+                  : null
+                : name === "chapterName" || name === "description"
+                  ? value?.trimStart()
+                  : value,
+            ...(type === "file"
+              ? { videoUrl: files?.[0] ? files[0].name : ch.videoUrl }
+              : {}),
+          }
           : ch,
       ),
     );
@@ -283,13 +289,13 @@ export default function SyllabusCourses({
         chapterErrors.duration = "Duration must be a positive number";
         isValid = false;
       }
-      if (formActiveTab == "recorded") {
-        if (!chapter.videoFile && !chapter.videoUrl) {
-          chapterErrors.videoFile =
-            "Please upload a video file or provide a video URL";
-          isValid = false;
-        }
-      }
+      // if (formActiveTab == "recorded") {
+      //   if (!chapter.videoFile && !chapter.videoUrl) {
+      //     chapterErrors.videoFile =
+      //       "Please upload a video file or provide a video URL";
+      //     isValid = false;
+      //   }
+      // }
 
       if (Object.keys(chapterErrors).length > 0) {
         newErrors[index] = chapterErrors;
@@ -450,8 +456,8 @@ export default function SyllabusCourses({
                   onDrop={(e) => handleVideoDrop(e, index)}
                 >
                   {chapter.videoFile ||
-                  videoPreviews[index] ||
-                  chapter.videoUrl ? (
+                    videoPreviews[index] ||
+                    chapter.videoUrl ? (
                     <div className={styles.previewWrapper}>
                       <video
                         src={

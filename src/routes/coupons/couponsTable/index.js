@@ -41,11 +41,30 @@ const couponFormSchema = z.object({
     }),
 
   expiryDate: z
-    .date({
-      required_error: "Expiry date is required.",
-      invalid_type_error: "Please enter a valid date",
+    .union([z.date(), z.string(), z.undefined()])
+    .refine((val) => val !== undefined, {
+      message: "Expiry date is required",
     })
-    .min(new Date(), "Expiry date must be in the future"),
+    .refine(
+      (val) => {
+        if (val === undefined) return false;
+        const date = typeof val === "string" ? new Date(val) : val;
+        return date instanceof Date && !isNaN(date.getTime());
+      },
+      {
+        message: "Please enter a valid date",
+      },
+    )
+    .refine(
+      (val) => {
+        if (val === undefined) return false;
+        const date = typeof val === "string" ? new Date(val) : val;
+        return date >= new Date(new Date().setHours(0, 0, 0, 0));
+      },
+      {
+        message: "Expiry date must be in the future",
+      },
+    ),
 
   usageLimit: z
     .string()
@@ -223,6 +242,9 @@ export default function CouponsTable() {
       <UserHeader
         icon={PlusIcon}
         HeaderText="Coupons"
+        placeholder="Search Coupons"
+        value={searchTerm}
+        onChange={handleSearchInputChange}
         DescriptionText="Create and control discount codes and promotional offers"
         buttonText="Add Coupons"
         onClick={() => {
@@ -260,7 +282,7 @@ export default function CouponsTable() {
                 <tbody>
                   {filteredCoupons?.length > 0 ? (
                     filteredCoupons.map((coupon, index) => (
-                      <tr>
+                      <tr key={coupon._id}>
                         <td>{index + 1}</td>
                         <td>{coupon.couponCode}</td>
                         <td>{coupon.discount}%</td>

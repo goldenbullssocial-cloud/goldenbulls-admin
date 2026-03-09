@@ -341,10 +341,11 @@ export default function Courses() {
       errors.instructor = "Instructor is required";
     }
 
-    // Validate price (required and > 0)
+    // Validate price (required and > 0, unless it's a free course)
+    const isFree = formData.get("isFree") === "on";
     const priceValue = formData.get("price")?.toString();
     const price = priceValue ? parseFloat(priceValue) : 0;
-    if (!priceValue || isNaN(price) || price <= 0) {
+    if (!isFree && (!priceValue || isNaN(price) || price <= 0)) {
       errors.price = "Please enter valid price greater than 0";
     }
 
@@ -355,16 +356,17 @@ export default function Courses() {
       errors.hours = "Please enter valid hours greater than 0";
     }
 
+    //---------------optional image and intro video
     // Image required on create (skip when editing)
-    if (!editCourse && !imageFile) {
-      errors.image = "Please upload an image";
-    } else if (imageFile && imageFile.size >= 1 * 1024 * 1024) {
-      errors.image = "Image size must be less than 1MB";
-    }
+    // if (!editCourse && !imageFile) {
+    //   errors.image = "Please upload an image";
+    // } else if (imageFile && imageFile.size >= 1 * 1024 * 1024) {
+    //   errors.image = "Image size must be less than 1MB";
+    // }
 
-    if (!editCourse && !videoFile) {
-      errors.videoFile = "Please upload an video";
-    }
+    // if (!editCourse && !videoFile) {
+    //   errors.videoFile = "Please upload an video";
+    // }
     return errors;
   };
 
@@ -514,11 +516,13 @@ export default function Courses() {
       setFormErrors(errors);
 
       // Create a JSON object for the API request instead of FormData
+      const isFree = formData.get("isFree") === "on";
       const apiData = {
         courseType: formData.get("courseType") || "",
         CourseName: formData.get("name") || "",
         description: formData.get("description") || "",
-        price: formData.get("price") || "0",
+        price: isFree ? "0" : (formData.get("price") || "0"),
+        isFree: isFree,
         hours: formData.get("hours") || "0",
         instructor: formData.get("instructor") || "",
         language: formData.get("language") || "english",
@@ -643,9 +647,9 @@ export default function Courses() {
         } else {
           toast.error(
             error.response?.data?.message ||
-              (editCourse
-                ? "Failed to update course"
-                : "Failed to create course"),
+            (editCourse
+              ? "Failed to update course"
+              : "Failed to create course"),
             {
               description: error.response?.data?.error || error.message,
             },

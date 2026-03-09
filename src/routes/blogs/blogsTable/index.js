@@ -27,7 +27,7 @@ const blogFormSchema = z.object({
   categoryId: z.string().min(1, "Category is required"),
   name: z.string().min(2, "Author name is required"),
   description: z.string().min(100, "Content must be at least 100 characters"),
-  coverImage: z.any().refine((file) => file, "Cover image is required"),
+  coverImage: z.any().optional(),
   tableOfContent: z
     .array(z.string())
     .min(1, "At least one table of content item is required"),
@@ -257,7 +257,7 @@ export default function BlogsTable() {
           if (value !== null && value !== undefined) {
             // Handle array fields like tableOfContent
             if (key === "tableOfContent" && Array.isArray(value)) {
-              formData.append(key, JSON.stringify(value));
+              if (value.length > 0) value.forEach((item) => formData.append(`${key}[]`, item));
             } else {
               formData.append(key, value);
             }

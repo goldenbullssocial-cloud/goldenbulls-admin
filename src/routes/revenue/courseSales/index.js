@@ -135,7 +135,7 @@ export default function CourseSales({
                     <td>{payment?.planType || "N/A"}</td>
                     <td>{payment?.price || "N/A"}</td>
                     <td>{payment?.orderId || "N/A"}</td>
-                    <td>{/* {payment?.} */}</td>
+                    <td>{payment?.metaAccountNumber || "N/A"}</td>
                     <td>
                       <button
                         onClick={() => downloadPaymentInvoice(payment)}

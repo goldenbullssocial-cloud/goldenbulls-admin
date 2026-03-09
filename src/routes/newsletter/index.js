@@ -91,7 +91,6 @@ export default function Newsletter() {
                 <tr>
                   <th>Sr no.</th>
                   <th>Email</th>
-                  <th>Status</th>
                   <th>Subscribed Date</th>
                 </tr>
               </thead>
@@ -101,17 +100,6 @@ export default function Newsletter() {
                     <tr key={newsletter._id}>
                       <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>
                       <td>{newsletter.email || "N/A"}</td>
-                      <td>
-                        <span
-                          className={`${styles.status} ${
-                            newsletter.isActive
-                              ? styles.active
-                              : styles.inactive
-                          }`}
-                        >
-                          {newsletter.isActive ? "Active" : "Inactive"}
-                        </span>
-                      </td>
                       <td>
                         {newsletter.createdAt
                           ? format(

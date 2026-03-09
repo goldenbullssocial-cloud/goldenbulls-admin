@@ -17,6 +17,7 @@ import { getSocket } from "@/utils/webSocket";
 import NoDataFound from "@/components/noDataFound";
 import CommonLoader from "@/components/commonLoader";
 import EditIcon from "../../../../public/assets/icons/Edit.svg";
+import LockIcon from "../../../../public/assets/icons/lock.svg";
 import Image from "next/image";
 const settingIcon = "/assets/icons/settings.svg";
 export default function WithdrawRequestsTable() {
@@ -186,6 +187,12 @@ export default function WithdrawRequestsTable() {
 
   // Open edit dialog for withdrawal
   const handleEditClick = (withdrawal) => {
+    // Prevent editing if withdrawal is already approved or rejected
+    if (withdrawal.status === "approved" || withdrawal.status === "rejected") {
+      toast.info(`Cannot edit withdrawal with status: ${withdrawal.status}`);
+      return;
+    }
+
     setEditingWithdrawal(withdrawal);
     setEditStatus(withdrawal.status);
     setTransactionId(withdrawal.transactionId || "");
@@ -392,17 +399,29 @@ export default function WithdrawRequestsTable() {
                             </span>
                           </td>
                           <td>
-                            <Image
-                              alt="Edit withdrawal"
-                              src={EditIcon}
-                              width={20}
-                              height={20}
-                              className={styles.editIcon}
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleEditClick(withdrawal);
-                              }}
-                            />
+                            {withdrawal.status === "approved" ||
+                            withdrawal.status === "rejected" ? (
+                              <Image
+                                alt="Locked withdrawal"
+                                src={LockIcon}
+                                width={20}
+                                height={20}
+                                className={styles.lockIcon}
+                                title={`Withdrawal ${withdrawal.status} - cannot be edited`}
+                              />
+                            ) : (
+                              <Image
+                                alt="Edit withdrawal"
+                                src={EditIcon}
+                                width={20}
+                                height={20}
+                                className={styles.editIcon}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleEditClick(withdrawal);
+                                }}
+                              />
+                            )}
                           </td>
                         </tr>
                       );

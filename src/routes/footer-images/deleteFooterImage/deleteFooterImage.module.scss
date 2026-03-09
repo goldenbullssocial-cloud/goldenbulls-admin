@@ -1,0 +1,117 @@
+@use "../../../scss/main.scss" as *;
+@use "../../../scss/breakpoints/breakpoints.scss" as *;
+@use "../../../scss/font/font.scss" as *;
+
+.deleteFooterImageModalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.deleteFooterImageModalContent {
+  background: #1a1a1a;
+  border-radius: 16px;
+  padding: 32px;
+  max-width: 400px;
+  width: 90%;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+
+  @include respond-to("sm") {
+    padding: 24px;
+  }
+
+  .modalHeader {
+    text-align: center;
+    margin-bottom: 24px;
+
+    h2 {
+      color: #fff;
+      font-size: 20px;
+      font-weight: 600;
+      margin: 0 0 12px 0;
+      @include heading-font;
+    }
+
+    p {
+      color: #9ca3af;
+      font-size: 14px;
+      margin: 0;
+      line-height: 1.5;
+    }
+  }
+
+  .footerImageInfo {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 24px;
+
+    .footerImageTitle {
+      color: #fff;
+      font-weight: 500;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+
+    .footerImageDetails {
+      color: #9ca3af;
+      font-size: 14px;
+      line-height: 1.4;
+
+      div {
+        margin-bottom: 4px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+
+  .modalActions {
+    display: flex;
+    gap: 12px;
+
+    button {
+      flex: 1;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+
+      &.cancelButton {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.15);
+        }
+      }
+
+      &.deleteButton {
+        background: #ef4444;
+        color: #fff;
+
+        &:hover {
+          background: #dc2626;
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+      }
+    }
+  }
+}

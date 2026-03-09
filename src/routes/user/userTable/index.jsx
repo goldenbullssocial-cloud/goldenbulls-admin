@@ -27,6 +27,7 @@ import UserHeader from "@/components/userHeader";
 import NoDataFound from "@/components/noDataFound";
 import TableSkeleton from "@/components/tableSkeleton";
 import CommonLoader from "@/components/commonLoader";
+import { toast } from "sonner";
 
 // Define the form schema
 const customerFormSchema = z.object({
@@ -164,13 +165,26 @@ export default function UserTable() {
 
     try {
       setDeletingId(selectedCustomer.id);
+
+      // Remove from local state immediately for better UX
+      setCustomers((prevCustomers) =>
+        prevCustomers.filter(
+          (customer) => customer._id !== selectedCustomer.id,
+        ),
+      );
+
       await deleteCustomer(selectedCustomer.id);
       setDeleteDialogOpen(false);
       toast.success(`Customer "${selectedCustomer.name}" has been deleted.`);
+
+      // Refetch to ensure data consistency
       await fetchCustomersData();
     } catch (error) {
       console.error("Error deleting customer:", error);
       toast.error("Failed to delete customer. Please try again.");
+
+      // Refetch to restore the correct state if deletion failed
+      await fetchCustomersData();
     } finally {
       setDeletingId(null);
     }
@@ -331,6 +345,7 @@ export default function UserTable() {
         HeaderText="Users"
         DescriptionText="Manage user accounts and their details"
         value={searchInput}
+        placeholder="Search Users"
         onChange={handleSearchInputChange}
         NoButton
       />

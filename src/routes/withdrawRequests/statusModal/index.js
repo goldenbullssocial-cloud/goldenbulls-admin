@@ -36,7 +36,7 @@ export default function StatusModal({
   };
 
   const handleTransactionIdChange = (e) => {
-    setTransactionId(e.target.value);
+    setTransactionId(e.target.value.trimStart());
     // Clear error when user starts typing
     if (formErrors.transactionId) {
       setFormErrors((prev) => ({

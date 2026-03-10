@@ -291,7 +291,7 @@ export default function FooterImagesTable() {
         <CommonLoader />
       ) : (
         <div className={styles.footerImagesPageAlignment}>
-          <div className={styles.footerImagesGridAlignment}>
+          <div className={styles.contentArea}>
             <div className={styles.imagesGrid}>
               {filteredFooterImages.length > 0 ? (
                 filteredFooterImages.map((footerImage, index) => (
@@ -321,7 +321,6 @@ export default function FooterImagesTable() {
                           />
                         </div>
                       </div>
-                   
                     </div>
                   </div>
                 ))
@@ -331,6 +330,8 @@ export default function FooterImagesTable() {
                 </div>
               )}
             </div>
+          </div>
+          <div className={styles.paginationArea}>
             <PagePagination
               currentPage={currentPage}
               totalPages={totalPages}

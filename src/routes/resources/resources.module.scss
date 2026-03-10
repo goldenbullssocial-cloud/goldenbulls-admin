@@ -7,10 +7,23 @@
   border-top: 1px solid #66666693;
   border-left: 1px solid #66666693;
   background: #0f0f0f;
+  min-height: calc(100dvh - 282px);
   padding: 32px;
+  display: flex;
+  flex-direction: column;
 
   @include respond-to("xl") {
     padding: 22px;
+  }
+
+  .contentArea {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .paginationArea {
+    margin-top: 24px;
   }
 
   .grid {
@@ -46,13 +59,25 @@
         align-items: center;
         background: #000;
         border-radius: 12px;
-        padding: 32px;
+        overflow: hidden;
         flex-grow: 1;
-        min-height: 140px;
+        min-height: 180px;
+        max-height: 180px;
+        border: 1px solid #333;
         
+        .pdfPreview {
+          width: 110%;
+          height: 110%;
+          border: none;
+          pointer-events: none;
+          object-fit: cover;
+          overflow: hidden;
+          margin: -5%;
+        }
+
         svg {
-          width: 64px;
-          height: 64px;
+          width: 54px;
+          height: 54px;
           color: #d4af37;
         }
       }
@@ -65,66 +90,63 @@
         .titleRow {
           display: flex;
           justify-content: space-between;
-          align-items: flex-start;
+          align-items: center;
           gap: 12px;
 
           .title {
             color: #fff;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 500;
             @include font-medium;
             margin: 0;
             display: -webkit-box;
-            -webkit-line-clamp: 2;
-            line-clamp: 2;
+            -webkit-line-clamp: 1;
+            line-clamp: 1;
             -webkit-box-orient: vertical;
             overflow: hidden;
             text-overflow: ellipsis;
             word-break: break-word;
+            flex-grow: 1;
           }
 
-          .dropdownContainer {
-            position: relative;
-            z-index: 22;
-            overflow: visible;
+          .moreAction {
+            display: flex;
+            align-items: center;
+            gap: 4px;
             flex-shrink: 0;
+
+            .downloadBtn {
+              background: transparent;
+              border: none;
+              cursor: pointer;
+              padding: 4px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              transition: transform 0.2s ease;
+
+              &:hover {
+                transform: scale(1.1);
+              }
+
+              svg {
+                width: 20px;
+                height: 20px;
+              }
+            }
           }
         }
 
         .date {
           color: #858585;
-          font-size: 14px;
+          font-size: 13px;
           @include font-normal;
-          margin: 0;
+          margin: 4px 0 0 0;
         }
       }
 
       .actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-top: 1px solid #333;
-        padding-top: 12px;
-
-        a {
-          color: #d4af37;
-          font-size: 14px;
-          font-weight: 500;
-          text-decoration: none;
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          transition: 0.3s ease;
-
-          &:hover {
-            color: #fff;
-          }
-
-          svg {
-            width: 16px;
-            height: 16px;
-          }
-        }
+        display: none;
       }
     }
   }

@@ -31,7 +31,16 @@ const formSchema = z.object({
     .string()
     .min(1, "Title is required")
     .max(120, "Title must be at most 120 characters"),
-  fileUrl: z.any().optional(),
+  fileUrl: z
+    .string({
+      required_error: "File is required",
+      invalid_type_error: "File is required",
+    })
+    .min(1, "File is required")
+    .nullable()
+    .refine((val) => val !== null && val !== "", {
+      message: "File is required",
+    }),
 });
 
 export default function ResourcesTable() {
@@ -129,6 +138,24 @@ export default function ResourcesTable() {
   };
 
   const openFileDialog = () => fileInputRef.current?.click();
+  
+    const handleDownload = (url, title) => {
+        if (!url) return;
+        let filename = title || 'resource';
+        if (!filename.toLowerCase().endsWith('.pdf') && !filename.toLowerCase().endsWith('.doc') && !filename.toLowerCase().endsWith('.docx') && !filename.toLowerCase().endsWith('.ppt') && !filename.toLowerCase().endsWith('.pptx')) {
+            filename += '.pdf';
+        }
+        
+        const proxyUrl = `/api/download?url=${encodeURIComponent(url)}&filename=${encodeURIComponent(filename)}`;
+        
+        const link = document.createElement('a');
+        link.href = proxyUrl;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
 
   const onSubmit = async (data) => {
     setIsLoading(true);
@@ -136,8 +163,9 @@ export default function ResourcesTable() {
       let requestData = {};
       if (isEditMode && currentId) {
         const originalItem = items.find((item) => item._id === currentId);
+        const originalUrl = originalItem.item || originalItem.fileUrl;
         if (data.title !== originalItem.title) requestData.title = data.title;
-        if (data.fileUrl && data.fileUrl !== originalItem.fileUrl) requestData.fileUrl = data.fileUrl;
+        if (data.fileUrl && data.fileUrl !== originalUrl) requestData.fileUrl = data.fileUrl;
 
         if (Object.keys(requestData).length > 0) {
           await updateResource(currentId, requestData);
@@ -148,11 +176,6 @@ export default function ResourcesTable() {
           return;
         }
       } else {
-        if (!data.fileUrl) {
-          toast.error("Please upload a file");
-          setIsLoading(false);
-          return;
-        }
         requestData = { title: data.title, fileUrl: data.fileUrl };
         await createResource(requestData);
         toast.success("Resource created successfully");
@@ -173,7 +196,7 @@ export default function ResourcesTable() {
     setCurrentId(item._id);
     reset({
       title: item.title,
-      fileUrl: item.fileUrl ?? null,
+      fileUrl: (item.item || item.fileUrl) ?? null,
     });
     setIsOpen(true);
   };
@@ -233,51 +256,63 @@ export default function ResourcesTable() {
         <CommonLoader />
       ) : (
         <div className={styles.resourcesPageAlignment}>
-          <div className={styles.grid}>
-            {items.length > 0 ? (
-              items.map((item, index) => (
-                <div className={styles.gridItems} key={item._id || index}>
-                  <div className={styles.fileIconWrapper}>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                      <polyline points="14 2 14 8 20 8" />
-                      <line x1="16" y1="13" x2="8" y2="13" />
-                      <line x1="16" y1="17" x2="8" y2="17" />
-                      <polyline points="10 9 9 9 8 9" />
-                    </svg>
-                  </div>
-                  <div className={styles.info}>
-                    <div className={styles.titleRow}>
-                      <h3 className={styles.title}>{item.title}</h3>
-                      <div className={styles.dropdownContainer}>
-                        <Dropdown
-                          actions={getActions()}
-                          onSelect={(action) => handleAction(action, item)}
-                        />
+          <div className={styles.contentArea}>
+            <div className={styles.grid}>
+              {items.length > 0 ? (
+                items.map((item, index) => {
+                  const resourceUrl = item.item || item.fileUrl;
+                  return (
+                    <div className={styles.gridItems} key={item._id || index}>
+                      <div className={styles.fileIconWrapper}>
+                        {resourceUrl ? (
+                          <iframe
+                            src={`${resourceUrl}#view=FitW&page=1&toolbar=0&navpanes=0&scrollbar=0`}
+                            title={item.title}
+                            className={styles.pdfPreview}
+                            scrolling="no"
+                          />
+                        ) : (
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                            <line x1="16" y1="13" x2="8" y2="13" />
+                            <line x1="16" y1="17" x2="8" y2="17" />
+                            <polyline points="10 9 9 9 8 9" />
+                          </svg>
+                        )}
+                      </div>
+                      <div className={styles.info}>
+                        <div className={styles.titleRow}>
+                          <h3 className={styles.title}>{item.title}</h3>
+                          <div className={styles.moreAction}>
+                            <button 
+                              className={styles.downloadBtn}
+                              onClick={() => handleDownload(resourceUrl, item.title)}
+                              title="Download"
+                            >
+                              <DownloadIcon color="#d4af37" />
+                            </button>
+                            <Dropdown
+                              actions={getActions()}
+                              onSelect={(action) => handleAction(action, item)}
+                            />
+                          </div>
+                        </div>
+                        <p className={styles.date}>
+                          {item.createdAt ? format(new Date(item.createdAt), "MMM d, yyyy") : "N/A"}
+                        </p>
                       </div>
                     </div>
-                    <p className={styles.date}>
-                      {item.createdAt ? format(new Date(item.createdAt), "MMM d, yyyy") : "N/A"}
-                    </p>
-                  </div>
-                  <div className={styles.actions}>
-                    {item.fileUrl ? (
-                      <a href={item.fileUrl} target="_blank" rel="noopener noreferrer">
-                        <DownloadIcon /> View File
-                      </a>
-                    ) : (
-                      <span style={{color: '#858585'}}>No File</span>
-                    )}
-                  </div>
+                  );
+                })
+              ) : (
+                <div style={{gridColumn: '1 / -1'}}>
+                  <NoDataFound />
                 </div>
-              ))
-            ) : (
-              <div style={{gridColumn: '1 / -1'}}>
-                <NoDataFound />
-              </div>
-            )}
+              )}
+            </div>
           </div>
-          <div style={{marginTop: '24px'}}>
+          <div className={styles.paginationArea}>
             <PagePagination
               currentPage={currentPage}
               totalPages={totalPages}

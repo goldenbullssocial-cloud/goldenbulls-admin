@@ -51,6 +51,7 @@ export default function BlogCategoriesTable() {
   const [categoryToDelete, setCategoryToDelete] = useState(null);
   const [currentCategoryId, setCurrentCategoryId] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [debouncedSearch, setDebouncedSearch] = useState("");
 
   const form = useForm({
     resolver: zodResolver(blogCategoryFormSchema),
@@ -67,12 +68,12 @@ export default function BlogCategoriesTable() {
       const response = await getAllBlogCategory({
         page: currentPage,
         limit: itemsPerPage,
-        search: searchTerm,
+        search: debouncedSearch,
       });
 
       setBlogCategories(response.payload.data);
-      setTotalItems(response.payload.data.length);
-      setTotalPages(Math.ceil(response.payload.totalPages / itemsPerPage));
+      setTotalItems(response.payload.totalItems || response.payload.data.length);
+      setTotalPages(Math.ceil((response.payload.totalItems || response.payload.data.length) / itemsPerPage));
     } catch (error) {
       console.error("Error fetching blog categories:", error);
     } finally {
@@ -82,7 +83,19 @@ export default function BlogCategoriesTable() {
 
   useEffect(() => {
     fetchBlogCategories();
-  }, [currentPage, itemsPerPage]);
+  }, [currentPage, itemsPerPage, debouncedSearch]);
+
+  // Debounce search term
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(searchTerm);
+      setCurrentPage(1); // Reset to first page on search
+    }, 500);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchTerm]);
 
   const handleEdit = (category) => {
     setIsEditMode(true);
@@ -161,9 +174,10 @@ export default function BlogCategoriesTable() {
     setSearchTerm(e.target.value.trimStart());
   };
 
-  const filteredCategories = blogCategories.filter((category) =>
-    category.name.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  // Removed client-side filtering since we're using server-side search
+  // const filteredCategories = blogCategories.filter((category) =>
+  //   category.name.toLowerCase().includes(searchTerm.toLowerCase()),
+  // );
 
   const handleAddNew = () => {
     setIsEditMode(false);
@@ -197,6 +211,9 @@ export default function BlogCategoriesTable() {
   return (
     <>
       <UserHeader
+        value={searchTerm}
+        onChange={handleSearchInputChange}
+        placeholder="Search categories..."
         buttonText="Add Category"
         onClick={handleAddNew}
         HeaderText="Blog Categories"
@@ -219,8 +236,8 @@ export default function BlogCategoriesTable() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredCategories?.length > 0 ? (
-                    filteredCategories.map((category, index) => (
+                  {blogCategories?.length > 0 ? (
+                    blogCategories.map((category, index) => (
                       <tr key={category._id}>
                         <td>{index + 1}</td>
                         <td>{category.name}</td>

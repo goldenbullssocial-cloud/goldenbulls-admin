@@ -395,57 +395,59 @@ export default function Youtube() {
         DescriptionText="Add, remove or update YouTube videos"
       />
       <div className={styles.youtubePageAlignment}>
-        {isFetching ? (
-          <CommonLoader />
-        ) : (
-          <div className={styles.grid}>
-            {displayItems?.length > 0 ? (
-              displayItems?.map((item, index) => {
-                return (
-                  <div className={styles.gridItems} key={index}>
-                    <div className={styles.image}>
-                      <Image
-                        width={1000}
-                        height={1000}
-                        src={item?.thumbnail}
-                        alt={item?.description}
-                      />
-                      {/* <div className={styles.playButtonOverlay}>
-                      <Image
-                        width={60}
-                        height={60}
-                        src={youtube}
-                        alt="Play on YouTube"
-                        className={styles.playButton}
-                      />
-                    </div> */}
-                    </div>
-                    <div className={styles.title}>
-                      <span className={styles.titleText}>
-                        {item?.description || "N/A"}
-                      </span>
-                      <div className={styles.dropdownContainer}>
-                        <Dropdown
-                          actions={getActions(item)}
-                          onSelect={(action) => handleAction(action, item)}
+        <div className={styles.contentArea}>
+          {isFetching ? (
+            <CommonLoader />
+          ) : (
+            <div className={styles.grid}>
+              {displayItems?.length > 0 ? (
+                displayItems?.map((item, index) => {
+                  return (
+                    <div className={styles.gridItems} key={index}>
+                      <div className={styles.image}>
+                        <Image
+                          width={1000}
+                          height={1000}
+                          src={item?.thumbnail}
+                          alt={item?.description}
                         />
                       </div>
+                      <div className={styles.title}>
+                        <span className={styles.titleText}>
+                          {item?.description || "N/A"}
+                        </span>
+                        <div className={styles.dropdownContainer}>
+                          <Dropdown
+                            actions={getActions(item)}
+                            onSelect={(action) => handleAction(action, item)}
+                          />
+                        </div>
+                      </div>
+                      <a
+                        href={item.videoUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className={styles.videoLink}
+                        onClick={(e) => e.stopPropagation()}
+                      ></a>
                     </div>
-                    <a
-                      href={item.videoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={styles.videoLink}
-                      onClick={(e) => e.stopPropagation()}
-                    ></a>
-                  </div>
-                );
-              })
-            ) : (
-              <NoDataFound />
-            )}
-          </div>
-        )}
+                  );
+                })
+              ) : (
+                <NoDataFound />
+              )}
+            </div>
+          )}
+        </div>
+        <div className={styles.paginationArea}>
+          <PagePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            itemsPerPage={itemsPerPage}
+            totalItems={totalItems}
+            onPageChange={handlePageChange}
+          />
+        </div>
       </div>
       {isOpen && (
         <AddyoutubeVideo
@@ -469,13 +471,6 @@ export default function Youtube() {
           isLoading={isLoading}
         />
       )}
-      <PagePagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        itemsPerPage={itemsPerPage}
-        totalItems={totalItems}
-        onPageChange={handlePageChange}
-      />
       {deleteDialogOpen && (
         <DeleteBanner
           onClose={() => setDeleteDialogOpen(false)}

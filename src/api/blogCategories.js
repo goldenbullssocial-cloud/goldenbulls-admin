@@ -16,14 +16,14 @@ export const getAllBlogCategory = async (params) => {
 
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
-        if (value !== undefined) {
+        if (value !== undefined && value !== null && value !== "") {
           searchParams.append(key, String(value));
         }
       });
     }
 
     const queryString = searchParams.toString();
-    const url = `${API_BASE_URL}/blogCategory/getAllBlogCategory`;
+    const url = `${API_BASE_URL}/blogCategory/getAllBlogCategory${queryString ? `?${queryString}` : ""}`;
 
     const response = await axios.get(url);
     return response.data;

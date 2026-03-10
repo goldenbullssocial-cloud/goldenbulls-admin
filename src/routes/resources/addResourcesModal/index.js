@@ -51,7 +51,7 @@ export default function AddResourcesModal({
           </div>
           
           <div className={styles.text}>
-            <p>Upload File (PDF, PPT, DOC, DOCX, Images)</p>
+            <p>Upload File (PDF, PPT, DOC)</p>
           </div>
           
           <input
@@ -100,7 +100,7 @@ export default function AddResourcesModal({
                     <Dropicon />
                   </div>
                   <h5>Click to select file</h5>
-                  <p>(PDF, PPT, DOC, Image)</p>
+                  <p>(PDF, PPT, DOC)</p>
                 </>
               )}
             </div>
